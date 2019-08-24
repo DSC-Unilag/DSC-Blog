@@ -75,7 +75,7 @@ body{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 30px 0 25px 40px;
+    padding: 30px 20px 25px 40px;
 }
 
 .navbar__wrapper{
@@ -137,15 +137,28 @@ body{
     position: absolute;
     top: 0;
     width: 100%;
+    z-index: 1;
+    left: 0;
 }
 
 .top-post{
-    background-image: url("../images/camp.jpg");
-    background-size: cover;
-    height: 460px;
-    background-position-y: -300px;
+    height: calc(100vh - 100px);
     margin: auto;
-    padding: 225px 20px 80px 120px;
+    padding: 225px 50px 80px 120px;
+}
+
+.top-post > *{
+    z-index: 2;
+}
+
+.top-post__img{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    left: 0;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
 }
 
 .top-post__tag{
@@ -207,6 +220,7 @@ body{
     position: absolute;
     bottom: 30px;
     right: 20px;
+    z-index: 2;
 }
 
 .post-scroll-button{
@@ -235,12 +249,6 @@ main{
     grid-gap: 20px;
     margin-top: 40px;
     padding: 0 32px 20px;
-}
-
-.categories{
-/*, .sidebar{*/
-    position: sticky;
-    top: 40px;
 }
 
 .categories{
@@ -373,7 +381,7 @@ main{
 }
 
 .article__img-tag--black{
-
+    background-color: black
 }
 
 .article__img-tag--red{
@@ -484,6 +492,15 @@ main{
     color: white;
 }
 
+.article__page-next-link{
+    font-family: 'Raleway Medium',sans-serif;
+    color: #2DA7E2;
+    position: absolute;
+    right: 0;
+    top: 8px;
+    font-size: 14px;
+}
+
 footer{
     padding: 90px 0 37px;
     display: flex;
@@ -496,7 +513,8 @@ footer{
 
 .footer-page-links{
     display: flex;
-    width: 620px;
+    width: 100%;
+    max-width: 620px;
     justify-content: space-between;
     color: white;
 }
@@ -504,4 +522,30 @@ footer{
 .footer-page-link{
     font-family: 'Raleway Medium',sans-serif;
     font-size: 16px;
+}
+
+.sm-icons{
+    max-width: 235px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin: 50px 0 57px;
+}
+
+.copyright{
+    font-family: 'Raleway Medium',sans-serif;
+    font-size: 12px;
+    color: #C3CCD3;
+    text-align: center;
+}
+
+.sm-icon img{
+    width: 42px;
+}
+
+.dsc-logo{
+    width: 56px;
+    position: absolute;
+    top: -28px;
+    right: 10%;
 }
