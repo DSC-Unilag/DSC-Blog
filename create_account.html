@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>DSC Blog - Sign Up</title>
+</head>
+<body class="flx col">
+ <style>
+  @font-face {
+    font-family: SegoeUI;
+    src:
+        local("Segoe UI Semibold"),
+        url(//c.s-microsoft.com/static/fonts/segoe-ui/west-european/semibold/latest.woff2) format("woff2"),
+        url(//c.s-microsoft.com/static/fonts/segoe-ui/west-european/semibold/latest.woff) format("woff"),
+        url(//c.s-microsoft.com/static/fonts/segoe-ui/west-european/semibold/latest.ttf) format("truetype");
+    font-weight: 700;
+}
+@font-face {font-family: "Microsoft PhagsPa"; src: url("//db.onlinewebfonts.com/t/623a4e160c7783fb2450e2fade07d883.eot"); src: url("//db.onlinewebfonts.com/t/623a4e160c7783fb2450e2fade07d883.eot?#iefix") format("embedded-opentype"), url("//db.onlinewebfonts.com/t/623a4e160c7783fb2450e2fade07d883.woff2") format("woff2"), url("//db.onlinewebfonts.com/t/623a4e160c7783fb2450e2fade07d883.woff") format("woff"), url("//db.onlinewebfonts.com/t/623a4e160c7783fb2450e2fade07d883.ttf") format("truetype"), url("//db.onlinewebfonts.com/t/623a4e160c7783fb2450e2fade07d883.svg#Microsoft PhagsPa") format("svg"); }
+  body{
+   background: rgb(241, 207, 207);
+   align-items: flex-end;
+  }
+  .flx{
+   display: flex;
+  }
+  .col{
+   flex-direction: column;
+  }
+  .row{
+   flex-direction: row;
+  }
+  .al-cnt{
+   align-items: center
+  }
+  .al-end{
+   align-items: flex-end;
+  }
+  .full-width{
+   width: 100%;
+  }
+  
+  .content{
+   width: 483px;
+   background: none;
+   margin-right: 4%;
+   margin-top: 3%;
+   margin-bottom: 20px;
+  }  
+  .card{
+   padding-top: 14px;
+   background-color: white;
+   height: fit-content;
+   border: 1px solid #707070;
+  } 
+  .createBtn{
+   background-color: #F5381A;
+   color: white;
+   border: none;
+   border-radius: 5px;
+   width: 84.3%;
+   height: 44px;
+   margin: 31px 0 25px 0;
+   cursor: pointer;
+   font-family: "Microsoft PhagsPa";
+   font-weight: bold;
+   font-size: 1em;
+   letter-spacing: 1px;
+  }
+  .createBtn:hover{
+   background-color: rgb(241, 106, 86);
+  }
+  input{
+   width: 84.8%;
+   font-family: "SF Compact Rounded", Arial, Helvetica, sans-serif;
+   font-size: 20px;
+   border: none;
+   border-bottom: 1.5px solid #cecccc;
+   padding: 12px;
+   margin: 14px 0 14px 0;
+   outline: none;
+  }
+  h1{
+   color: #707070;
+   font-family: "Segoe UI Semibold", SegoeUI;
+   font-size: 2em;
+  }
+ /* Media queries */
+ @media only screen and (max-width: 938px) {
+  body {
+    align-items: center;
+    /* background: picture?? */
+  }
+  .content{
+   margin-right: 0;
+  }
+}
+@media only screen and (max-width: 530px) {
+ .content{
+  width: 100%;
+ }
+ input{
+  font-size: 16px;
+ }
+}
+ </style>
+
+<div class="content flx col al-cnt">
+  <img class="logo" src="./assets/icon.png" alt="#">
+  <h1>DSC Unilag</h1>
+  <div class="card flx col al-cnt full-width">
+   <form action="" class="full-width flx col al-cnt">
+    <input type="text" placeholder="Full Name">
+    <input type="text" placeholder="Email">
+    <input type="text" placeholder="Create Password">
+    <button class="createBtn">CREATE ACCOUNT</button>
+   </form>
+  </div>
+</div>
+</body>
+</html>
