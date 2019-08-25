@@ -9,7 +9,7 @@
 - Users
 - Categories (Python, Web, DevOps, etc...)
 - Articles
-- Applicants
+- Applications
 
 ## All Needed Endpoints are as follows:
 - POST /auth/login - Authentication Endpoint for both Contributors and Admins (It should make checks with the email to determine the role of the user that's logging in)
@@ -25,10 +25,10 @@
 - DELETE/PUT - /categories/:categoryId - To Delete/Archive a category (Not sure how this should be so i leave it to your discretion)
 - GET /contributors - Get All Contributors
 - POST /contributors - Register a Contributor
-- GET /applicants - Get All Contributors Applications
-- POST /applicants - Submit an application to be an contributor
-- PATCH /applicants/:applicationId/reviewed - Mark an application as reviewed 
-- DELETE /applicants/:applicantId - Delete an Contributor Application
+- GET /applicantions - Get All Contributors Applications
+- POST /applicantions - Submit an application to be an contributor
+- PATCH /applicantions/:applicationId/reviewed - Mark an application as reviewed 
+- DELETE /applicantions/:applicantionId - Delete an Contributor Application
 - POST /admin - Add an Admin (Only Supreme Admins can do this)
 
 ### *Note: If at the end contributors and admins will be using the same data for registration, only 1 endpoint will be needed instead of 2.*
