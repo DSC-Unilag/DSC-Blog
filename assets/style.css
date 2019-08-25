@@ -173,12 +173,12 @@ margin: 0;
  }
  .right{
    width: 100%;
+   height: fit-content;
  }
  .blur{ 
   padding-top: 16px;
   padding-bottom: 16px;
    margin-top: 20px;
-   margin-bottom: 20px;    
   height: 55vh;
  }
  .blur img{
@@ -188,6 +188,11 @@ margin: 0;
  .left .btn1{
    margin-top: 30px;
  }
+ legend{  
+  margin-top: 26px;
+  margin-bottom: 30px;
+ }
+ 
  input{
    font-size: 16px;
    margin: 10px 0 10px 0;
