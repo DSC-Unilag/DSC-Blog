@@ -1,0 +1,195 @@
+@font-face {
+  font-family: SegoeUI;
+  src:
+      local("Segoe UI Semibold"),
+      url(//c.s-microsoft.com/static/fonts/segoe-ui/west-european/semibold/latest.woff2) format("woff2"),
+      url(//c.s-microsoft.com/static/fonts/segoe-ui/west-european/semibold/latest.woff) format("woff"),
+      url(//c.s-microsoft.com/static/fonts/segoe-ui/west-european/semibold/latest.ttf) format("truetype");
+  font-weight: 700;
+}
+@font-face {
+
+font-family: "MicrosoftPhagsPa"; 
+src: url("//db.onlinewebfonts.com/t/623a4e160c7783fb2450e2fade07d883.eot"); src: url("//db.onlinewebfonts.com/t/623a4e160c7783fb2450e2fade07d883.eot?#iefix") format("embedded-opentype"), url("//db.onlinewebfonts.com/t/623a4e160c7783fb2450e2fade07d883.woff2") format("woff2"), url("//db.onlinewebfonts.com/t/623a4e160c7783fb2450e2fade07d883.woff") format("woff"), url("//db.onlinewebfonts.com/t/623a4e160c7783fb2450e2fade07d883.ttf") format("truetype"), url("//db.onlinewebfonts.com/t/623a4e160c7783fb2450e2fade07d883.svg#Microsoft PhagsPa") format("svg"); 
+}
+@font-face {font-family: "Microsoft PhagsPa"; src: url("//db.onlinewebfonts.com/t/c96b36c6ec8c33462679cbf409f929db.eot"); src: url("//db.onlinewebfonts.com/t/c96b36c6ec8c33462679cbf409f929db.eot?#iefix") format("embedded-opentype"), url("//db.onlinewebfonts.com/t/c96b36c6ec8c33462679cbf409f929db.woff2") format("woff2"), url("//db.onlinewebfonts.com/t/c96b36c6ec8c33462679cbf409f929db.woff") format("woff"), url("//db.onlinewebfonts.com/t/c96b36c6ec8c33462679cbf409f929db.ttf") format("truetype"), url("//db.onlinewebfonts.com/t/c96b36c6ec8c33462679cbf409f929db.svg#Microsoft PhagsPa") format("svg"); }
+
+@font-face {font-family: "SF Compact Text"; src: url("//db.onlinewebfonts.com/t/d725b84c427673a446e930f3873ba604.eot"); src: url("//db.onlinewebfonts.com/t/d725b84c427673a446e930f3873ba604.eot?#iefix") format("embedded-opentype"), url("//db.onlinewebfonts.com/t/d725b84c427673a446e930f3873ba604.woff2") format("woff2"), url("//db.onlinewebfonts.com/t/d725b84c427673a446e930f3873ba604.woff") format("woff"), url("//db.onlinewebfonts.com/t/d725b84c427673a446e930f3873ba604.ttf") format("truetype"), url("//db.onlinewebfonts.com/t/d725b84c427673a446e930f3873ba604.svg#SF Compact Text") format("svg"); }
+
+
+body{
+margin: 0;
+padding: 0;
+min-height: 100vh;
+align-items: center;
+flex-direction: row;
+}
+.flx{
+ display: flex;
+}
+.col{
+ flex-direction: column;
+}
+.row{
+ flex-direction: row;
+}
+.al-cnt{
+ align-items: center
+}
+.al-end{
+ align-items: flex-end;
+}
+.js-spr{
+  justify-content: space-around
+}
+.full-width{
+ width: 100%;
+}
+
+.left{
+  background-color: #ffffff;
+  flex: 1;
+  width: 100%;
+}
+
+.btn1{
+  font-family: "MicrosoftPhagsPa", Arial;
+  font-weight: bold;
+  letter-spacing: 1px; 
+  border: none;
+  background-color: #F5381A;
+  color: #ffffff;
+  font-size: 1.05em;
+  letter-spacing: 1px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 65px 0 30px 0;
+}
+
+.btn1:hover{
+ background-color: rgb(241, 106, 86);
+}
+
+.left ul{
+outline: none
+}
+.left li{
+list-style-type: none;
+}
+.left p{
+font-family: "SF Compact Text", Arial, Helvetica, sans-serif;
+font-size: 1.2em;
+}
+.left a{
+text-decoration: none;
+color: #F5381A;
+}
+form{
+width: 400px;
+}
+fieldset{
+padding: 0;
+margin: 0;
+border: none;
+width: 100%;
+}
+
+legend{
+font-family: "Microsoft PhagsPa", Arial;  
+font-size: 2em;
+font-weight: bold;
+color: #768791;
+margin-top: 20px;
+margin-bottom: 40px;
+text-align: center;
+}
+input{
+width: 100%;
+font-family: "SF Compact Rounded", Arial, Helvetica, sans-serif;
+background-color: #D8D8D8;
+border: none;
+border-radius: 5px;
+font-size: 18px;
+padding: 14px;
+margin: 16px 0 15px 0;
+}
+
+.right {
+  height: 100vh;
+  background: url("./background.png") center center no-repeat;
+  flex: 1;
+}
+
+.blur{ 
+-webkit-backdrop-filter: blur(26px);
+backdrop-filter: blur(26px); 
+width: 74%;
+height: 80vh;
+margin: auto;
+
+}
+.right p, .right h1{
+color: white;  
+text-align: center;
+}
+.right h1{
+font-family:"Microsoft PhagsPa", Arial;  
+font-size: 2em;
+}
+.right p {
+font-family: "MicrosoftPhagsPa", Arial;  
+}
+.right .btn1 {  
+width: 82%;
+justify-self: flex-end;
+margin: 0;
+}
+/* Media queries */ 
+@media only screen and (max-width: 1250px) {
+ form {
+   width: 70%;
+ }
+ 
+ .blur{
+   width: 90%;
+ }
+ .right h1{
+   font-size: 1.8em;
+   padding: 5%;
+ }
+ .left, .right .btn1{
+   font-size: 0.8rem;
+ }
+}
+@media only screen and (max-width: 750px){
+ body{
+   flex-direction: column;
+ }
+ .left{
+   order: 1;
+   margin-bottom: 39px;
+ }
+ .right{
+   width: 100%;
+ }
+ .blur{ 
+  padding-top: 16px;
+  padding-bottom: 16px;
+   margin-top: 20px;
+   margin-bottom: 20px;    
+  height: 55vh;
+ }
+ .blur img{
+  height: auto;
+  width: 60%;
+ }
+ .left .btn1{
+   margin-top: 30px;
+ }
+ input{
+   font-size: 16px;
+   margin: 10px 0 10px 0;
+ }
+  }
