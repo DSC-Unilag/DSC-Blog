@@ -2,18 +2,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
     <title>BLOG</title>
     <link rel="stylesheet" href="./assets/css/index.css">
 </head>
 <body>
     <header>
+        <div class="sidenav__container">
+            <aside class="sidenav active">
+                <img src="./assets/images/logo.jpg" class="sidenav__logo" alt="">
+                <ul class="sidenav__links">
+                    <li class="sidenav__link">
+                        <a href="">BLOG</a>
+                    </li>
+                    <li class="sidenav__link">
+                        <a href="">TECHNOLOGIES</a>
+                    </li>
+                    <li class="sidenav__link">
+                        <a href="">WORKSHOPS</a>
+                    </li>
+                    <li class="sidenav__link">
+                        <a href="">THE TEAM</a>
+                    </li>
+                </ul>
+                <div class="sidenav-reg__links">
+                    <button class="sidenav-reg__link">
+                        SIGN IN
+                    </button>
+                    <button class="sidenav-reg__link">
+                        SIGN UP
+                    </button>
+                </div>
+            </aside>
+        </div>
         <nav class="navbar">
+            <button class="sidenav__btn">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
             <!--TODO Give better classname-->
             <div class="navbar__wrapper">
-                <img src="./assets/images/icon.svg" alt="Logo" class="navbar__logo">
-                <span class="navbar__title">
-                    DSC Unilag
-                </span>
+                <img src="./assets/images/logo.jpg" alt="Logo" class="navbar__logo">
+<!--                <span class="navbar__title">-->
+<!--                    DSC Unilag-->
+<!--                </span>-->
             </div>
             <ul class="navbar__links">
                 <li class="navbar__link navbar__link--active">
@@ -74,48 +107,53 @@
         </div>
     </header>
     <main>
-        <aside class="categories">
-            <p class="categories__title">
-                Categories
-            </p>
-            <ul class="categories__list">
-                <li class="categories__category categories__category--active">
-                    <span></span>
-                    Devops
-                </li>
-                <li class="categories__category">
-                    <span></span>
-                    UI/UX
-                </li>
-                <li class="categories__category">
-                    <span></span>
-                    Python
-                </li>
-                <li class="categories__category">
-                    <span></span>
-                    React
-                </li>
-                <li class="categories__category">
-                    <span></span>
-                    Javascript
-                </li>
-                <li class="categories__category">
-                    <span></span>
-                    ReactNative
-                </li>
-                <li class="categories__category">
-                    <span></span>
-                    Wordpress
-                </li>
-                <li class="categories__category">
-                    <span></span>
-                    Integration
-                </li>
-                <li class="categories__category">
-                    <span></span>
-                    Personal
-                </li>
-            </ul>
+        <aside>
+            <button class="post-article-btn">
+                Post Article
+            </button>
+            <div class="categories">
+                <p class="categories__title">
+                    Categories
+                </p>
+                <ul class="categories__list">
+                    <li class="categories__category categories__category--active">
+                        <span></span>
+                        Devops
+                    </li>
+                    <li class="categories__category">
+                        <span></span>
+                        UI/UX
+                    </li>
+                    <li class="categories__category">
+                        <span></span>
+                        Python
+                    </li>
+                    <li class="categories__category">
+                        <span></span>
+                        React
+                    </li>
+                    <li class="categories__category">
+                        <span></span>
+                        Javascript
+                    </li>
+                    <li class="categories__category">
+                        <span></span>
+                        ReactNative
+                    </li>
+                    <li class="categories__category">
+                        <span></span>
+                        Wordpress
+                    </li>
+                    <li class="categories__category">
+                        <span></span>
+                        Integration
+                    </li>
+                    <li class="categories__category">
+                        <span></span>
+                        Personal
+                    </li>
+                </ul>
+            </div>
         </aside>
         <div class="articles">
             <div class="article">
@@ -351,7 +389,20 @@
         <p class="copyright">
             Copyright@NwabuokeiChristopher-2019-AllRights Reserved.
         </p>
-        <img src="./assets/images/icon.svg" alt="dsc logo" class="dsc-logo">
+        <img src="./assets/images/logo-small.jpg" alt="dsc logo" class="dsc-logo">
     </footer>
+    <script>
+        const sidenavBtn = document.querySelector('.sidenav__btn');
+        const sidenav = document.querySelector('.sidenav__container');
+        sidenavBtn.addEventListener('click', () => {
+            if(sidenav.classList.contains('active')){
+                sidenav.classList.remove('active');
+                sidenavBtn.classList.remove('sidenav__btn--active')
+            }else{
+                sidenav.classList.add('active');
+                sidenavBtn.classList.add('sidenav__btn--active')
+            }
+        });
+    </script>
 </body>
 </html>
