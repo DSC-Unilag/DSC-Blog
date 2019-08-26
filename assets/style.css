@@ -87,7 +87,7 @@ text-decoration: none;
 color: #F5381A;
 }
 form{
-width: 400px;
+width: 414px;
 }
 fieldset{
 padding: 0;
@@ -106,13 +106,15 @@ margin-bottom: 40px;
 text-align: center;
 }
 input{
+padding-top: 14px;
+padding-bottom: 14px;
+text-indent: 14px;
 width: 100%;
 font-family: "SF Compact Rounded", Arial, Helvetica, sans-serif;
 background-color: #D8D8D8;
 border: none;
 border-radius: 5px;
 font-size: 18px;
-padding: 14px;
 margin: 16px 0 15px 0;
 }
 
