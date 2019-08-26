@@ -123,11 +123,11 @@ margin: 16px 0 15px 0;
 }
 
 .blur{ 
--webkit-backdrop-filter: blur(26px);
-backdrop-filter: blur(26px); 
 width: 74%;
 height: 80vh;
 margin: auto;
+background-color: rgba(0, 0, 0, 0.66);
+border-radius: 8px;
 
 }
 .right p, .right h1{
@@ -146,12 +146,19 @@ width: 82%;
 justify-self: flex-end;
 margin: 0;
 }
+.socials{
+  padding: 0;
+  width: 24%;
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  justify-content: space-between;
+}
 /* Media queries */ 
 @media only screen and (max-width: 1250px) {
  form {
    width: 70%;
- }
- 
+ } 
  .blur{
    width: 90%;
  }
@@ -161,6 +168,9 @@ margin: 0;
  }
  .left, .right .btn1{
    font-size: 0.8rem;
+ }
+ .socials {
+   width: 40%;
  }
 }
 @media only screen and (max-width: 750px){
@@ -179,6 +189,7 @@ margin: 0;
   padding-top: 16px;
   padding-bottom: 16px;
    margin-top: 20px;
+   margin-bottom: 10px;
   height: 55vh;
  }
  .blur img{
