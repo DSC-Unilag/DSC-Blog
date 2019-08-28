@@ -5,7 +5,8 @@ aside {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #D8D8D8;
+    background-color:#F2F2F2;
+    box-shadow: 0px 3px 6px #000000;
     overflow-x: hidden;
     color: black;
     
@@ -86,9 +87,15 @@ aside a {
 
 */
 
-main div {
-	 margin-left: 250px; /* Same as the width of the sidenav */
+main{
+	 margin-left: 242px; /* Same as the width of the sidenav */
      font-size: 28px; /* Increased text to enable scrolling */
      padding: 0px 10px;
-     background-color: #D8D8D8;
+     background: #F9F9F9 0% 0% no-repeat padding-box;
+     opacity: 1;
+}
+
+main h2 {
+	font-size: 20px;
+	font-family: 'Source Sans Pro', sans-serif;
 }
