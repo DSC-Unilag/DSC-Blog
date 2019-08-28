@@ -24,6 +24,7 @@ min-height: 100vh;
 width: 100%;
 align-items: center;
 flex-direction: row;
+font-size: 0.8rem;
 }
 .flx{
  display: flex;
@@ -78,7 +79,7 @@ flex-direction: row;
   padding: 16px;
   border-radius: 5px;
   cursor: pointer;
-  margin: 65px 0 30px 0;
+  margin: 65px 0 0 0;
 }
 
 .btn1:hover{
@@ -87,17 +88,29 @@ flex-direction: row;
 
 .left ul{
 outline: none;
-padding: 0;
+height: fit-content;
+width: 28%;
+min-width: fit-content;
+align-items: center;
+justify-content: space-between;
+padding: 23px 0 23px 0;
 margin: 0;
 }
+
 .left li{
 list-style-type: none;
+height: fit-content;
+width: fit-content;
+display: flex;
+flex-direction: column;
  padding: 0;
   margin: 0;
+  cursor: pointer;
 }
 .left p{
 font-family: "SF Compact Text", Arial, Helvetica, sans-serif;
 font-size: 1.2em;
+margin: 0;
 }
 .left a{
 text-decoration: none;
@@ -117,6 +130,7 @@ legend{
 font-family: "Microsoft PhagsPa", Arial;  
 font-size: 2em;
 font-weight: bold;
+letter-spacing: 1px;
 color: #768791;
 margin-top: 20px;
 margin-bottom: 40px;
@@ -172,6 +186,7 @@ color: white;
   width: 80%;
   }
   .white-bg{
+    padding-top: 20px;
     flex: 0.54;
    width: 60%;
   }
@@ -182,19 +197,9 @@ color: white;
 .right .btn1{
 margin: 0;
 }
-.socials{
-  padding: 0;
-  width: 24%;
-  min-width: fit-content;
-  margin: auto;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  justify-content: space-between;
-}
-
-.info{
-  margin: 30px;
-  margin-top: 40px;
+.info{  
+  margin: 46px;
+  margin-top: 60px;
 }
 .info p{
   width: 100%
@@ -207,15 +212,18 @@ margin: 0;
  .left, .right .btn1{
    font-size: 0.8rem;
  }
- .socials {
-   width: 40%;
+ .left ul {
+   width: 42%;
  }
 }
 @media only screen and (max-width: 750px){
  body{
    flex-direction: column;
+   padding-bottom: 60px;
  }
  .white-bg{
+   padding-top: 8px;
+   padding-bottom: 24px;
    width: 70%;
  }
  .left{
@@ -225,6 +233,9 @@ margin: 0;
  .left p {
    font-size: 1.37em;
  }
+ .left ul{
+   padding: 25px 0 25px 0;
+ }
  .right{
    height: fit-content;
  } 
@@ -232,6 +243,7 @@ margin: 0;
  .left .btn1{
    margin-top: 30px;
  }
+ 
  legend{  
   margin-top: 26px;
   margin-bottom: 30px;
@@ -239,8 +251,10 @@ margin: 0;
  
  input{
    font-size: 16px;
-   margin: 10px 0 10px 0;
+   margin: 12px 0 12px 0;
+   padding: 12px 0 12px 0;
  }
+
  .right img{
    width: 120px;
    height: auto;
@@ -248,6 +262,10 @@ margin: 0;
   }
 @media only screen and (max-width: 500px){
   form{
-    width: 80%;
+    width: 74%;
+  }
+  .left ul {
+    width: 58%;
+    padding: 40px 0 30px 0;
   }
 }
