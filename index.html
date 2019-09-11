@@ -10,7 +10,10 @@
     <header>
         <div class="sidenav__container">
             <aside class="sidenav active">
-                <img src="./assets/images/logo.jpg" class="sidenav__logo" alt="">
+                <div class="sidenav__logo">
+                    <img src="./assets/images/dsc_logo.svg" alt="DSC Unilag Logo" />
+                    <p>Developer Students Club</p>
+                </div>
                 <ul class="sidenav__links">
                     <li class="sidenav__link">
                         <a href="">BLOG</a>
@@ -43,10 +46,10 @@
             </button>
             <!--TODO Give better classname-->
             <div class="navbar__wrapper">
-                <img src="./assets/images/logo.jpg" alt="Logo" class="navbar__logo">
-<!--                <span class="navbar__title">-->
-<!--                    DSC Unilag-->
-<!--                </span>-->
+                <div class="navbar__logo">
+                    <img src="./assets/images/dsc_logo.svg" alt="DSC Unilag Logo" />
+                    <p>Developer Students Club</p>
+                </div>
             </div>
             <ul class="navbar__links">
                 <li class="navbar__link navbar__link--active">
@@ -111,7 +114,7 @@
             <button class="post-article-btn">
                 Post Article
             </button>
-            <div class="categories">
+            <section class="categories">
                 <p class="categories__title">
                     Categories
                 </p>
@@ -153,16 +156,16 @@
                         Personal
                     </li>
                 </ul>
-            </div>
+            </section>
         </aside>
-        <div class="articles">
-            <div class="article">
+        <section class="articles">
+            <article class="article">
                 <div class="article__img-wrapper">
                     <span class="article__img-tag article__img-tag--red">Dev Ops</span>
                     <img src="./assets/images/article-1.png" alt="article" class="article__img">
                 </div>
                 <p class="article__title">
-                    EXPLORING THE DEV OPS WORLD
+                    <a href="#">EXPLORING THE DEV OPS WORLD</a>
                 </p>
                 <p class="article__details">
                     2 days ago / by Olabisi Joseph  /  3 min read
@@ -170,7 +173,7 @@
                 <p class="article__synopsis">
                     Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to
                 </p>
-                <div class="article__metrics">
+                <!-- <div class="article__metrics">
                     <div class="article__views">
                         <img src="./assets/images/options.svg" alt="options">
                         <div class="article__viewers">
@@ -191,15 +194,15 @@
                             <span>10</span>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="article">
+                </div> -->
+            </article>
+            <article class="article">
                 <div class="article__img-wrapper">
                     <span class="article__img-tag article__img-tag--black">Dev Ops</span>
                     <img src="./assets/images/article-2.png" alt="article" class="article__img">
                 </div>
                 <p class="article__title">
-                    Interacting with Developers
+                    <a href="#">Interacting with Developers</a>
                 </p>
                 <p class="article__details">
                     5 days ago / by NwabuokeiChristopher  /  3 min read
@@ -207,7 +210,7 @@
                 <p class="article__synopsis">
                     Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to
                 </p>
-                <div class="article__metrics">
+                <!-- <div class="article__metrics">
                     <div class="article__views">
                         <img src="./assets/images/options.svg" alt="options">
                         <div class="article__viewers">
@@ -228,15 +231,15 @@
                             <span>10</span>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="article">
+                </div> -->
+            </article>
+            <article class="article">
                 <div class="article__img-wrapper">
                     <span class="article__img-tag article__img-tag--red">Dev Ops</span>
                     <img src="./assets/images/article-1.png" alt="article" class="article__img">
                 </div>
                 <p class="article__title">
-                    EXPLORING THE DEV OPS WORLD
+                    <a href="#">EXPLORING THE DEV OPS WORLD</a>
                 </p>
                 <p class="article__details">
                     2 days ago / by Olabisi Joseph  /  3 min read
@@ -244,7 +247,7 @@
                 <p class="article__synopsis">
                     Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to
                 </p>
-                <div class="article__metrics">
+                <!-- <div class="article__metrics">
                     <div class="article__views">
                         <img src="./assets/images/options.svg" alt="options">
                         <div class="article__viewers">
@@ -265,8 +268,8 @@
                             <span>10</span>
                         </div>
                     </div>
-                </div>
-            </div>
+                </div> -->
+            </article>
             <div class="article__page-links">
                 <span class="article__page-link article__page-link--active">1</span>
                 <span class="article__page-link">2</span>
@@ -274,7 +277,7 @@
                 <span class="article__page-link">...</span>
                 <a class="article__page-next-link">Next</a>
             </div>
-        </div>
+        </section>
         <aside class="sidebar">
             <div class="popular-posts">
                 <p class="popular-posts__title">
@@ -389,7 +392,7 @@
         <p class="copyright">
             &copy; 2019 DSC-Unilag, AllRights Reserved.
         </p>
-        <img src="./assets/images/logo-small.jpg" alt="dsc logo" class="dsc-logo">
+        <img src="./assets/images/dsc_logo.svg" alt="Dsc Unilag logo" class="dsc-logo">
     </footer>
     <script>
         const sidenavBtn = document.querySelector('.sidenav__btn');
