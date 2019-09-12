@@ -1,13 +1,12 @@
 const {Router} = require("express");
 const middleware = require("../../middleware");
 const getAllArticles = require("./getAllArticles");
-const getAllCategories = require("../categories/getAllCategories");
 const postArticle = require("./postArticle");
 const publishArticle = require("./publishArticle");
 
 const articleRouter = Router();
 
-const {verifyToken, permissions} = middleware;
+const {verifyToken, permissions, fileUpload} = middleware;
 
 articleRouter.get(
 	"/",
@@ -30,6 +29,7 @@ articleRouter.post(
 	"/",
 	verifyToken,
 	(req, res, next) => permissions(req, res, next, "articles", "create"),
+	fileUpload,
 	postArticle
 );
 

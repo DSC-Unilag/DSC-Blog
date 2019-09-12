@@ -1,5 +1,8 @@
 /* eslint-disable promise/no-nesting */
+const path = require("path");
+const fs = require("fs");
 const admin = require("firebase-admin");
+const {cloudinaryUpload} = require("../../helpers/cloudinary");
 
 const db = admin.firestore();
 
@@ -12,16 +15,22 @@ const postArticle = (request, response) => {
 		});
 	}
 
-	return db
-		.collection("articles")
-		.add({
-			title,
-			content,
-			user: request.payload.uid,
-			category: categoryId,
-			published: false,
-			updated: new Date().getTime(),
-			created: new Date().getTime()
+	const [image] = request.files;
+	cloudinaryUpload(image.filepath)
+		.then(result => {
+			fs.unlinkSync(image.filepath, error => {
+				if (error) throw new Error(error.message);
+			});
+			return db.collection("articles").add({
+				title,
+				content,
+				imageUrl: result.secure_url,
+				user: request.payload.uid,
+				category: categoryId,
+				published: false,
+				updated: new Date().getTime(),
+				created: new Date().getTime()
+			});
 		})
 		.then(() => {
 			return response.status(201).send({

@@ -6,7 +6,11 @@
   "plugins": [
     "promise"
   ],
-  "extends": "eslint:recommended",
+  "extends": [
+    "eslint:recommended",
+    "airbnb",
+    "prettier"
+  ],
   "rules": {
     // Removed rule "disallow the use of console" from recommended eslint rules
     "no-console": "off",

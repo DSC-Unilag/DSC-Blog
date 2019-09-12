@@ -12,7 +12,44 @@ const getAllArticles = (request, response) => {
 			const data = snapshot.docs.map(doc => {
 				return {...doc.data(), aid: doc.id};
 			});
-			return response.status(200).send({
+			return data;
+		})
+		.then(data => {
+			const populateUsers = data.map(doc => {
+				return db
+					.collection("users")
+					.doc(doc.user)
+					.get()
+					.then(docRef => {
+						const userData = docRef.data();
+						return {
+							...doc,
+							user: {
+								firstname: userData.firstname,
+								lastname: userData.lastname,
+								email: userData.email,
+								role: userData.role,
+								uid: docRef.id
+							}
+						};
+					});
+			});
+			return Promise.all(populateUsers);
+		})
+		.then(data => {
+			const populateCategories = data.map(doc => {
+				return db
+					.collection("categories")
+					.doc(doc.category)
+					.get()
+					.then(docRef => {
+						return {...doc, category: {...docRef.data(), cid: docRef.id}};
+					});
+			});
+			return Promise.all(populateCategories);
+		})
+		.then(data => {
+			return response.status(200).json({
 				success: true,
 				message: "Articles Retrieved",
 				data
