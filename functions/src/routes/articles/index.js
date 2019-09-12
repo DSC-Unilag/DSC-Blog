@@ -1,7 +1,7 @@
 const {Router} = require("express");
 const middleware = require("../../middleware");
 const getAllArticles = require("./getAllArticles");
-const getAllCategories = require("./getAllCategories");
+const getAllCategories = require("../categories/getAllCategories");
 const postArticle = require("./postArticle");
 const publishArticle = require("./publishArticle");
 
@@ -26,7 +26,6 @@ articleRouter.get(
 	},
 	getAllArticles
 );
-articleRouter.get("/categories", getAllCategories);
 articleRouter.post(
 	"/",
 	verifyToken,
