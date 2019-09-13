@@ -23,6 +23,7 @@
 		"dotenv": "^8.1.0",
 		"express": "^4.17.1",
 		"express-fileupload": "^1.1.6-alpha.4",
+		"express-list-endpoints": "^4.0.1",
 		"firebase": "^6.4.2",
 		"firebase-admin": "^8.4.0",
 		"firebase-functions": "^3.2.0",
