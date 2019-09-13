@@ -3,10 +3,12 @@ const admin = require("firebase-admin");
 
 const db = admin.firestore();
 
-const getArticles = (request, response) => {
+const getArticlesByCategory = (request, response) => {
+    const {cid} = request.params;
 	return db
 		.collection("articles")
-		.where("published", "==", request.published)
+        .where("published", "==", true)
+        .where('category','==', cid)
 		.get()
 		.then(snapshot => {
 			const data = snapshot.docs.map(doc => {
@@ -63,4 +65,4 @@ const getArticles = (request, response) => {
 		});
 };
 
-module.exports = getArticles;
+module.exports = getArticlesByCategory;

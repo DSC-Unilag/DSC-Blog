@@ -1,8 +1,9 @@
 const {Router} = require("express");
 const middleware = require("../../middleware");
-const getAllArticles = require("./getAllArticles");
+const getArticles = require("./getAllArticles");
 const postArticle = require("./postArticle");
 const publishArticle = require("./publishArticle");
+const getArticlesByCategory = require("./getArticlesByCategory");
 
 const articleRouter = Router();
 
@@ -14,7 +15,7 @@ articleRouter.get(
 		req.published = true;
 		next();
 	},
-	getAllArticles
+	getArticles
 );
 articleRouter.get(
 	"/unpublished",
@@ -23,7 +24,7 @@ articleRouter.get(
 		req.published = false;
 		next();
 	},
-	getAllArticles
+	getArticles
 );
 articleRouter.post(
 	"/",
@@ -39,5 +40,7 @@ articleRouter.patch(
 	(req, res, next) => permissions(req, res, next, "articles", "update"),
 	publishArticle
 );
+
+articleRouter.get("/:cid", getArticlesByCategory);
 
 module.exports = articleRouter;
