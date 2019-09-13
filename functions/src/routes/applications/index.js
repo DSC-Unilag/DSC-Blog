@@ -4,6 +4,7 @@ const contributorApplication = require("./contributorApplication");
 const getApplications = require("./getApplications");
 const reviewApplication = require("./reviewApplication");
 const deleteApplication = require("./deleteApplication");
+const {createContributor} = require("../users/contributor");
 
 const applicationRouter = Router();
 
@@ -45,6 +46,13 @@ applicationRouter.delete(
 	verifyToken,
 	(req, res, next) => permissions(req, res, next, "applications", "delete"),
 	deleteApplication
+);
+
+applicationRouter.post(
+	"/approve",
+	verifyToken,
+	(req, res, next) => permissions(req, res, next, "contributors", "create"),
+	createContributor
 );
 
 module.exports = applicationRouter;

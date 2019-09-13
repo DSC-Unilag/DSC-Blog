@@ -47,6 +47,7 @@ const createAdmin = (request, response) => {
 				created: new Date().getTime()
 			})
 			.then(docRef => {
+				// Email the contributor his/her details
 				return response.status(201).send({
 					success: true,
 					message: "Admin successfully created",
