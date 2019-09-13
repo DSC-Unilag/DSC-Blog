@@ -121,6 +121,7 @@
     "promise/no-nesting": 1,
     "no-plusplus": "off",
     "no-return-assign": "off",
-    "no-tabs": "off"
+    "no-tabs": "off",
+    "prefer-destructuring": "off"
   }
 }
