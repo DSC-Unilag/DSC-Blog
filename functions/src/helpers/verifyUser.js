@@ -8,23 +8,20 @@ const verifyUser = (payload, filter = []) => {
   if (filter.length === 0) {
     return false;
   }
-  filter.map(search => {
+  filter.map((search) => {
     if (search === 'id') {
-      query = query
-        .where(admin.firestore.FieldPath.documentId(), '==', payload.id);
+      query = query.where(admin.firestore.FieldPath.documentId(), '==', payload.id);
     }
     query = query.where(search, '==', payload[search]);
     return true;
-  })
-  return query
-    .get()
-    .then(snapshot => {
-      let exists = false;
-      if (!snapshot.empty) {
-        exists = true;
-      }
-      return exists;
-    });
-}
+  });
+  return query.get().then((snapshot) => {
+    let exists = false;
+    if (!snapshot.empty) {
+      exists = true;
+    }
+    return exists;
+  });
+};
 
 module.exports = verifyUser;

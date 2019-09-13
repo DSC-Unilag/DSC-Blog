@@ -6,5 +6,5 @@ const compare = (password, hashed) => bcrypt.compareSync(password, hashed);
 
 module.exports = {
   hash,
-  compare
+  compare,
 };

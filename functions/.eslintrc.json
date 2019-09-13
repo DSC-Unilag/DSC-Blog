@@ -1,16 +1,12 @@
 {
   "parserOptions": {
     // Required for certain syntax usages
-    "ecmaVersion": 2017
+    "ecmaVersion": 2018
   },
   "plugins": [
     "promise"
   ],
-  "extends": [
-    "eslint:recommended",
-    "airbnb",
-    "prettier"
-  ],
+  "extends": "airbnb-base",
   "rules": {
     // Removed rule "disallow the use of console" from recommended eslint rules
     "no-console": "off",
@@ -122,6 +118,9 @@
     "promise/catch-or-return": 2,
 
     // Warn against nested then() or catch() statements
-    "promise/no-nesting": 1
+    "promise/no-nesting": 1,
+    "no-plusplus": "off",
+    "no-return-assign": "off",
+    "no-tabs": "off"
   }
 }
