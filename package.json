@@ -1,0 +1,43 @@
+{
+	"name": "dsc-blog",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"build": "browserify ./assets/js/app.js -o ./assets/js/dist/bundle.js",
+		"watch": "watchify ./assets/js/app.js -o ./assets/js/dist/bundle.js -v"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/DSC-Unilag/DSC-Blog.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/DSC-Unilag/DSC-Blog/issues"
+	},
+	"homepage": "https://github.com/DSC-Unilag/DSC-Blog#readme",
+	"dependencies": {
+		"browserify": "^16.5.0",
+		"watchify": "^3.11.1"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.6.0",
+		"@babel/polyfill": "^7.6.0",
+		"@babel/preset-env": "^7.6.0",
+		"babelify": "^10.0.0"
+	},
+	"browserify": {
+		"transform": [
+			[
+				"babelify",
+				{
+					"presets": [
+						"@babel/preset-env"
+					]
+				}
+			]
+		]
+	}
+}
