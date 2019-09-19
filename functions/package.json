@@ -20,6 +20,7 @@
 		"bcryptjs": "^2.4.3",
 		"busboy": "^0.3.1",
 		"cloudinary": "^1.15.0",
+		"cors": "^2.8.5",
 		"dotenv": "^8.1.0",
 		"express": "^4.17.1",
 		"express-fileupload": "^1.1.6-alpha.4",

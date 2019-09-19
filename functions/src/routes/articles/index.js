@@ -3,6 +3,7 @@ const middleware = require('../../middleware');
 const getArticles = require('./getArticles');
 const postArticle = require('./postArticle');
 const publishArticle = require('./publishArticle');
+const getArticle = require('./getArticle');
 
 const articleRouter = Router();
 
@@ -29,7 +30,12 @@ articleRouter.get(
 );
 
 articleRouter.get(
-  '/:cid',
+  '/:id',
+  getArticle,
+);
+
+articleRouter.get(
+  '/category/:cid',
   (req, res, next) => {
     req.type = 'category';
     next();
