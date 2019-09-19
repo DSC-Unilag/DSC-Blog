@@ -1,3 +1,4 @@
 functions
 .firebaserc
 node_modules
+firebase-debug.log
