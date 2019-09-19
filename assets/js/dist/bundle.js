@@ -8,8 +8,8 @@ exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = 
 
 var _helpers = require("./helpers.js");
 
-var API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
-var PROD_API_URL = "https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app"; // API Actions
+var DEV_API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
+var API_URL = "https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app"; // API Actions
 
 var getArticles = function getArticles() {
   return (0, _helpers.requestData)("".concat(API_URL, "/articles"), "get")["catch"](function (err) {
