@@ -1,34 +1,35 @@
-import {requestData, getDateDiff} from "./helpers.js";
+import {requestData, getDateDiff, generateDate} from "./helpers.js";
 
 const API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
 const PROD_API_URL =
 	"https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app";
 
 // API Actions
-export const getArticles = async () => {
-	try {
-		const result = await requestData(`${API_URL}/articles`, "get");
-		return result;
-	} catch (error) {
+export const getArticles = () => {
+	return requestData(`${API_URL}/articles`, "get").catch(err => {
 		console.log("Error Msg: " + error.message);
 		console.log(error.stack);
-	}
+	});
 };
 
-export const getCategories = async () => {
-	try {
-		const result = await requestData(`${API_URL}/categories`, "get");
-		return result;
-	} catch (error) {
+export const getSingleArticle = aid => {
+	return requestData(`${API_URL}/articles/${aid}`, "get").catch(err => {
 		console.log("Error Msg: " + error.message);
 		console.log(error.stack);
-	}
+	});
+};
+
+export const getCategories = () => {
+	return requestData(`${API_URL}/categories`, "get").catch(err => {
+		console.log("Error Msg: " + error.message);
+		console.log(error.stack);
+	});
 };
 
 // DOM Actions
 export const onLoadArticles = articlesSection => {
 	articlesSection.innerHTML = `<div class="loader">Loading...</div>`;
-	return articles => {
+	return (articles, topPosts) => {
 		articlesSection.innerHTML = "";
 		if (articles.length > 0) {
 			articles.forEach(article => {
@@ -41,8 +42,10 @@ export const onLoadArticles = articlesSection => {
 											article.imageUrl
 										}" alt="article" class="article__img">
                 </div>
-                <p class="article__title">
-                    <a href="#">${article.title}</a>
+                <p class="article__title tool" data-aid=${
+									article.aid
+								} data-tip="Read Full Article">
+                    <a href="javascript:;">${article.title}</a>
                 </p>
                 <p class="article__details">
                     ${getDateDiff(article.created)} / by ${article.user
@@ -51,7 +54,7 @@ export const onLoadArticles = articlesSection => {
 					article.user.lastname}
                 </p>
                 <p class="article__synopsis">
-                    ${article.content}
+                    ${article.content.substring(0, 100) + "..."}
                 </p>
                 <!-- <div class="article__metrics">
                     <div class="article__views">
@@ -84,6 +87,36 @@ export const onLoadArticles = articlesSection => {
             <span class="article__page-link">...</span>
             <a class="article__page-next-link">Next</a>
         </div>`;
+			topPosts.innerHTML += `<div class="top-post">
+            <div class="overlay"></div>
+            <img src="./assets/images/camp-2-min.png" alt="Post Image" class="top-post__img">
+            <p class="top-post__tag">
+                <img src="./assets/images/play.svg" alt="play">
+                Latest Post
+            </p>
+            <p class="top-post__title">
+                ${articles[0].title}
+            </p>
+            <p class="top-post__content">
+                ${articles[0].content.substring(0, 100) + "..."}
+            </p>
+            <div class="top-post__row">
+                <a href="#" class="top-post__link" data-aid=${articles[0].aid}>
+                    KEEP READING
+                </a>
+                <div class="top-post__author-details">
+                    <p class="top-post__author">
+                    ${articles[0].user.firstname +
+											" " +
+											articles[0].user.lastname}
+                    </p>
+                    <p class="top-post__author-role">
+                        ${articles[0].user.role[0].toUpperCase() +
+													articles[0].user.role.slice(1)}
+                    </p>
+                </div>
+            </div>
+        </div>`;
 		} else {
 			articlesSection.innerHTML += `<p>No Articles Found</p>`;
 		}
@@ -99,4 +132,39 @@ export const onLoadCategories = (categoriesList, categories) => {
         </li>`;
 		});
 	}
+};
+
+export const showSingleArticle = (
+	e,
+	mainEl,
+	loadingDiv,
+	singleArticleSection,
+	singleArticleMain
+) => {
+	loadingDiv.classList.remove("hide");
+	mainEl.classList.add("hidden");
+	let {aid} = e.target.dataset;
+	if (e.target.dataset.aid === undefined) {
+		aid = e.target.parentElement.dataset.aid;
+	}
+	getSingleArticle(aid).then(result => {
+		const {data} = result;
+		singleArticleSection.innerHTML += `<article class="single__article">
+        <p class="single__article-title">${data.title}</p>
+        <p class="single__article-author">
+            By ${data.user.firstname +
+							" " +
+							data.user.lastname} <span>${generateDate(data.created)}</span>
+        </p>
+        <div class="single__article-img">
+            <img src="${data.imageUrl}" alt="Article Image" />
+        </div>
+        <br />
+        <p class="single__article-content">
+            ${data.content}
+        </p>
+    </article>`;
+		loadingDiv.classList.add("hide");
+		singleArticleMain.classList.add("visible");
+	});
 };

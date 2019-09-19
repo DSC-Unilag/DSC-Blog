@@ -30,3 +30,14 @@ export const getDateDiff = datetime => {
 	}
 	return duration;
 };
+
+export const generateDate = (timestamp) => {
+	const options = {
+		weekday: 'short',
+		month: 'short',
+		year: 'numeric',
+		day: 'numeric'
+	};
+	const date = new Date(timestamp);
+	return date.toLocaleDateString('en-US', options);
+}
