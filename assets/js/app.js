@@ -30,7 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					return childNode.className === "categories__category";
 				}
 			);
-			console.log(categoriesList);
 			setupCategoryClickEventListeners(
 				categoriesList,
 				loadArticles,

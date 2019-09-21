@@ -95,7 +95,7 @@ export const onLoadArticles = articlesSection => {
             <span class="article__page-link">...</span>
             <a class="article__page-next-link">Next</a>
         </div>`;
-			topPosts.innerHTML += `<div class="top-post">
+			topPosts.innerHTML = `<div class="top-post">
             <div class="overlay"></div>
             <img src="./assets/images/camp-2-min.png" alt="Post Image" class="top-post__img">
             <p class="top-post__tag">
