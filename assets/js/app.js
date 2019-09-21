@@ -3,7 +3,9 @@ import {
 	onLoadArticles,
 	getCategories,
 	onLoadCategories,
-	showSingleArticle
+	setupPostClickEventListeners,
+	setupCategoryClickEventListeners,
+	showHomepage
 } from "./actions.js";
 
 //DOM Elements
@@ -14,6 +16,7 @@ const topPost = document.querySelector(".top-posts");
 const mainEl = document.querySelector("main");
 const singleArticleSection = document.querySelector(".single__article-page");
 const singleArticleMain = document.querySelector(".single__article-main");
+const backBtn = document.querySelector(".single__article-main > .btn");
 
 // Event Listeners
 document.addEventListener("DOMContentLoaded", () => {
@@ -21,21 +24,31 @@ document.addEventListener("DOMContentLoaded", () => {
 		const [categoryResult, articlesResult] = result;
 		onLoadCategories(categoryList, categoryResult.data);
 		const loadArticles = onLoadArticles(articlesSection);
+		if (categoryList.childElementCount > 1) {
+			const categoriesList = Array.from(categoryList.childNodes).filter(
+				childNode => {
+					return childNode.className === "categories__category";
+				}
+			);
+			console.log(categoriesList);
+			setupCategoryClickEventListeners(
+				categoriesList,
+				loadArticles,
+				topPost,
+				loadingDiv
+			);
+		}
 		loadArticles(articlesResult.data, topPost);
 		loadingDiv.classList.add("hide");
 		const postTitles = document.querySelectorAll("p.article__title.tool > a");
 		if (postTitles !== null) {
-			postTitles.forEach(postTitle => {
-				postTitle.addEventListener("click", e =>
-					showSingleArticle(
-						e,
-						mainEl,
-						loadingDiv,
-						singleArticleSection,
-						singleArticleMain
-					)
-				);
-			});
+			setupPostClickEventListeners(postTitles);
 		}
 	});
 });
+
+if (backBtn !== null) {
+	backBtn.addEventListener("click", () => {
+		showHomepage(mainEl, loadingDiv, singleArticleSection, singleArticleMain);
+	});
+}

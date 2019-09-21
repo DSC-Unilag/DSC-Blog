@@ -4,7 +4,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
+exports.setupCategoryClickEventListeners = exports.onLoadCategoryArticles = exports.setupPostClickEventListeners = exports.showHomepage = exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
 
 var _helpers = require("./helpers.js");
 
@@ -34,10 +34,19 @@ var getCategories = function getCategories() {
     console.log("Error Msg: " + error.message);
     console.log(error.stack);
   });
+};
+
+exports.getCategories = getCategories;
+
+var getArticlesByCategory = function getArticlesByCategory(cid) {
+  return (0, _helpers.requestData)("".concat(API_URL, "/articles/category/").concat(cid), "get")["catch"](function (err) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
 }; // DOM Actions
 
 
-exports.getCategories = getCategories;
+exports.getArticlesByCategory = getArticlesByCategory;
 
 var onLoadArticles = function onLoadArticles(articlesSection) {
   articlesSection.innerHTML = "<div class=\"loader\">Loading...</div>";
@@ -61,7 +70,7 @@ exports.onLoadArticles = onLoadArticles;
 var onLoadCategories = function onLoadCategories(categoriesList, categories) {
   if (categories.length > 0) {
     categories.forEach(function (category) {
-      categoriesList.innerHTML += "<li class=\"categories__category\">\n            <span></span>\n            ".concat(category.name, "\n        </li>");
+      categoriesList.innerHTML += "<li class=\"categories__category\" data-cid=".concat(category.id, ">\n            <span></span>\n            ").concat(category.name, "\n        </li>");
     });
   }
 };
@@ -87,6 +96,51 @@ var showSingleArticle = function showSingleArticle(e, mainEl, loadingDiv, single
 
 exports.showSingleArticle = showSingleArticle;
 
+var showHomepage = function showHomepage(mainEl, loadingDiv, singleArticleSection, singleArticleMain) {
+  loadingDiv.classList.remove("hide");
+  singleArticleSection.innerHTML = "";
+  singleArticleMain.classList.remove("visible");
+  loadingDiv.classList.add("hide");
+  mainEl.classList.remove("hidden");
+};
+
+exports.showHomepage = showHomepage;
+
+var setupPostClickEventListeners = function setupPostClickEventListeners(postTitles) {
+  postTitles.forEach(function (postTitle) {
+    postTitle.addEventListener("click", function (e) {
+      return showSingleArticle(e, mainEl, loadingDiv, singleArticleSection, singleArticleMain);
+    });
+  });
+};
+
+exports.setupPostClickEventListeners = setupPostClickEventListeners;
+
+var onLoadCategoryArticles = function onLoadCategoryArticles(e, loadArticles, loadingDiv, topPost) {
+  var cid = e.target.dataset.cid;
+
+  if (e.target.dataset.cid === undefined) {
+    cid = e.target.parentElement.dataset.cid;
+  }
+
+  getArticlesByCategory(cid).then(function (result) {
+    loadArticles(result.data, topPost);
+    loadingDiv.classList.add("hide");
+  });
+};
+
+exports.onLoadCategoryArticles = onLoadCategoryArticles;
+
+var setupCategoryClickEventListeners = function setupCategoryClickEventListeners(categoriesList, loadArticles, topPost, loadingDiv) {
+  categoriesList.forEach(function (category) {
+    category.addEventListener("click", function (e) {
+      onLoadCategoryArticles(e, loadArticles, loadingDiv, topPost);
+    });
+  });
+};
+
+exports.setupCategoryClickEventListeners = setupCategoryClickEventListeners;
+
 },{"./helpers.js":3}],2:[function(require,module,exports){
 "use strict";
 
@@ -107,7 +161,8 @@ var loadingDiv = document.querySelector(".loading");
 var topPost = document.querySelector(".top-posts");
 var mainEl = document.querySelector("main");
 var singleArticleSection = document.querySelector(".single__article-page");
-var singleArticleMain = document.querySelector(".single__article-main"); // Event Listeners
+var singleArticleMain = document.querySelector(".single__article-main");
+var backBtn = document.querySelector(".single__article-main > .btn"); // Event Listeners
 
 document.addEventListener("DOMContentLoaded", function () {
   Promise.all([(0, _actions.getCategories)(), (0, _actions.getArticles)()]).then(function (result) {
@@ -117,19 +172,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
     (0, _actions.onLoadCategories)(categoryList, categoryResult.data);
     var loadArticles = (0, _actions.onLoadArticles)(articlesSection);
+
+    if (categoryList.childElementCount > 1) {
+      var categoriesList = Array.from(categoryList.childNodes).filter(function (childNode) {
+        return childNode.className === "categories__category";
+      });
+      console.log(categoriesList);
+      (0, _actions.setupCategoryClickEventListeners)(categoriesList, loadArticles, topPost, loadingDiv);
+    }
+
     loadArticles(articlesResult.data, topPost);
     loadingDiv.classList.add("hide");
     var postTitles = document.querySelectorAll("p.article__title.tool > a");
 
     if (postTitles !== null) {
-      postTitles.forEach(function (postTitle) {
-        postTitle.addEventListener("click", function (e) {
-          return (0, _actions.showSingleArticle)(e, mainEl, loadingDiv, singleArticleSection, singleArticleMain);
-        });
-      });
+      (0, _actions.setupPostClickEventListeners)(postTitles);
     }
   });
 });
+
+if (backBtn !== null) {
+  backBtn.addEventListener("click", function () {
+    (0, _actions.showHomepage)(mainEl, loadingDiv, singleArticleSection, singleArticleMain);
+  });
+}
 
 },{"./actions.js":1}],3:[function(require,module,exports){
 "use strict";

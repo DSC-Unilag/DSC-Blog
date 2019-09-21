@@ -1,8 +1,7 @@
 import {requestData, getDateDiff, generateDate} from "./helpers.js";
 
 const DEV_API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
-const API_URL =
-	"https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app";
+const API_URL = "https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app";
 
 // API Actions
 export const getArticles = () => {
@@ -24,6 +23,15 @@ export const getCategories = () => {
 		console.log("Error Msg: " + error.message);
 		console.log(error.stack);
 	});
+};
+
+export const getArticlesByCategory = cid => {
+	return requestData(`${API_URL}/articles/category/${cid}`, "get").catch(
+		err => {
+			console.log("Error Msg: " + error.message);
+			console.log(error.stack);
+		}
+	);
 };
 
 // DOM Actions
@@ -126,7 +134,7 @@ export const onLoadArticles = articlesSection => {
 export const onLoadCategories = (categoriesList, categories) => {
 	if (categories.length > 0) {
 		categories.forEach(category => {
-			categoriesList.innerHTML += `<li class="categories__category">
+			categoriesList.innerHTML += `<li class="categories__category" data-cid=${category.id}>
             <span></span>
             ${category.name}
         </li>`;
@@ -166,5 +174,61 @@ export const showSingleArticle = (
     </article>`;
 		loadingDiv.classList.add("hide");
 		singleArticleMain.classList.add("visible");
+	});
+};
+
+export const showHomepage = (
+	mainEl,
+	loadingDiv,
+	singleArticleSection,
+	singleArticleMain
+) => {
+	loadingDiv.classList.remove("hide");
+	singleArticleSection.innerHTML = "";
+	singleArticleMain.classList.remove("visible");
+	loadingDiv.classList.add("hide");
+	mainEl.classList.remove("hidden");
+};
+
+export const setupPostClickEventListeners = postTitles => {
+	postTitles.forEach(postTitle => {
+		postTitle.addEventListener("click", e =>
+			showSingleArticle(
+				e,
+				mainEl,
+				loadingDiv,
+				singleArticleSection,
+				singleArticleMain
+			)
+		);
+	});
+};
+
+export const onLoadCategoryArticles = (
+	e,
+	loadArticles,
+	loadingDiv,
+	topPost
+) => {
+	let {cid} = e.target.dataset;
+	if (e.target.dataset.cid === undefined) {
+		cid = e.target.parentElement.dataset.cid;
+	}
+	getArticlesByCategory(cid).then(result => {
+		loadArticles(result.data, topPost);
+		loadingDiv.classList.add("hide");
+	});
+};
+
+export const setupCategoryClickEventListeners = (
+	categoriesList,
+	loadArticles,
+	topPost,
+	loadingDiv
+) => {
+	categoriesList.forEach(category => {
+		category.addEventListener("click", e => {
+			onLoadCategoryArticles(e, loadArticles, loadingDiv, topPost);
+		});
 	});
 };
