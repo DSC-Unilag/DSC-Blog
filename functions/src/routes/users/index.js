@@ -1,18 +1,21 @@
-const { Router } = require('express');
-const { createAdmin, login } = require('./admin');
-const middleware = require('../../middleware');
+const {Router} = require("express");
+const {createAdmin} = require("./admin");
+const {login, refreshJwtToken} = require("./auth");
+const middleware = require("../../middleware");
 
-const userRoute = Router();
+const userRouter = Router();
 
-const { verifyToken, permissions } = middleware;
+const {verifyToken, permissions} = middleware;
 
-userRoute.post(
-  '/createAdmin',
-  verifyToken,
-  (req, res, next) => permissions(req, res, next, 'admin', 'create'),
-  createAdmin,
+userRouter.post(
+	"/createAdmin",
+	verifyToken,
+	(req, res, next) => permissions(req, res, next, "admin", "create"),
+	createAdmin
 );
 
-userRoute.post('/login', login);
+userRouter.post("/auth/login", login);
 
-module.exports = userRoute;
+userRouter.post('/auth/refresh_token', refreshJwtToken);
+
+module.exports = userRouter;

@@ -9,9 +9,9 @@ const verifyToken = (request, response, next) => {
     token = request.headers.authorization.split(' ')[1];
   }
   token = token
-    || request.headers['x-access-token']
-    || request.query.token
-    || request.body.token;
+    || request.headers['x-access-token'].split(' ')[1]
+    || request.query.token.split(' ')[1]
+    || request.body.token.split(' ')[1];
 
   if (!token) {
     return response.status(401).send({

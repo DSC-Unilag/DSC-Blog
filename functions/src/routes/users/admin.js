@@ -1,7 +1,6 @@
 /* eslint-disable promise/no-nesting */
 const admin = require('firebase-admin');
 const randomize = require('../../helpers/randomize');
-const generateToken = require('../../helpers/generateToken');
 const passwordHash = require('../../helpers/passwordHash');
 const verifyUser = require('../../helpers/verifyUser');
 const userPermissions = require('../../helpers/userPermissions');
@@ -68,50 +67,4 @@ const createAdmin = (request, response) => {
   });
 };
 
-const login = (request, response) => {
-  const { email, password } = request.body;
-  if (!email || !password) {
-    return response.status(400).send({
-      success: false,
-      message: 'Missing input/fields',
-    });
-  }
-  return verifyUser({ email }, ['email']).then((check) => {
-    if (!check) {
-      return response.status(422).send({
-        success: false,
-        message: 'This user does not exist',
-      });
-    }
-    return db
-      .collection('users')
-      .where('email', '==', email)
-      .get()
-      .then((snapshot) => {
-        const doc = snapshot.docs[0];
-        const data = { ...doc.data(), uid: doc.id };
-        if (!passwordHash.compare(password, data.password)) {
-          return response.status(422).send({
-            success: false,
-            message: 'Invalid Password',
-          });
-        }
-        const { password: ps, ...safe } = data;
-        const token = generateToken(safe);
-        return response.status(200).json({
-          success: true,
-          message: 'Logged In',
-          popup: `Welcome ${data.firstname}`,
-          token,
-        });
-      })
-      .catch((err) => response.status(500).send({
-        success: false,
-        message: 'Something went wrong',
-        error: err.message,
-        errStack: err.stack,
-      }));
-  });
-};
-
-module.exports = { createAdmin, login };
+module.exports = { createAdmin };
