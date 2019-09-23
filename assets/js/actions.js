@@ -1,7 +1,7 @@
 import {requestData, getDateDiff, generateDate, sAlert} from "./helpers.js";
 
-const API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
-const PROD_API_URL =
+const DEV_API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
+const API_URL =
 	"https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app";
 
 // API Actions
