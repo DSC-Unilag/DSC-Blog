@@ -5,7 +5,9 @@ import {
 	onLoadCategories,
 	setupPostClickEventListeners,
 	setupCategoryClickEventListeners,
-	showHomepage
+	showHomepage,
+	postSignIn,
+	checkAuthState
 } from "./actions.js";
 
 //DOM Elements
@@ -17,6 +19,7 @@ const mainEl = document.querySelector("main");
 const singleArticleSection = document.querySelector(".single__article-page");
 const singleArticleMain = document.querySelector(".single__article-main");
 const backBtn = document.querySelector(".single__article-main > .btn");
+const signInForm = document.getElementById("signInForm");
 
 //Event Callbacks
 const loadHomepageElements = () => {
@@ -56,8 +59,18 @@ const loadDashboard = () => {};
 
 // Event Listeners
 document.addEventListener("DOMContentLoaded", () => {
-	if (window.location.pathname.includes("index")) {
+	if (
+		window.location.pathname.includes("index") ||
+		window.location.pathname === "/"
+	) {
 		loadHomepageElements();
+	}
+
+	if (
+		window.location.pathname.includes("dashboard") ||
+		window.location.pathname.includes("create_account")
+	) {
+		checkAuthState();
 	}
 });
 
@@ -65,4 +78,8 @@ if (backBtn !== null) {
 	backBtn.addEventListener("click", () => {
 		showHomepage(mainEl, loadingDiv, singleArticleSection, singleArticleMain);
 	});
+}
+
+if (signInForm !== null) {
+	signInForm.addEventListener("submit", postSignIn);
 }

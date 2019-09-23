@@ -8,16 +8,24 @@
 	</head>
 	<body class="flx">
 		<div class="left flx col al-cnt">
-			<form action="" method="POST">
+			<form action="#" method="POST" id="signInForm">
 				<fieldset>
 					<div class="flx col al-cnt">
 						<legend>SIGN IN</legend>
 						<input
-							type="text"
+							type="email"
 							class="form_field"
-							placeholder="Usename or Email"
+							placeholder="Email"
+							name="email"
+							required
 						/>
-						<input type="password" class="form_field" placeholder="Password" />
+						<input
+							type="password"
+							class="form_field"
+							placeholder="Password"
+							name="password"
+							required
+						/>
 					</div>
 				</fieldset>
 				<button class="btn1">SIGN IN</button>
@@ -48,7 +56,13 @@
 					</a>
 				</li>
 			</ul>
-			<p>Don't have an account? &nbsp;<a href="#" class="link">APPLY</a></p>
+			<p>
+				Don't have an account? &nbsp;<a
+					href="./contributor_form.html"
+					class="link"
+					>APPLY</a
+				>
+			</p>
 		</div>
 		<div class="right flx col al-cnt">
 			<div class="black-bg flx col">
@@ -67,5 +81,6 @@
 				</div>
 			</div>
 		</div>
+		<script src="./assets/js/dist/bundle.js"></script>
 	</body>
 </html>

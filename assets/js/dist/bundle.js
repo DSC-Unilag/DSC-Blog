@@ -4,15 +4,18 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.setupCategoryClickEventListeners = exports.onLoadDashboard = exports.onLoadCategoryArticles = exports.setupPostClickEventListeners = exports.showHomepage = exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
+exports.checkAuthState = exports.setupPostClickEventListeners = exports.setupCategoryClickEventListeners = exports.onLoadDashboard = exports.onLoadCategoryArticles = exports.showHomepage = exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = exports.getEndpoints = exports.getNewToken = exports.postSignIn = exports.getUnpublishedArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
 
 var _helpers = require("./helpers.js");
 
-var DEV_API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
-var API_URL = "https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app"; // API Actions
+var API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
+var PROD_API_URL = "https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app"; // API Actions
 
 var getArticles = function getArticles() {
-  return (0, _helpers.requestData)("".concat(API_URL, "/articles"), "get")["catch"](function (err) {
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/articles"),
+    method: "get"
+  })["catch"](function (error) {
     console.log("Error Msg: " + error.message);
     console.log(error.stack);
   });
@@ -21,7 +24,10 @@ var getArticles = function getArticles() {
 exports.getArticles = getArticles;
 
 var getSingleArticle = function getSingleArticle(aid) {
-  return (0, _helpers.requestData)("".concat(API_URL, "/articles/").concat(aid), "get")["catch"](function (err) {
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/articles/").concat(aid),
+    method: "get"
+  })["catch"](function (error) {
     console.log("Error Msg: " + error.message);
     console.log(error.stack);
   });
@@ -30,7 +36,10 @@ var getSingleArticle = function getSingleArticle(aid) {
 exports.getSingleArticle = getSingleArticle;
 
 var getCategories = function getCategories() {
-  return (0, _helpers.requestData)("".concat(API_URL, "/categories"), "get")["catch"](function (err) {
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/categories"),
+    method: "get"
+  })["catch"](function (error) {
     console.log("Error Msg: " + error.message);
     console.log(error.stack);
   });
@@ -39,14 +48,88 @@ var getCategories = function getCategories() {
 exports.getCategories = getCategories;
 
 var getArticlesByCategory = function getArticlesByCategory(cid) {
-  return (0, _helpers.requestData)("".concat(API_URL, "/articles/category/").concat(cid), "get")["catch"](function (err) {
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/articles/category/").concat(cid),
+    method: "get"
+  })["catch"](function (error) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
+};
+
+exports.getArticlesByCategory = getArticlesByCategory;
+
+var getUnpublishedArticles = function getUnpublishedArticles() {
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/articles/unpublished"),
+    method: "get",
+    authToken: localStorage.getItem("token") || ""
+  })["catch"](function (error) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
+};
+
+exports.getUnpublishedArticles = getUnpublishedArticles;
+
+var postSignIn = function postSignIn(e) {
+  e.preventDefault();
+  var form = new FormData(e.target);
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/users/auth/login"),
+    method: "post",
+    data: JSON.stringify({
+      email: form.get("email"),
+      password: form.get("password")
+    })
+  }).then(function (res) {
+    console.log(res);
+    (0, _helpers.sAlert)({
+      title: res.popup || "Something went wrong",
+      message: res.message,
+      type: res.success ? "success" : "error"
+    });
+
+    if (res.token) {
+      var expTime = new Date().getTime() + 86400 * 1000;
+      localStorage.setItem("token", res.token);
+      localStorage.setItem("exp", expTime);
+      localStorage.setItem("refresh", JSON.stringify({
+        refreshToken: res.refreshToken,
+        uid: res.uid
+      }));
+      window.location.href = "/dashboard.html";
+    }
+  })["catch"](function (error) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
+};
+
+exports.postSignIn = postSignIn;
+
+var getNewToken = function getNewToken(tokenData) {
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/auth/refresh_token"),
+    method: "post",
+    data: tokenData
+  })["catch"](function (error) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
+};
+
+exports.getNewToken = getNewToken;
+
+var getEndpoints = function getEndpoints() {
+  return (0, _helpers.requestData)("".concat(API_URL, "/endpoints"), "get")["catch"](function (error) {
     console.log("Error Msg: " + error.message);
     console.log(error.stack);
   });
 }; // DOM Actions
 
 
-exports.getArticlesByCategory = getArticlesByCategory;
+exports.getEndpoints = getEndpoints;
 
 var onLoadArticles = function onLoadArticles(articlesSection) {
   articlesSection.innerHTML = "<div class=\"loader\">Loading...</div>";
@@ -101,16 +184,6 @@ var showHomepage = function showHomepage(mainEl, loadingDiv, singleArticleSectio
 
 exports.showHomepage = showHomepage;
 
-var setupPostClickEventListeners = function setupPostClickEventListeners(mainEl, loadingDiv, singleArticleSection, singleArticleMain, postTitles) {
-  postTitles.forEach(function (postTitle) {
-    postTitle.addEventListener("click", function (e) {
-      return showSingleArticle(e, mainEl, loadingDiv, singleArticleSection, singleArticleMain);
-    });
-  });
-};
-
-exports.setupPostClickEventListeners = setupPostClickEventListeners;
-
 var onLoadCategoryArticles = function onLoadCategoryArticles(e, loadArticles, loadingDiv, topPost) {
   var cid = e.target.closest("[data-cid]").dataset.cid;
   getArticlesByCategory(cid).then(function (result) {
@@ -130,7 +203,7 @@ var onLoadDashboard = function onLoadDashboard() {
       return "<article class=\"archive__card\" data-uid=".concat(_contributor.cid, ">\n\t\t\t<div class=\"archive__card-details contributor__details\">\n\t\t\t\t<p>Name: Timilehin Olumofin</p>\n\t\t\t\t<p>Email: timilehin.olumofin@gmail.com</p>\n\t\t\t\t<p>No of Articles: 1</p>\n\t\t\t</div>\n\t\t\t<div class=\"archive__card-actions\">\n\t\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t\t</buttton>\n\t\t\t</div>\n\t\t</article>");
     }
   };
-}; //EventListeners Setups
+}; //Dynamic EventListeners Setups
 
 
 exports.onLoadDashboard = onLoadDashboard;
@@ -144,6 +217,44 @@ var setupCategoryClickEventListeners = function setupCategoryClickEventListeners
 };
 
 exports.setupCategoryClickEventListeners = setupCategoryClickEventListeners;
+
+var setupPostClickEventListeners = function setupPostClickEventListeners(mainEl, loadingDiv, singleArticleSection, singleArticleMain, postTitles) {
+  postTitles.forEach(function (postTitle) {
+    postTitle.addEventListener("click", function (e) {
+      return showSingleArticle(e, mainEl, loadingDiv, singleArticleSection, singleArticleMain);
+    });
+  });
+}; //Custom
+
+
+exports.setupPostClickEventListeners = setupPostClickEventListeners;
+
+var checkAuthState = function checkAuthState() {
+  if (localStorage.getItem("token") && localStorage.getItem("exp") > new Date().getTime()) {
+    return true;
+  }
+
+  var tokenData = localStorage.getItem("refresh");
+
+  if (tokenData !== null) {
+    getNewToken(tokenData).then(function (res) {
+      if (res.token) {
+        var expTime = new Date().getTime() + 86400 * 1000;
+        localStorage.setItem("token", res.token);
+        localStorage.setItem("exp", expTime);
+        localStorage.setItem("refresh", JSON.stringify({
+          refreshToken: res.refreshToken,
+          uid: res.uid
+        }));
+        return true;
+      }
+    });
+  } else {
+    window.location.href = "/sign_in.html";
+  }
+};
+
+exports.checkAuthState = checkAuthState;
 
 },{"./helpers.js":3}],2:[function(require,module,exports){
 "use strict";
@@ -166,7 +277,8 @@ var topPost = document.querySelector(".top-posts");
 var mainEl = document.querySelector("main");
 var singleArticleSection = document.querySelector(".single__article-page");
 var singleArticleMain = document.querySelector(".single__article-main");
-var backBtn = document.querySelector(".single__article-main > .btn"); //Event Callbacks
+var backBtn = document.querySelector(".single__article-main > .btn");
+var signInForm = document.getElementById("signInForm"); //Event Callbacks
 
 var loadHomepageElements = function loadHomepageElements() {
   Promise.all([(0, _actions.getCategories)(), (0, _actions.getArticles)()]).then(function (result) {
@@ -198,8 +310,12 @@ var loadDashboard = function loadDashboard() {}; // Event Listeners
 
 
 document.addEventListener("DOMContentLoaded", function () {
-  if (window.location.pathname.includes("index")) {
+  if (window.location.pathname.includes("index") || window.location.pathname === "/") {
     loadHomepageElements();
+  }
+
+  if (window.location.pathname.includes("dashboard") || window.location.pathname.includes("create_account")) {
+    (0, _actions.checkAuthState)();
   }
 });
 
@@ -209,27 +325,36 @@ if (backBtn !== null) {
   });
 }
 
+if (signInForm !== null) {
+  signInForm.addEventListener("submit", _actions.postSignIn);
+}
+
 },{"./actions.js":1}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.inquire = exports.generateDate = exports.getDateDiff = exports.requestData = void 0;
+exports.deleteCookie = exports.getCookie = exports.setCookie = exports.sAlert = exports.inquire = exports.generateDate = exports.getDateDiff = exports.requestData = void 0;
 
 var _sweetalert = _interopRequireDefault(require("sweetalert"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var requestData = function requestData(url, method) {
-  var headers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-  var data = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-  var defaultHeaders = {
-    "Content-Type": "application/json"
+var requestData = function requestData(_ref) {
+  var url = _ref.url,
+      method = _ref.method,
+      _ref$data = _ref.data,
+      data = _ref$data === void 0 ? null : _ref$data,
+      _ref$authToken = _ref.authToken,
+      authToken = _ref$authToken === void 0 ? "" : _ref$authToken;
+  var headers = {
+    "Content-Type": "application/json",
+    Authorization: authToken !== "" ? "Bearer " + authToken : authToken
   };
   var requestConfig = {
     method: method,
-    headers: headers || defaultHeaders
+    headers: headers
   };
 
   if (method.toLowerCase() !== "get" || method.toLowerCase() !== "delete") {
@@ -299,6 +424,47 @@ var inquire = function inquire(question, callback) {
 };
 
 exports.inquire = inquire;
+
+var sAlert = function sAlert(_ref2) {
+  var title = _ref2.title,
+      message = _ref2.message,
+      type = _ref2.type;
+  return (0, _sweetalert["default"])({
+    title: title,
+    text: message,
+    icon: type,
+    button: "OK"
+  });
+};
+
+exports.sAlert = sAlert;
+
+var setCookie = function setCookie(key, value) {
+  var days = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+  var date = new Date();
+  var expiresIn = date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = "".concat(key, "=").concat(value, "; expires=").concat(expiresIn);
+  return true;
+};
+
+exports.setCookie = setCookie;
+
+var getCookie = function getCookie(key) {
+  var cookie = document.cookie.split(";").filter(function (ck) {
+    var cookiePair = ck.split("=");
+    return cookiePair[0] === key;
+  });
+  return cookie.length > 0 ? cookie[0].split("=")[1] : null;
+};
+
+exports.getCookie = getCookie;
+
+var deleteCookie = function deleteCookie(key) {
+  document.cookie = name + "=; Max-Age=-99999999;";
+  return true;
+};
+
+exports.deleteCookie = deleteCookie;
 
 },{"sweetalert":5}],4:[function(require,module,exports){
 // shim for using process in browser

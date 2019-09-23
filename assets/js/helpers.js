@@ -1,12 +1,13 @@
 import swal from "sweetalert";
 
-export const requestData = (url, method, headers = null, data = null) => {
-	const defaultHeaders = {
-		"Content-Type": "application/json"
+export const requestData = ({url, method, data = null, authToken = ""}) => {
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: authToken !== "" ? "Bearer " + authToken : authToken
 	};
 	const requestConfig = {
 		method,
-		headers: headers || defaultHeaders
+		headers
 	};
 	if (method.toLowerCase() !== "get" || method.toLowerCase() !== "delete") {
 		requestConfig.body = data;
@@ -57,4 +58,35 @@ export const inquire = (question, callback, icon = "info", danger = false) => {
 			swal.close();
 		}
 	});
+};
+
+export const sAlert = ({title, message, type}) => {
+	return swal({
+		title,
+		text: message,
+		icon: type,
+		button: "OK"
+	});
+};
+
+export const setCookie = (key, value, days = 1) => {
+	const date = new Date();
+	const expiresIn = date
+		.setTime(date.getTime() + days * 24 * 60 * 60 * 1000)
+		.toUTCString();
+	document.cookie = `${key}=${value}; expires=${expiresIn}`;
+	return true;
+};
+
+export const getCookie = key => {
+	const cookie = document.cookie.split(";").filter(ck => {
+		const cookiePair = ck.split("=");
+		return cookiePair[0] === key;
+	});
+	return cookie.length > 0 ? cookie[0].split("=")[1] : null;
+};
+
+export const deleteCookie = key => {
+	document.cookie = name + "=; Max-Age=-99999999;";
+	return true;
 };
