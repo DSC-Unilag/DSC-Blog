@@ -1,3 +1,5 @@
+import swal from "sweetalert";
+
 export const requestData = (url, method, headers = null, data = null) => {
 	const defaultHeaders = {
 		"Content-Type": "application/json"
@@ -21,23 +23,38 @@ export const getDateDiff = datetime => {
 	let duration = `${years} ${years === 1 ? "year" : "years"} ago`;
 	if (years === 0) {
 		duration = `${months} ${months === 1 ? "month" : "months"} ago`;
-    }
-    if (months === 0) {
+	}
+	if (months === 0) {
 		duration = `${weeks} ${weeks === 1 ? "week" : "weeks"} ago`;
-    }
-    if (weeks === 0) {
+	}
+	if (weeks === 0) {
 		duration = `${days} ${days === 1 ? "day" : "days"} ago`;
 	}
 	return duration;
 };
 
-export const generateDate = (timestamp) => {
+export const generateDate = timestamp => {
 	const options = {
-		weekday: 'short',
-		month: 'short',
-		year: 'numeric',
-		day: 'numeric'
+		weekday: "short",
+		month: "short",
+		year: "numeric",
+		day: "numeric"
 	};
 	const date = new Date(timestamp);
-	return date.toLocaleDateString('en-US', options);
-}
+	return date.toLocaleDateString("en-US", options);
+};
+
+export const inquire = (question, callback, icon = "info", danger = false) => {
+	return swal({
+		title: "Are you sure?",
+		text: question,
+		icon,
+		dangerMode: danger
+	}).then(carryOn => {
+		if (carryOn) {
+			return callback();
+		} else {
+			swal.close();
+		}
+	});
+};

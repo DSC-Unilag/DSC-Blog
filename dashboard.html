@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Dashboard</title>
+		<link rel="stylesheet" href="./assets/font-awesome/css/all.css" />
+		<link rel="stylesheet" href="./assets/css/index.css" />
+	</head>
+	<body>
+		<header class="white">
+			<div class="sidenav__container">
+				<aside class="sidenav active">
+					<div class="sidenav__logo">
+						<img src="./assets/images/dsc_logo.svg" alt="DSC Unilag Logo" />
+						<p>Developer Students Club</p>
+					</div>
+					<ul class="sidenav__links">
+						<li class="sidenav__link">
+							<a href="">BLOG</a>
+						</li>
+						<li class="sidenav__link">
+							<a href="">ARTICLES</a>
+						</li>
+						<li class="sidenav__link">
+							<a href="">CONTRIBUTORS</a>
+						</li>
+						<li class="sidenav__link">
+							<a href="">APPLICANTS</a>
+						</li>
+					</ul>
+					<div class="sidenav-reg__links">
+						<button class="sidenav-reg__link">
+							SIGN IN
+						</button>
+						<button class="sidenav-reg__link">
+							SIGN UP
+						</button>
+					</div>
+				</aside>
+			</div>
+			<nav class="navbar">
+				<button class="sidenav__btn">
+					<span class="bar"></span>
+					<span class="bar"></span>
+					<span class="bar"></span>
+				</button>
+				<!--TODO Give better classname-->
+				<div class="navbar__wrapper">
+					<div class="navbar__logo">
+						<img src="./assets/images/dsc_logo.svg" alt="DSC Unilag Logo" />
+						<p>Developer Students Club</p>
+					</div>
+				</div>
+				<ul class="navbar__links">
+					<li class="navbar__link">
+						Blog
+					</li>
+					<li class="navbar__link navbar__link--active">
+						Articles
+					</li>
+					<li class="navbar__link">
+						Contributors
+					</li>
+					<li class="navbar__link">
+						Applicants
+					</li>
+				</ul>
+				<div class="navbar__registration-links">
+					<a href="#" class="btn navbar__registration-link">
+						LOGOUT
+					</a>
+				</div>
+			</nav>
+		</header>
+		<main class="dashboard__main">
+			<section class="archive">
+				<h3>All Contributors</h3>
+				<article class="archive__card" data-uid="userId">
+					<div class="archive__card-details contributor__details">
+						<p>Name: Timilehin Olumofin</p>
+						<p>Email: timilehin.olumofin@gmail.com</p>
+						<p>No of Articles: 1</p>
+					</div>
+					<div class="archive__card-actions">
+						<buttton class="btn actions__btn">
+							<i class="far fa-trash-alt"></i> &nbsp; Delete
+						</buttton>
+					</div>
+				</article>
+				<article class="archive__card" data-aid="ArticleId">
+					<div class="archive__card-img">
+						<img src="./assets/images/article-2.png" alt="Article Image" />
+					</div>
+					<div class="archive__card-details">
+						<p>Post 1</p>
+						<p>Author: Timilehin Olumofin</p>
+					</div>
+					<div class="archive__card-actions">
+						<buttton class="btn actions__btn">
+							<i class="far fa-eye"></i> &nbsp; View
+						</buttton>
+						<buttton class="btn actions__btn">
+							<i class="far fa-edit"></i> &nbsp; Edit
+						</buttton>
+						<buttton class="btn actions__btn">
+							<i class="far fa-trash-alt"></i> &nbsp; Delete
+						</buttton>
+					</div>
+				</article>
+				<article class="archive__card" data-aid="ArticleId">
+					<div class="archive__card-img">
+						<img src="./assets/images/article-2.png" alt="Article Image" />
+					</div>
+					<div class="archive__card-details">
+						<p>Post 1</p>
+						<p>Author: Timilehin Olumofin</p>
+					</div>
+					<div class="archive__card-actions">
+						<buttton class="btn actions__btn">
+							<i class="far fa-eye"></i> &nbsp; View
+						</buttton>
+						<buttton class="btn actions__btn">
+							<i class="far fa-edit"></i> &nbsp; Edit
+						</buttton>
+						<buttton class="btn actions__btn">
+							<i class="far fa-trash-alt"></i> &nbsp; Delete
+						</buttton>
+					</div>
+				</article>
+				<article class="archive__card" data-aid="ApplicantId">
+					<div class="archive__card-details contributor__details">
+						<p>Name: Timilehin Olumofin</p>
+						<p>Email: timilehin.olumofin@gmail.com</p>
+						<p>
+							Reason for Applying: Lorem ipsum dolor sit, amet consectetur
+							adipisicing elit. Impedit voluptatem eum dolore nam voluptates
+							necessitatibus officia enim beatae reprehenderit in libero at
+							molestiae quaerat laudantium velit mollitia aliquid, nobis ea.
+						</p>
+					</div>
+					<div class="archive__card-actions">
+						<buttton class="btn actions__btn">
+							<i class="far fa-eye"></i> &nbsp; Mark as reviewed
+						</buttton>
+					</div>
+				</article>
+				<article class="archive__card" data-aid="ApplicantId">
+					<div class="archive__card-details contributor__details">
+						<p>Name: Timilehin Olumofin</p>
+						<p>Email: timilehin.olumofin@gmail.com</p>
+						<p>
+							Reason for Applying: Lorem ipsum dolor sit, amet consectetur
+							adipisicing elit. Impedit voluptatem eum dolore nam voluptates
+							necessitatibus officia enim beatae reprehenderit in libero at
+							molestiae quaerat laudantium velit mollitia aliquid, nobis ea.
+						</p>
+					</div>
+					<div class="archive__card-actions">
+						<buttton class="btn actions__btn">
+							<i class="far fa-thumbs-up"></i> &nbsp; Approve
+						</buttton>
+						<buttton class="btn actions__btn">
+							<i class="far fa-trash-alt"></i> &nbsp; Delete
+						</buttton>
+					</div>
+				</article>
+			</section>
+		</main>
+		<footer>
+			<ul class="footer-page-links">
+				<li class="footer-page-link">
+					Blog
+				</li>
+				<li class="footer-page-link">
+					Articles
+				</li>
+				<li class="footer-page-link">
+					Contributors
+				</li>
+				<li class="footer-page-link">
+					Applicants
+				</li>
+			</ul>
+			<ul class="sm-icons">
+				<li class="sm-icon">
+					<a href="">
+						<img src="./assets/images/fb.svg" alt="" />
+					</a>
+				</li>
+				<li class="sm-icon">
+					<a href="">
+						<img src="./assets/images/tw.svg" alt="" />
+					</a>
+				</li>
+				<li class="sm-icon">
+					<a href="">
+						<img src="./assets/images/ig.svg" alt="" />
+					</a>
+				</li>
+				<li class="sm-icon">
+					<a href="">
+						<img src="./assets/images/ln.svg" alt="" />
+					</a>
+				</li>
+				<li class="sm-icon">
+					<a href="">
+						<img src="./assets/images/yt.svg" alt="" />
+					</a>
+				</li>
+			</ul>
+			<p class="copyright">
+				&copy; 2019 DSC-Unilag, AllRights Reserved.
+			</p>
+			<img
+				src="./assets/images/dsc_logo.svg"
+				alt="Dsc Unilag logo"
+				class="dsc-logo"
+			/>
+		</footer>
+		<script>
+			const sidenavBtn = document.querySelector(".sidenav__btn");
+			const sidenav = document.querySelector(".sidenav__container");
+			sidenavBtn.addEventListener("click", () => {
+				if (sidenav.classList.contains("active")) {
+					sidenav.classList.remove("active");
+					sidenavBtn.classList.remove("sidenav__btn--active");
+				} else {
+					sidenav.classList.add("active");
+					sidenavBtn.classList.add("sidenav__btn--active");
+				}
+			});
+		</script>
+		<script src="assets/js/dist/bundle.js"></script>
+	</body>
+</html>

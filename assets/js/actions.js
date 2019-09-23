@@ -151,10 +151,7 @@ export const showSingleArticle = (
 ) => {
 	loadingDiv.classList.remove("hide");
 	mainEl.classList.add("hidden");
-	let {aid} = e.target.dataset;
-	if (e.target.dataset.aid === undefined) {
-		aid = e.target.parentElement.dataset.aid;
-	}
+	let {aid} = e.target.closest("[data-aid]").dataset;
 	getSingleArticle(aid).then(result => {
 		const {data} = result;
 		singleArticleSection.innerHTML += `<article class="single__article">
@@ -190,7 +187,13 @@ export const showHomepage = (
 	mainEl.classList.remove("hidden");
 };
 
-export const setupPostClickEventListeners = postTitles => {
+export const setupPostClickEventListeners = (
+	mainEl,
+	loadingDiv,
+	singleArticleSection,
+	singleArticleMain,
+	postTitles
+) => {
 	postTitles.forEach(postTitle => {
 		postTitle.addEventListener("click", e =>
 			showSingleArticle(
@@ -210,16 +213,55 @@ export const onLoadCategoryArticles = (
 	loadingDiv,
 	topPost
 ) => {
-	let {cid} = e.target.dataset;
-	if (e.target.dataset.cid === undefined) {
-		cid = e.target.parentElement.dataset.cid;
-	}
+	let {cid} = e.target.closest("[data-cid]").dataset;
 	getArticlesByCategory(cid).then(result => {
 		loadArticles(result.data, topPost);
 		loadingDiv.classList.add("hide");
 	});
 };
 
+export const onLoadDashboard = () => {
+	const archives = {
+		article: article => {
+			return `<article class="archive__card" data-aid=${article.aid}>
+			<div class="archive__card-img">
+				<img src="${article.imageUrl}" alt="Article Image" />
+			</div>
+			<div class="archive__card-details">
+				<p>${article.title}</p>
+				<p>Author: ${article.user.firstname + " " + article.user.lastname}</p>
+			</div>
+			<div class="archive__card-actions">
+				<buttton class="btn actions__btn">
+					<i class="far fa-eye"></i> &nbsp; View
+				</buttton>
+				<buttton class="btn actions__btn">
+					<i class="far fa-edit"></i> &nbsp; Edit
+				</buttton>
+				<buttton class="btn actions__btn">
+					<i class="far fa-trash-alt"></i> &nbsp; Delete
+				</buttton>
+			</div>
+		</article>`;
+		},
+		contributor: contributor => {
+			return `<article class="archive__card" data-uid=${contributor.cid}>
+			<div class="archive__card-details contributor__details">
+				<p>Name: Timilehin Olumofin</p>
+				<p>Email: timilehin.olumofin@gmail.com</p>
+				<p>No of Articles: 1</p>
+			</div>
+			<div class="archive__card-actions">
+				<buttton class="btn actions__btn">
+					<i class="far fa-trash-alt"></i> &nbsp; Delete
+				</buttton>
+			</div>
+		</article>`;
+		}
+	};
+};
+
+//EventListeners Setups
 export const setupCategoryClickEventListeners = (
 	categoriesList,
 	loadArticles,

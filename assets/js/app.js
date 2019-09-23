@@ -18,8 +18,8 @@ const singleArticleSection = document.querySelector(".single__article-page");
 const singleArticleMain = document.querySelector(".single__article-main");
 const backBtn = document.querySelector(".single__article-main > .btn");
 
-// Event Listeners
-document.addEventListener("DOMContentLoaded", () => {
+//Event Callbacks
+const loadHomepageElements = () => {
 	Promise.all([getCategories(), getArticles()]).then(result => {
 		const [categoryResult, articlesResult] = result;
 		onLoadCategories(categoryList, categoryResult.data);
@@ -41,9 +41,24 @@ document.addEventListener("DOMContentLoaded", () => {
 		loadingDiv.classList.add("hide");
 		const postTitles = document.querySelectorAll("p.article__title.tool > a");
 		if (postTitles !== null) {
-			setupPostClickEventListeners(postTitles);
+			setupPostClickEventListeners(
+				mainEl,
+				loadingDiv,
+				singleArticleSection,
+				singleArticleMain,
+				postTitles
+			);
 		}
 	});
+};
+
+const loadDashboard = () => {};
+
+// Event Listeners
+document.addEventListener("DOMContentLoaded", () => {
+	if (window.location.pathname.includes("index")) {
+		loadHomepageElements();
+	}
 });
 
 if (backBtn !== null) {

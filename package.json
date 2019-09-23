@@ -20,6 +20,7 @@
 	"homepage": "https://github.com/DSC-Unilag/DSC-Blog#readme",
 	"dependencies": {
 		"browserify": "^16.5.0",
+		"sweetalert": "^2.1.2",
 		"watchify": "^3.11.1"
 	},
 	"devDependencies": {
