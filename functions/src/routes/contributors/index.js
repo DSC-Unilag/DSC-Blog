@@ -15,7 +15,7 @@ contributorRouter.get(
 );
 
 contributorRouter.delete(
-  '/:cid',
+  '/:uid',
   verifyToken,
   (req, res, next) => permissions(req, res, next, 'contributors', 'delete'),
   deleteContributor,

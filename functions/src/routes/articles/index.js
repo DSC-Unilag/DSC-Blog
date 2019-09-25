@@ -1,72 +1,77 @@
-const { Router } = require('express');
-const middleware = require('../../middleware');
-const getArticles = require('./getArticles');
-const postArticle = require('./postArticle');
-const publishArticle = require('./publishArticle');
-const getArticle = require('./getArticle');
+const {Router} = require("express");
+const middleware = require("../../middleware");
+const getArticles = require("./getArticles");
+const postArticle = require("./postArticle");
+const publishArticle = require("./publishArticle");
+const getArticle = require("./getArticle");
+const deleteArticle = require("./deleteArticle");
 
 const articleRouter = Router();
 
-const { verifyToken, permissions, fileUpload } = middleware;
+const {verifyToken, permissions, fileUpload} = middleware;
 
 articleRouter.get(
-  '/',
-  (req, res, next) => {
-    req.type = 'all';
-    req.published = true;
-    next();
-  },
-  getArticles,
+	"/",
+	(req, res, next) => {
+		req.type = "all";
+		req.published = true;
+		next();
+	},
+	getArticles
 );
 articleRouter.get(
-  '/unpublished',
-  verifyToken,
-  (req, res, next) => {
-    req.type = 'all';
-    req.published = false;
-    next();
-  },
-  getArticles,
-);
-
-articleRouter.get(
-  '/:id',
-  getArticle,
+	"/unpublished",
+	verifyToken,
+	(req, res, next) => {
+		req.type = "all";
+		req.published = false;
+		next();
+	},
+	getArticles
 );
 
+articleRouter.get("/:id", getArticle);
+
 articleRouter.get(
-  '/category/:cid',
-  (req, res, next) => {
-    req.type = 'category';
-    next();
-  },
-  getArticles,
+	"/category/:cid",
+	(req, res, next) => {
+		req.type = "category";
+		next();
+	},
+	getArticles
 );
 
 articleRouter.get(
-  '/user/:uid',
-  verifyToken,
-  (req, res, next) => permissions(req, res, next, 'articles', 'read'),
-  (req, res, next) => {
-    req.type = 'user';
-    next();
-  },
-  getArticles,
+	"/user/:uid",
+	verifyToken,
+	(req, res, next) => permissions(req, res, next, "articles", "read"),
+	(req, res, next) => {
+		req.type = "user";
+		next();
+	},
+	getArticles
 );
 
 articleRouter.post(
-  '/',
-  verifyToken,
-  (req, res, next) => permissions(req, res, next, 'articles', 'create'),
-  fileUpload,
-  postArticle,
+	"/",
+	verifyToken,
+	(req, res, next) => permissions(req, res, next, "articles", "create"),
+	fileUpload,
+	postArticle
 );
 
 articleRouter.patch(
-  '/publish',
-  verifyToken,
-  (req, res, next) => permissions(req, res, next, 'articles', 'update'),
-  publishArticle,
+	"/publish",
+	verifyToken,
+	(req, res, next) => permissions(req, res, next, "articles", "update"),
+	publishArticle
+);
+
+articleRouter.delete(
+	"/:aid",
+	verifyToken,
+	(req, res, next) => permissions(req, res, next, "articles", "delete"),
+	deleteArticle
 );
 
 module.exports = articleRouter;
