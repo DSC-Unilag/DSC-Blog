@@ -1,14 +1,17 @@
 import {
 	getArticles,
-	onLoadArticles,
 	getCategories,
+	postSignIn,
+	postApply
+} from "./actions/api.js";
+import {
+	onLoadArticles,
 	onLoadCategories,
 	setupPostClickEventListeners,
 	setupCategoryClickEventListeners,
 	showHomepage,
-	postSignIn,
 	checkAuthState
-} from "./actions.js";
+} from "./actions/dom.js";
 
 //DOM Elements
 const articlesSection = document.querySelector(".articles");
@@ -20,6 +23,7 @@ const singleArticleSection = document.querySelector(".single__article-page");
 const singleArticleMain = document.querySelector(".single__article-main");
 const backBtn = document.querySelector(".single__article-main > .btn");
 const signInForm = document.getElementById("signInForm");
+const applicationForm = document.getElementById("applicationForm");
 
 //Event Callbacks
 const loadHomepageElements = () => {
@@ -82,4 +86,8 @@ if (backBtn !== null) {
 
 if (signInForm !== null) {
 	signInForm.addEventListener("submit", postSignIn);
+}
+
+if (applicationForm !== null) {
+	applicationForm.addEventListener("submit", postApply);
 }

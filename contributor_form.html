@@ -8,18 +8,41 @@
 	</head>
 	<body class="flx">
 		<div class="left flx col al-cnt">
-			<form action="#" method="POST">
+			<form action="#" method="POST" id="applicationForm">
 				<fieldset>
 					<div class="flx col al-cnt">
 						<legend>APPLY AS A CONTRIBUTOR</legend>
-						<input type="text" class="form_field" placeholder="Name" />
-						<input type="email" class="form_field" placeholder="Email" />
-						<input type="password" class="form_field" placeholder="Password" />
 						<input
-							type="password"
+							type="text"
 							class="form_field"
-							placeholder="Confirm Password"
+							name="firstname"
+							placeholder="Firstname"
+							required
 						/>
+						<input
+							type="text"
+							class="form_field"
+							name="lastname"
+							placeholder="Lastname"
+							required
+						/>
+						<input
+							type="email"
+							class="form_field"
+							name="email"
+							placeholder="Email"
+							required
+						/>
+						<textarea
+							name="reason"
+							id="reason"
+							cols="30"
+							rows="10"
+							class="form_field"
+							required
+						>
+Reason</textarea
+						>
 					</div>
 				</fieldset>
 				<button class="btn1">APPLY AS CONTRIBUTOR</button>
@@ -27,19 +50,28 @@
 			<ul class="sm-icons">
 				<li class="sm-icon">
 					<a href="">
-						<img src="./assets/images/facebook-logo-black.svg" alt="Facebook Logo" />
+						<img
+							src="./assets/images/facebook-logo-black.svg"
+							alt="Facebook Logo"
+						/>
 					</a>
 				</li>
 				<li class="sm-icon">
 					<a href="">
-						<img src="./assets/images/twitter-logo-black.svg" alt="Twitter Logo" />
+						<img
+							src="./assets/images/twitter-logo-black.svg"
+							alt="Twitter Logo"
+						/>
 					</a>
-        </li>
-        <li class="sm-icon">
-          <a href="https://github.com/DSC-Unilag">
-            <img src="./assets/images/github-logo-black.svg" alt="Github Logo">
-          </a>
-        </li>
+				</li>
+				<li class="sm-icon">
+					<a href="https://github.com/DSC-Unilag">
+						<img
+							src="./assets/images/github-logo-black.svg"
+							alt="Github Logo"
+						/>
+					</a>
+				</li>
 			</ul>
 			<p>Already have an account? &nbsp;<a href="#" class="link">SIGN IN</a></p>
 		</div>
@@ -59,5 +91,6 @@
 				</div>
 			</div>
 		</div>
+		<script src="./assets/js/dist/bundle.js"></script>
 	</body>
 </html>
