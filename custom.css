@@ -1,0 +1,11 @@
+section input{
+  width: 1000px;
+  height: 30px;
+}
+#textt{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: 500px;
+	margin-top: 200px;
+}

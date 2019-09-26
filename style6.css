@@ -16,7 +16,7 @@
      height: 100%;
      position: absolute;
      left:250px;
-     width:100%;
+     width:84.5%;
      top:0px;
      overflow-y: hidden; 
 }
@@ -194,4 +194,44 @@ body{
 .icon-1 ion-icon {
   flex: 1;
   color: #c4c4c4;
+}
+.article{
+  text-align: center;
+}
+
+textarea{
+  display: none;
+  background-color: #eeeeee;
+  margin-top: 30%;
+  opacity: 0.5;
+  height: 1px;
+  width: 1px;
+  
+}
+#button{
+  margin-left: 3%;
+}
+#buttonFunction{
+  opacity: 0;
+}
+#bFunction{
+  display: none;
+}
+#upload{
+  display: none;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0px;
+}
+
+#uc{
+  display: none;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 70px;
+}
+button{
+  border: none;
+  color: #9292b2;
+  background-color: #222222;
 }
