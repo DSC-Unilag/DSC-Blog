@@ -5,6 +5,7 @@ const postArticle = require("./postArticle");
 const publishArticle = require("./publishArticle");
 const getArticle = require("./getArticle");
 const deleteArticle = require("./deleteArticle");
+const editArticle = require("./editArticle");
 
 const articleRouter = Router();
 
@@ -73,5 +74,14 @@ articleRouter.delete(
 	(req, res, next) => permissions(req, res, next, "articles", "delete"),
 	deleteArticle
 );
+
+articleRouter.patch(
+	"/edit",
+	verifyToken,
+	(req, res, next) => permissions(req, res, next, "articles", "update"),
+	fileUpload,
+	editArticle
+);
+
 
 module.exports = articleRouter;
