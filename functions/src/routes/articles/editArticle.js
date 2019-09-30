@@ -7,7 +7,7 @@ const { cloudinaryUpload } = require('../../helpers/cloudinary');
 const db = admin.firestore();
 
 const editArticle = (request, response) => {
-    const { aid } = request.query;
+    const { id } = request.query;
     const { title, content, categoryId } = request.body;
 
     const [image] = request.files;
@@ -28,13 +28,13 @@ const editArticle = (request, response) => {
     }
    
     db.collection('articles')
-        .doc(aid)
+        .doc(id)
         .get()
         .then((oldDoc) => {
             const doc = oldDoc.data();
             return db
                 .collection('articles')
-                .doc(aid)
+                .doc(id)
                 .set({
                     title: title || doc.title ,
                     content: content || doc.content,
