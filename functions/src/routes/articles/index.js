@@ -81,9 +81,6 @@ articleRouter.patch(
 	(req, res, next) => permissions(req, res, next, "articles", "update"),
 	fileUpload,
 	editArticle
-	// verifyToken,
-	// (req, res, next) => permissions(req, res, next, "articles", "update"),
-	// deleteArticle
 );
 
 
