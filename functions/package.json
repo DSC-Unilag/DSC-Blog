@@ -11,7 +11,7 @@
 		"logs": "firebase functions:log",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"lint": "eslint --ignore-path .gitignore src/ --fix",
-		"prettier": "prettier --single-quote --trailing-comma es5 --print-width 85 --write --no-bracket-spacing src/**/*.js"
+		"prettier": "prettier --single-quote --use-tabs --tab-width 8 --trailing-comma es5 --print-width 85 --write --no-bracket-spacing src/**/*.js"
 	},
 	"keywords": [],
 	"author": "",

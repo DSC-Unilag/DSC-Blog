@@ -67,7 +67,7 @@ const getArticles = (request, response) => {
     })
     .catch(() => response.status(500).send({
       success: false,
-      message: 'Something went wrong'
+      message: 'Something went wrong',
     }));
 };
 

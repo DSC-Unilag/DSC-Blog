@@ -10,6 +10,21 @@ const cloudinaryUpload = (imagePath) => new Promise((resolve, reject) => {
   });
 });
 
+const cloudinaryDestroy = (id) => new Promise((resolve, reject) => {
+  cloudinary.uploader.destroy(id, (error, result) => {
+    if (error) {
+      reject(error);
+    } else {
+      resolve(result);
+    }
+  });
+});
+
+const getIdFromUrl = (url) => {
+  const split = url.split('/');
+  return split[split.length - 1].slice(0, -4);
+};
+
 const configureCloudinary = () => {
   const { CLOUDINARY_URL } = process.env;
   const cloudName = CLOUDINARY_URL.split('@')[1];
@@ -24,4 +39,9 @@ const configureCloudinary = () => {
   });
 };
 
-module.exports = { cloudinaryUpload, configureCloudinary };
+module.exports = {
+  cloudinaryUpload,
+  configureCloudinary,
+  getIdFromUrl,
+  cloudinaryDestroy,
+};
