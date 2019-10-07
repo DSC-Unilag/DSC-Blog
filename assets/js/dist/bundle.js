@@ -169,11 +169,28 @@ exports.postApply = postApply;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.checkAuthState = exports.setupPostClickEventListeners = exports.setupCategoryClickEventListeners = exports.onLoadDashboard = exports.onLoadCategoryArticles = exports.showHomepage = exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = void 0;
+exports.checkAuthState = exports.setupPostClickEventListeners = exports.setupCategoryClickEventListeners = exports.onLoadDashboardArticles = exports.onLoadCategoryArticles = exports.showHomepage = exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = void 0;
 
 var _helpers = require("../helpers.js");
 
-// DOM Actions
+var _api = require("./api.js");
+
+//DOM Objects
+var archives = {
+  articleHtml: function articleHtml(article) {
+    return "<article class=\"archive__card\" data-aid=".concat(article.aid, ">\n\t\t<div class=\"archive__card-img\">\n\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"Article Image\" />\n\t\t</div>\n\t\t<div class=\"archive__card-details\">\n\t\t\t<p>").concat(article.title, "</p>\n\t\t\t<p>Author: ").concat(article.user.firstname + " " + article.user.lastname, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-edit\"></i> &nbsp; Edit\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
+  },
+  unpublishedArticleHtml: function unpublishedArticleHtml(article) {
+    return "<article class=\"archive__card\" data-aid=".concat(article.aid, ">\n\t\t<div class=\"archive__card-img\">\n\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"Article Image\" />\n\t\t</div>\n\t\t<div class=\"archive__card-details\">\n\t\t\t<p>").concat(article.title, "</p>\n\t\t\t<p>Author: ").concat(article.user.firstname + " " + article.user.lastname, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-file-alt\"></i> &nbsp; Publish\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
+  },
+  contributorHtml: function contributorHtml(contributor) {
+    return "<article class=\"archive__card\" data-uid=".concat(contributor.cid, ">\n\t\t<div class=\"archive__card-details contributor__details\">\n\t\t\t<p>Name: Timilehin Olumofin</p>\n\t\t\t<p>Email: timilehin.olumofin@gmail.com</p>\n\t\t\t<p>No of Articles: 1</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
+  },
+  applicationHtml: function applicationHtml(application) {
+    return "<article class=\"archive__card\" data-aid=\"".concat(application.id, "\">\n\t\t<div class=\"archive__card-details contributor__details\">\n\t\t\t<p>Name: ").concat(application.firstname, " ").concat(application.lastname, "</p>\n\t\t\t<p>Email: ").concat(application.email, "</p>\n\t\t\t<p>\n\t\t\t\tReason for Applying: ").concat(application.reason, "\n\t\t\t</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-thumbs-up\"></i> &nbsp; Approve\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
+  }
+}; // DOM Actions
+
 var onLoadArticles = function onLoadArticles(articlesSection) {
   articlesSection.innerHTML = "<div class=\"loader\">Loading...</div>";
   return function (articles, topPosts) {
@@ -207,7 +224,7 @@ var showSingleArticle = function showSingleArticle(e, mainEl, loadingDiv, single
   loadingDiv.classList.remove("hide");
   mainEl.classList.add("hidden");
   var aid = e.target.closest("[data-aid]").dataset.aid;
-  getSingleArticle(aid).then(function (result) {
+  (0, _api.getSingleArticle)(aid).then(function (result) {
     var data = result.data;
     singleArticleSection.innerHTML += "<article class=\"single__article\">\n        <p class=\"single__article-title\">".concat(data.title, "</p>\n        <p class=\"single__article-author\">\n            By ").concat(data.user.firstname + " " + data.user.lastname, " <span>").concat((0, _helpers.generateDate)(data.created), "</span>\n        </p>\n        <div class=\"single__article-img\">\n            <img src=\"").concat(data.imageUrl, "\" alt=\"Article Image\" />\n        </div>\n        <br />\n        <p class=\"single__article-content\">\n            ").concat(data.content, "\n        </p>\n    </article>");
     loadingDiv.classList.add("hide");
@@ -229,7 +246,7 @@ exports.showHomepage = showHomepage;
 
 var onLoadCategoryArticles = function onLoadCategoryArticles(e, loadArticles, loadingDiv, topPost) {
   var cid = e.target.closest("[data-cid]").dataset.cid;
-  getArticlesByCategory(cid).then(function (result) {
+  (0, _api.getArticlesByCategory)(cid).then(function (result) {
     loadArticles(result.data, topPost);
     loadingDiv.classList.add("hide");
   });
@@ -237,19 +254,40 @@ var onLoadCategoryArticles = function onLoadCategoryArticles(e, loadArticles, lo
 
 exports.onLoadCategoryArticles = onLoadCategoryArticles;
 
-var onLoadDashboard = function onLoadDashboard() {
-  var archives = {
-    article: function article(_article) {
-      return "<article class=\"archive__card\" data-aid=".concat(_article.aid, ">\n\t\t\t<div class=\"archive__card-img\">\n\t\t\t\t<img src=\"").concat(_article.imageUrl, "\" alt=\"Article Image\" />\n\t\t\t</div>\n\t\t\t<div class=\"archive__card-details\">\n\t\t\t\t<p>").concat(_article.title, "</p>\n\t\t\t\t<p>Author: ").concat(_article.user.firstname + " " + _article.user.lastname, "</p>\n\t\t\t</div>\n\t\t\t<div class=\"archive__card-actions\">\n\t\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t\t</buttton>\n\t\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t\t<i class=\"far fa-edit\"></i> &nbsp; Edit\n\t\t\t\t</buttton>\n\t\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t\t</buttton>\n\t\t\t</div>\n\t\t</article>");
-    },
-    contributor: function contributor(_contributor) {
-      return "<article class=\"archive__card\" data-uid=".concat(_contributor.cid, ">\n\t\t\t<div class=\"archive__card-details contributor__details\">\n\t\t\t\t<p>Name: Timilehin Olumofin</p>\n\t\t\t\t<p>Email: timilehin.olumofin@gmail.com</p>\n\t\t\t\t<p>No of Articles: 1</p>\n\t\t\t</div>\n\t\t\t<div class=\"archive__card-actions\">\n\t\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t\t</buttton>\n\t\t\t</div>\n\t\t</article>");
-    }
-  };
+var onLoadDashboardArticles = function onLoadDashboardArticles(publishedArticles, unpublishedArticles, dashboardMainEl) {
+  dashboardMainEl.innerHTML = ""; // Add Published Articles Section
+
+  var publishedArchive = "<section class=\"archive\">";
+  publishedArchive += '<h3>All published articles</h3>';
+
+  if (publishedArticles.length > 0) {
+    publishedArticles.forEach(function (article) {
+      publishedArchive += archives.articleHtml(article);
+    });
+  } else {
+    publishedArchive += "<p class=\"empty\">No Published Article</p>";
+  }
+
+  publishedArchive += "</section>";
+  dashboardMainEl.innerHTML += publishedArchive; // Add Unpublished Articles Section
+
+  var unpublishedArchive = "<section class=\"archive\">";
+  unpublishedArchive += '<h3>All unpublished articles</h3>';
+
+  if (unpublishedArticles.length > 0) {
+    unpublishedArticles.forEach(function (article) {
+      unpublishedArchive += archives.unpublishedArticleHtml(article);
+    });
+  } else {
+    unpublishedArchive += "<p class=\"empty\">No Unpublished Article</p>";
+  }
+
+  unpublishedArchive += "</section>";
+  dashboardMainEl.innerHTML += unpublishedArchive;
 }; //Dynamic EventListeners Setups
 
 
-exports.onLoadDashboard = onLoadDashboard;
+exports.onLoadDashboardArticles = onLoadDashboardArticles;
 
 var setupCategoryClickEventListeners = function setupCategoryClickEventListeners(categoriesList, loadArticles, topPost, loadingDiv) {
   categoriesList.forEach(function (category) {
@@ -280,7 +318,7 @@ var checkAuthState = function checkAuthState() {
   var tokenData = localStorage.getItem("refresh");
 
   if (tokenData !== null) {
-    getNewToken(tokenData).then(function (res) {
+    (0, _api.getNewToken)(tokenData).then(function (res) {
       if (res.token) {
         var expTime = new Date().getTime() + 86400 * 1000;
         localStorage.setItem("token", res.token);
@@ -299,7 +337,7 @@ var checkAuthState = function checkAuthState() {
 
 exports.checkAuthState = checkAuthState;
 
-},{"../helpers.js":4}],3:[function(require,module,exports){
+},{"../helpers.js":4,"./api.js":1}],3:[function(require,module,exports){
 "use strict";
 
 var _api = require("./actions/api.js");
@@ -324,7 +362,8 @@ var singleArticleSection = document.querySelector(".single__article-page");
 var singleArticleMain = document.querySelector(".single__article-main");
 var backBtn = document.querySelector(".single__article-main > .btn");
 var signInForm = document.getElementById("signInForm");
-var applicationForm = document.getElementById("applicationForm"); //Event Callbacks
+var applicationForm = document.getElementById("applicationForm");
+var dashboardMainEl = document.querySelector(".dashboard__main"); //Event Callbacks
 
 var loadHomepageElements = function loadHomepageElements() {
   Promise.all([(0, _api.getCategories)(), (0, _api.getArticles)()]).then(function (result) {
@@ -352,7 +391,18 @@ var loadHomepageElements = function loadHomepageElements() {
   });
 };
 
-var loadDashboard = function loadDashboard() {}; // Event Listeners
+var loadDashboard = function loadDashboard() {
+  dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
+  Promise.all([(0, _api.getArticles)(), (0, _api.getUnpublishedArticles)()]).then(function (result) {
+    var _result2 = _slicedToArray(result, 2),
+        published = _result2[0],
+        unpublished = _result2[1];
+
+    published = published.data || [];
+    unpublished = unpublished.data || [];
+    (0, _dom.onLoadDashboardArticles)(published, unpublished, dashboardMainEl);
+  });
+}; // Event Listeners
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -362,6 +412,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (window.location.pathname.includes("dashboard") || window.location.pathname.includes("create_account")) {
     (0, _dom.checkAuthState)();
+  }
+
+  if (window.location.pathname.includes('dashboard')) {
+    loadDashboard();
   }
 });
 

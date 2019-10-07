@@ -903,6 +903,11 @@ main {
 	justify-content: space-evenly;
 }
 
+.archive .empty {
+	font-size: 2rem;
+	margin: 10px;
+}
+
 .archive__card {
 	display: flex;
 	flex-wrap: wrap;
@@ -952,8 +957,10 @@ main {
 }
 
 .actions__btn {
-	border: 1px solid var(--orange);
-	cursor: pointer;
+	font-size: .8rem;
+    border: 1px solid var(--orange);
+    cursor: pointer;
+    margin: 5px;
 }
 
 .actions__btn:hover,
@@ -1249,6 +1256,18 @@ footer {
 	}
 	.single__article-page {
 		grid-column: span 3;
+	}
+
+	.dashboard__main{
+		padding: 0 30px;
+	}
+
+	.archive {
+		padding: 0 10px;
+	}
+
+	.archive__card {
+		width: 80%;
 	}
 }
 

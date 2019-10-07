@@ -1,10 +1,12 @@
 import {
 	getArticles,
+	getUnpublishedArticles,
 	getCategories,
 	postSignIn,
 	postApply
 } from "./actions/api.js";
 import {
+	onLoadDashboardArticles,
 	onLoadArticles,
 	onLoadCategories,
 	setupPostClickEventListeners,
@@ -24,6 +26,7 @@ const singleArticleMain = document.querySelector(".single__article-main");
 const backBtn = document.querySelector(".single__article-main > .btn");
 const signInForm = document.getElementById("signInForm");
 const applicationForm = document.getElementById("applicationForm");
+const dashboardMainEl = document.querySelector(".dashboard__main");
 
 //Event Callbacks
 const loadHomepageElements = () => {
@@ -59,7 +62,15 @@ const loadHomepageElements = () => {
 	});
 };
 
-const loadDashboard = () => {};
+const loadDashboard = () => {
+	dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
+	Promise.all([getArticles(), getUnpublishedArticles()]).then(result => {
+		let [published, unpublished] = result;
+		published = published.data || [];
+		unpublished = unpublished.data || [];
+		onLoadDashboardArticles(published, unpublished, dashboardMainEl);
+	});
+};
 
 // Event Listeners
 document.addEventListener("DOMContentLoaded", () => {
@@ -75,6 +86,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		window.location.pathname.includes("create_account")
 	) {
 		checkAuthState();
+	}
+
+	if(window.location.pathname.includes('dashboard')){
+		loadDashboard();
 	}
 });
 
