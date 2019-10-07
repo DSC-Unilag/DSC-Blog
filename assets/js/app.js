@@ -35,6 +35,8 @@ const dashboardMainEl = document.querySelector(".dashboard__main");
 const articlesLinks = document.querySelectorAll(".articlesLink");
 const contributorsLinks = document.querySelectorAll(".contributorsLink");
 const applicantsLinks = document.querySelectorAll(".applicantsLink");
+const navbarAuthLinks = document.querySelector(".navbar__registration-links");
+const mobileAuthLinks = document.querySelector(".sidenav-reg__links");
 
 //Event Callbacks
 const loadHomepageElements = () => {
@@ -99,8 +101,8 @@ const loadDashboardApplications = () => {
 	);
 };
 
-const resetNavbarLinks = (navLink) => {
-	let activeLink = navLink.parentElement.querySelector('.navbar__link--active');
+const resetNavbarLinks = navLink => {
+	let activeLink = navLink.parentElement.querySelector(".navbar__link--active");
 	activeLink.classList.remove("navbar__link--active");
 };
 
@@ -110,6 +112,28 @@ document.addEventListener("DOMContentLoaded", () => {
 		window.location.pathname.includes("index") ||
 		window.location.pathname === "/"
 	) {
+		if (checkAuthState()) {
+			navbarAuthLinks.innerHTML = `<a href="#" class="btn navbar__registration-link">
+					LOGOUT
+				</a>`;
+			mobileAuthLinks.innerHTML = `
+			<button class="sidenav-reg__link">
+				LOGOUT
+			</button>`;
+		} else {
+			navbarAuthLinks.innerHTML = `<a href="./sign_in.html" class="btn navbar__registration-link">
+					SIGN IN
+				</a>
+				<a href="./contributor_form.html" class="btn navbar__registration-link">
+					SIGN UP
+				</a>`;
+			mobileAuthLinks.innerHTML = `<button class="sidenav-reg__link">
+			SIGN IN
+		</button>
+		<button class="sidenav-reg__link">
+			SIGN UP
+		</button>`;
+		}
 		loadHomepageElements();
 	}
 
@@ -117,7 +141,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		window.location.pathname.includes("dashboard") ||
 		window.location.pathname.includes("create_account")
 	) {
-		checkAuthState();
+		if (!checkAuthState()) {
+			window.location.href = "/sign_in.html";
+		}
 	}
 
 	if (window.location.pathname.includes("dashboard")) {

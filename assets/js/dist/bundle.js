@@ -4,7 +4,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getContributors = exports.getReviewedApplications = exports.getUnreviewedApplications = exports.postApply = exports.getEndpoints = exports.getNewToken = exports.postSignIn = exports.getUnpublishedArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
+exports.reviewApplication = exports.deleteApplication = exports.approveApplication = exports.getContributors = exports.getReviewedApplications = exports.getUnreviewedApplications = exports.postApply = exports.getEndpoints = exports.getNewToken = exports.postSignIn = exports.getUnpublishedArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
 
 var _helpers = require("../helpers.js");
 
@@ -201,6 +201,51 @@ var getContributors = function getContributors() {
 };
 
 exports.getContributors = getContributors;
+
+var approveApplication = function approveApplication(id) {
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/applications/approve"),
+    method: "post",
+    data: {
+      conid: id
+    },
+    authToken: localStorage.getItem("token") || ""
+  })["catch"](function (error) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
+};
+
+exports.approveApplication = approveApplication;
+
+var deleteApplication = function deleteApplication(id) {
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/applications/").concat(id),
+    method: "delete",
+    authToken: localStorage.getItem("token") || ""
+  })["catch"](function (error) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
+};
+
+exports.deleteApplication = deleteApplication;
+
+var reviewApplication = function reviewApplication(id) {
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/applications"),
+    method: "patch",
+    data: {
+      appid: id
+    },
+    authToken: localStorage.getItem("token") || ""
+  })["catch"](function (error) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
+};
+
+exports.reviewApplication = reviewApplication;
 
 },{"../helpers.js":4}],2:[function(require,module,exports){
 "use strict";
@@ -427,7 +472,7 @@ var checkAuthState = function checkAuthState() {
       }
     });
   } else {
-    window.location.href = "/sign_in.html";
+    return false;
   }
 };
 
@@ -462,7 +507,9 @@ var applicationForm = document.getElementById("applicationForm");
 var dashboardMainEl = document.querySelector(".dashboard__main");
 var articlesLinks = document.querySelectorAll(".articlesLink");
 var contributorsLinks = document.querySelectorAll(".contributorsLink");
-var applicantsLinks = document.querySelectorAll(".applicantsLink"); //Event Callbacks
+var applicantsLinks = document.querySelectorAll(".applicantsLink");
+var navbarAuthLinks = document.querySelector(".navbar__registration-links");
+var mobileAuthLinks = document.querySelector(".sidenav-reg__links"); //Event Callbacks
 
 var loadHomepageElements = function loadHomepageElements() {
   Promise.all([(0, _api.getCategories)(), (0, _api.getArticles)()]).then(function (result) {
@@ -524,18 +571,28 @@ var loadDashboardApplications = function loadDashboardApplications() {
 };
 
 var resetNavbarLinks = function resetNavbarLinks(navLink) {
-  var activeLink = navLink.parentElement.querySelector('.navbar__link--active');
+  var activeLink = navLink.parentElement.querySelector(".navbar__link--active");
   activeLink.classList.remove("navbar__link--active");
 }; // Event Listeners
 
 
 document.addEventListener("DOMContentLoaded", function () {
   if (window.location.pathname.includes("index") || window.location.pathname === "/") {
+    if ((0, _dom.checkAuthState)()) {
+      navbarAuthLinks.innerHTML = "<a href=\"#\" class=\"btn navbar__registration-link\">\n\t\t\t\t\tLOGOUT\n\t\t\t\t</a>";
+      mobileAuthLinks.innerHTML = "\n\t\t\t<button class=\"sidenav-reg__link\">\n\t\t\t\tLOGOUT\n\t\t\t</button>";
+    } else {
+      navbarAuthLinks.innerHTML = "<a href=\"./sign_in.html\" class=\"btn navbar__registration-link\">\n\t\t\t\t\tSIGN IN\n\t\t\t\t</a>\n\t\t\t\t<a href=\"./contributor_form.html\" class=\"btn navbar__registration-link\">\n\t\t\t\t\tSIGN UP\n\t\t\t\t</a>";
+      mobileAuthLinks.innerHTML = "<button class=\"sidenav-reg__link\">\n\t\t\tSIGN IN\n\t\t</button>\n\t\t<button class=\"sidenav-reg__link\">\n\t\t\tSIGN UP\n\t\t</button>";
+    }
+
     loadHomepageElements();
   }
 
   if (window.location.pathname.includes("dashboard") || window.location.pathname.includes("create_account")) {
-    (0, _dom.checkAuthState)();
+    if (!(0, _dom.checkAuthState)()) {
+      window.location.href = "/sign_in.html";
+    }
   }
 
   if (window.location.pathname.includes("dashboard")) {

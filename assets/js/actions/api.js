@@ -168,3 +168,42 @@ export const getContributors = () => {
 		console.log(error.stack);
 	});
 };
+
+export const approveApplication = id => {
+	return requestData({
+		url: `${API_URL}/applications/approve`,
+		method: "post",
+		data: {
+			conid: id
+		},
+		authToken: localStorage.getItem("token") || ""
+	}).catch(error => {
+		console.log("Error Msg: " + error.message);
+		console.log(error.stack);
+	});
+};
+
+export const deleteApplication = id => {
+	return requestData({
+		url: `${API_URL}/applications/${id}`,
+		method: "delete",
+		authToken: localStorage.getItem("token") || ""
+	}).catch(error => {
+		console.log("Error Msg: " + error.message);
+		console.log(error.stack);
+	});
+};
+
+export const reviewApplication = id => {
+	return requestData({
+		url: `${API_URL}/applications`,
+		method: "patch",
+		data: {
+			appid: id
+		},
+		authToken: localStorage.getItem("token") || ""
+	}).catch(error => {
+		console.log("Error Msg: " + error.message);
+		console.log(error.stack);
+	});
+};

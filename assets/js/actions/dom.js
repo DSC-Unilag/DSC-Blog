@@ -404,6 +404,6 @@ export const checkAuthState = () => {
 			}
 		});
 	} else {
-		window.location.href = "/sign_in.html";
+		return false
 	}
 };
