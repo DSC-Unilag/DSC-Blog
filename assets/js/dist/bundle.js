@@ -4,7 +4,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.postApply = exports.getEndpoints = exports.getNewToken = exports.postSignIn = exports.getUnpublishedArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
+exports.getContributors = exports.getReviewedApplications = exports.getUnreviewedApplications = exports.postApply = exports.getEndpoints = exports.getNewToken = exports.postSignIn = exports.getUnpublishedArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
 
 var _helpers = require("../helpers.js");
 
@@ -163,13 +163,52 @@ var postApply = function postApply(e) {
 
 exports.postApply = postApply;
 
+var getUnreviewedApplications = function getUnreviewedApplications() {
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/applications"),
+    method: "get",
+    authToken: localStorage.getItem("token") || ""
+  })["catch"](function (error) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
+};
+
+exports.getUnreviewedApplications = getUnreviewedApplications;
+
+var getReviewedApplications = function getReviewedApplications() {
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/applications/reviewed"),
+    method: "get",
+    authToken: localStorage.getItem("token") || ""
+  })["catch"](function (error) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
+};
+
+exports.getReviewedApplications = getReviewedApplications;
+
+var getContributors = function getContributors() {
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/contributors"),
+    method: "get",
+    authToken: localStorage.getItem("token") || ""
+  })["catch"](function (error) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
+};
+
+exports.getContributors = getContributors;
+
 },{"../helpers.js":4}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.checkAuthState = exports.setupPostClickEventListeners = exports.setupCategoryClickEventListeners = exports.onLoadDashboardArticles = exports.onLoadCategoryArticles = exports.showHomepage = exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = void 0;
+exports.checkAuthState = exports.setupPostClickEventListeners = exports.setupCategoryClickEventListeners = exports.onLoadDashboardApplications = exports.onLoadDashboardContributors = exports.onLoadDashboardArticles = exports.onLoadCategoryArticles = exports.showHomepage = exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = void 0;
 
 var _helpers = require("../helpers.js");
 
@@ -186,8 +225,11 @@ var archives = {
   contributorHtml: function contributorHtml(contributor) {
     return "<article class=\"archive__card\" data-uid=".concat(contributor.cid, ">\n\t\t<div class=\"archive__card-details contributor__details\">\n\t\t\t<p>Name: Timilehin Olumofin</p>\n\t\t\t<p>Email: timilehin.olumofin@gmail.com</p>\n\t\t\t<p>No of Articles: 1</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
   },
-  applicationHtml: function applicationHtml(application) {
+  reveiwedApplicationHtml: function reveiwedApplicationHtml(application) {
     return "<article class=\"archive__card\" data-aid=\"".concat(application.id, "\">\n\t\t<div class=\"archive__card-details contributor__details\">\n\t\t\t<p>Name: ").concat(application.firstname, " ").concat(application.lastname, "</p>\n\t\t\t<p>Email: ").concat(application.email, "</p>\n\t\t\t<p>\n\t\t\t\tReason for Applying: ").concat(application.reason, "\n\t\t\t</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-thumbs-up\"></i> &nbsp; Approve\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
+  },
+  unreveiwedApplicationHtml: function unreveiwedApplicationHtml(application) {
+    return "<article class=\"archive__card\" data-aid=\"".concat(application.id, "\">\n\t\t<div class=\"archive__card-details contributor__details\">\n\t\t\t<p>Name: ").concat(application.firstname, " ").concat(application.lastname, "</p>\n\t\t\t<p>Email: ").concat(application.email, "</p>\n\t\t\t<p>\n\t\t\t\tReason for Applying: ").concat(application.reason, "\n\t\t\t</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-thumbs-up\"></i> &nbsp; Review\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
   }
 }; // DOM Actions
 
@@ -258,7 +300,7 @@ var onLoadDashboardArticles = function onLoadDashboardArticles(publishedArticles
   dashboardMainEl.innerHTML = ""; // Add Published Articles Section
 
   var publishedArchive = "<section class=\"archive\">";
-  publishedArchive += '<h3>All published articles</h3>';
+  publishedArchive += "<h3>All published articles</h3>";
 
   if (publishedArticles.length > 0) {
     publishedArticles.forEach(function (article) {
@@ -272,7 +314,7 @@ var onLoadDashboardArticles = function onLoadDashboardArticles(publishedArticles
   dashboardMainEl.innerHTML += publishedArchive; // Add Unpublished Articles Section
 
   var unpublishedArchive = "<section class=\"archive\">";
-  unpublishedArchive += '<h3>All unpublished articles</h3>';
+  unpublishedArchive += "<h3>All unpublished articles</h3>";
 
   if (unpublishedArticles.length > 0) {
     unpublishedArticles.forEach(function (article) {
@@ -284,10 +326,64 @@ var onLoadDashboardArticles = function onLoadDashboardArticles(publishedArticles
 
   unpublishedArchive += "</section>";
   dashboardMainEl.innerHTML += unpublishedArchive;
+};
+
+exports.onLoadDashboardArticles = onLoadDashboardArticles;
+
+var onLoadDashboardContributors = function onLoadDashboardContributors(contributors, dashboardMainEl) {
+  dashboardMainEl.innerHTML = ""; // Add Published Articles Section
+
+  var contributorArchive = "<section class=\"archive\">";
+  contributorArchive += "<h3>All published articles</h3>";
+
+  if (contributors.length > 0) {
+    contributors.forEach(function (contributor) {
+      contributorArchive += archives.contributorHtml(contributor);
+    });
+  } else {
+    contributorArchive += "<p class=\"empty\">No Contributor</p>";
+  }
+
+  contributorArchive += "</section>";
+  dashboardMainEl.innerHTML += contributorArchive;
+};
+
+exports.onLoadDashboardContributors = onLoadDashboardContributors;
+
+var onLoadDashboardApplications = function onLoadDashboardApplications(reviewedApplications, unreviewedApplications, dashboardMainEl) {
+  dashboardMainEl.innerHTML = ""; // Add Reviewed Application Section
+
+  var reviewedArchive = "<section class=\"archive\">";
+  reviewedArchive += "<h3>All reviewed applications</h3>";
+
+  if (reviewedApplications.length > 0) {
+    reviewedApplications.forEach(function (application) {
+      reviewedArchive += archives.reveiwedApplicationHtml(application);
+    });
+  } else {
+    reviewedArchive += "<p class=\"empty\">No Reviewed Application</p>";
+  }
+
+  reviewedArchive += "</section>";
+  dashboardMainEl.innerHTML += reviewedArchive; // Add Unreviewed Application Section
+
+  var unreviewedArchive = "<section class=\"archive\">";
+  unreviewedArchive += "<h3>All unreviewed applications</h3>";
+
+  if (unreviewedApplications.length > 0) {
+    unreviewedApplications.forEach(function (application) {
+      unreviewedArchive += archives.unreveiwedApplicationHtml(application);
+    });
+  } else {
+    unreviewedArchive += "<p class=\"empty\">No Unreviewed Application</p>";
+  }
+
+  unreviewedArchive += "</section>";
+  dashboardMainEl.innerHTML += unreviewedArchive;
 }; //Dynamic EventListeners Setups
 
 
-exports.onLoadDashboardArticles = onLoadDashboardArticles;
+exports.onLoadDashboardApplications = onLoadDashboardApplications;
 
 var setupCategoryClickEventListeners = function setupCategoryClickEventListeners(categoriesList, loadArticles, topPost, loadingDiv) {
   categoriesList.forEach(function (category) {
@@ -363,7 +459,10 @@ var singleArticleMain = document.querySelector(".single__article-main");
 var backBtn = document.querySelector(".single__article-main > .btn");
 var signInForm = document.getElementById("signInForm");
 var applicationForm = document.getElementById("applicationForm");
-var dashboardMainEl = document.querySelector(".dashboard__main"); //Event Callbacks
+var dashboardMainEl = document.querySelector(".dashboard__main");
+var articlesLinks = document.querySelectorAll(".articlesLink");
+var contributorsLinks = document.querySelectorAll(".contributorsLink");
+var applicantsLinks = document.querySelectorAll(".applicantsLink"); //Event Callbacks
 
 var loadHomepageElements = function loadHomepageElements() {
   Promise.all([(0, _api.getCategories)(), (0, _api.getArticles)()]).then(function (result) {
@@ -391,7 +490,7 @@ var loadHomepageElements = function loadHomepageElements() {
   });
 };
 
-var loadDashboard = function loadDashboard() {
+var loadDashboardArticles = function loadDashboardArticles() {
   dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
   Promise.all([(0, _api.getArticles)(), (0, _api.getUnpublishedArticles)()]).then(function (result) {
     var _result2 = _slicedToArray(result, 2),
@@ -402,6 +501,31 @@ var loadDashboard = function loadDashboard() {
     unpublished = unpublished.data || [];
     (0, _dom.onLoadDashboardArticles)(published, unpublished, dashboardMainEl);
   });
+};
+
+var loadDashboardContributors = function loadDashboardContributors() {
+  dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
+  (0, _api.getContributors)().then(function (result) {
+    (0, _dom.onLoadDashboardContributors)(result.data, dashboardMainEl);
+  });
+};
+
+var loadDashboardApplications = function loadDashboardApplications() {
+  dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
+  Promise.all([(0, _api.getReviewedApplications)(), (0, _api.getUnreviewedApplications)()]).then(function (result) {
+    var _result3 = _slicedToArray(result, 2),
+        reviewed = _result3[0],
+        unreviewed = _result3[1];
+
+    reviewed = reviewed.data || [];
+    unreviewed = unreviewed.data || [];
+    (0, _dom.onLoadDashboardApplications)(reviewed, unreviewed, dashboardMainEl);
+  });
+};
+
+var resetNavbarLinks = function resetNavbarLinks(navLink) {
+  var activeLink = navLink.parentElement.querySelector('.navbar__link--active');
+  activeLink.classList.remove("navbar__link--active");
 }; // Event Listeners
 
 
@@ -414,8 +538,11 @@ document.addEventListener("DOMContentLoaded", function () {
     (0, _dom.checkAuthState)();
   }
 
-  if (window.location.pathname.includes('dashboard')) {
-    loadDashboard();
+  if (window.location.pathname.includes("dashboard")) {
+    loadDashboardArticles();
+    articlesLinks.forEach(function (articlesLink) {
+      articlesLink.classList.add("navbar__link--active");
+    });
   }
 });
 
@@ -431,6 +558,36 @@ if (signInForm !== null) {
 
 if (applicationForm !== null) {
   applicationForm.addEventListener("submit", _api.postApply);
+}
+
+if (articlesLinks !== null) {
+  articlesLinks.forEach(function (articlesLink) {
+    articlesLink.addEventListener("click", function () {
+      loadDashboardArticles();
+      resetNavbarLinks(articlesLink);
+      articlesLink.classList.add("navbar__link--active");
+    });
+  });
+}
+
+if (contributorsLinks !== null) {
+  contributorsLinks.forEach(function (contributorsLink) {
+    contributorsLink.addEventListener("click", function () {
+      loadDashboardContributors();
+      resetNavbarLinks(contributorsLink);
+      contributorsLink.classList.add("navbar__link--active");
+    });
+  });
+}
+
+if (applicantsLinks !== null) {
+  applicantsLinks.forEach(function (applicantsLink) {
+    applicantsLink.addEventListener("click", function () {
+      loadDashboardApplications();
+      resetNavbarLinks(applicantsLink);
+      applicantsLink.classList.add("navbar__link--active");
+    });
+  });
 }
 
 },{"./actions/api.js":1,"./actions/dom.js":2}],4:[function(require,module,exports){

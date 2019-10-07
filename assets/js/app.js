@@ -3,10 +3,15 @@ import {
 	getUnpublishedArticles,
 	getCategories,
 	postSignIn,
-	postApply
+	postApply,
+	getContributors,
+	getReviewedApplications,
+	getUnreviewedApplications
 } from "./actions/api.js";
 import {
 	onLoadDashboardArticles,
+	onLoadDashboardContributors,
+	onLoadDashboardApplications,
 	onLoadArticles,
 	onLoadCategories,
 	setupPostClickEventListeners,
@@ -27,6 +32,9 @@ const backBtn = document.querySelector(".single__article-main > .btn");
 const signInForm = document.getElementById("signInForm");
 const applicationForm = document.getElementById("applicationForm");
 const dashboardMainEl = document.querySelector(".dashboard__main");
+const articlesLinks = document.querySelectorAll(".articlesLink");
+const contributorsLinks = document.querySelectorAll(".contributorsLink");
+const applicantsLinks = document.querySelectorAll(".applicantsLink");
 
 //Event Callbacks
 const loadHomepageElements = () => {
@@ -62,7 +70,7 @@ const loadHomepageElements = () => {
 	});
 };
 
-const loadDashboard = () => {
+const loadDashboardArticles = () => {
 	dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
 	Promise.all([getArticles(), getUnpublishedArticles()]).then(result => {
 		let [published, unpublished] = result;
@@ -70,6 +78,30 @@ const loadDashboard = () => {
 		unpublished = unpublished.data || [];
 		onLoadDashboardArticles(published, unpublished, dashboardMainEl);
 	});
+};
+
+const loadDashboardContributors = () => {
+	dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
+	getContributors().then(result => {
+		onLoadDashboardContributors(result.data, dashboardMainEl);
+	});
+};
+
+const loadDashboardApplications = () => {
+	dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
+	Promise.all([getReviewedApplications(), getUnreviewedApplications()]).then(
+		result => {
+			let [reviewed, unreviewed] = result;
+			reviewed = reviewed.data || [];
+			unreviewed = unreviewed.data || [];
+			onLoadDashboardApplications(reviewed, unreviewed, dashboardMainEl);
+		}
+	);
+};
+
+const resetNavbarLinks = (navLink) => {
+	let activeLink = navLink.parentElement.querySelector('.navbar__link--active');
+	activeLink.classList.remove("navbar__link--active");
 };
 
 // Event Listeners
@@ -88,8 +120,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		checkAuthState();
 	}
 
-	if(window.location.pathname.includes('dashboard')){
-		loadDashboard();
+	if (window.location.pathname.includes("dashboard")) {
+		loadDashboardArticles();
+		articlesLinks.forEach(articlesLink => {
+			articlesLink.classList.add("navbar__link--active");
+		});
 	}
 });
 
@@ -105,4 +140,33 @@ if (signInForm !== null) {
 
 if (applicationForm !== null) {
 	applicationForm.addEventListener("submit", postApply);
+}
+
+if (articlesLinks !== null) {
+	articlesLinks.forEach(articlesLink => {
+		articlesLink.addEventListener("click", () => {
+			loadDashboardArticles();
+			resetNavbarLinks(articlesLink);
+			articlesLink.classList.add("navbar__link--active");
+		});
+	});
+}
+
+if (contributorsLinks !== null) {
+	contributorsLinks.forEach(contributorsLink => {
+		contributorsLink.addEventListener("click", () => {
+			loadDashboardContributors();
+			resetNavbarLinks(contributorsLink);
+			contributorsLink.classList.add("navbar__link--active");
+		});
+	});
+}
+if (applicantsLinks !== null) {
+	applicantsLinks.forEach(applicantsLink => {
+		applicantsLink.addEventListener("click", () => {
+			loadDashboardApplications();
+			resetNavbarLinks(applicantsLink);
+			applicantsLink.classList.add("navbar__link--active");
+		});
+	});
 }

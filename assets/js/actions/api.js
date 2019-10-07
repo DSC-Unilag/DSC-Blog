@@ -135,3 +135,36 @@ export const postApply = e => {
 			console.log(error.stack);
 		});
 };
+
+export const getUnreviewedApplications = () => {
+	return requestData({
+		url: `${API_URL}/applications`,
+		method: "get",
+		authToken: localStorage.getItem("token") || ""
+	}).catch(error => {
+		console.log("Error Msg: " + error.message);
+		console.log(error.stack);
+	});
+};
+
+export const getReviewedApplications = () => {
+	return requestData({
+		url: `${API_URL}/applications/reviewed`,
+		method: "get",
+		authToken: localStorage.getItem("token") || ""
+	}).catch(error => {
+		console.log("Error Msg: " + error.message);
+		console.log(error.stack);
+	});
+};
+
+export const getContributors = () => {
+	return requestData({
+		url: `${API_URL}/contributors`,
+		method: "get",
+		authToken: localStorage.getItem("token") || ""
+	}).catch(error => {
+		console.log("Error Msg: " + error.message);
+		console.log(error.stack);
+	});
+};

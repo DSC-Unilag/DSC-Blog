@@ -64,7 +64,7 @@ const archives = {
 		</div>
 	</article>`;
 	},
-	applicationHtml: application => {
+	reveiwedApplicationHtml: application => {
 		return `<article class="archive__card" data-aid="${application.id}">
 		<div class="archive__card-details contributor__details">
 			<p>Name: ${application.firstname} ${application.lastname}</p>
@@ -79,6 +79,22 @@ const archives = {
 			</buttton>
 			<buttton class="btn actions__btn">
 				<i class="far fa-trash-alt"></i> &nbsp; Delete
+			</buttton>
+		</div>
+	</article>`;
+	},
+	unreveiwedApplicationHtml: application => {
+		return `<article class="archive__card" data-aid="${application.id}">
+		<div class="archive__card-details contributor__details">
+			<p>Name: ${application.firstname} ${application.lastname}</p>
+			<p>Email: ${application.email}</p>
+			<p>
+				Reason for Applying: ${application.reason}
+			</p>
+		</div>
+		<div class="archive__card-actions">
+			<buttton class="btn actions__btn">
+				<i class="far fa-thumbs-up"></i> &nbsp; Review
 			</buttton>
 		</div>
 	</article>`;
@@ -259,7 +275,7 @@ export const onLoadDashboardArticles = (
 	dashboardMainEl.innerHTML = "";
 	// Add Published Articles Section
 	let publishedArchive = `<section class="archive">`;
-	publishedArchive += '<h3>All published articles</h3>';
+	publishedArchive += "<h3>All published articles</h3>";
 	if (publishedArticles.length > 0) {
 		publishedArticles.forEach(article => {
 			publishedArchive += archives.articleHtml(article);
@@ -271,7 +287,7 @@ export const onLoadDashboardArticles = (
 	dashboardMainEl.innerHTML += publishedArchive;
 	// Add Unpublished Articles Section
 	let unpublishedArchive = `<section class="archive">`;
-	unpublishedArchive += '<h3>All unpublished articles</h3>';
+	unpublishedArchive += "<h3>All unpublished articles</h3>";
 	if (unpublishedArticles.length > 0) {
 		unpublishedArticles.forEach(article => {
 			unpublishedArchive += archives.unpublishedArticleHtml(article);
@@ -281,6 +297,54 @@ export const onLoadDashboardArticles = (
 	}
 	unpublishedArchive += `</section>`;
 	dashboardMainEl.innerHTML += unpublishedArchive;
+};
+
+export const onLoadDashboardContributors = (contributors, dashboardMainEl) => {
+	dashboardMainEl.innerHTML = "";
+	// Add Published Articles Section
+	let contributorArchive = `<section class="archive">`;
+	contributorArchive += "<h3>All published articles</h3>";
+	if (contributors.length > 0) {
+		contributors.forEach(contributor => {
+			contributorArchive += archives.contributorHtml(contributor);
+		});
+	} else {
+		contributorArchive += `<p class="empty">No Contributor</p>`;
+	}
+	contributorArchive += `</section>`;
+	dashboardMainEl.innerHTML += contributorArchive;
+};
+
+export const onLoadDashboardApplications = (
+	reviewedApplications,
+	unreviewedApplications,
+	dashboardMainEl
+) => {
+	dashboardMainEl.innerHTML = "";
+	// Add Reviewed Application Section
+	let reviewedArchive = `<section class="archive">`;
+	reviewedArchive += "<h3>All reviewed applications</h3>";
+	if (reviewedApplications.length > 0) {
+		reviewedApplications.forEach(application => {
+			reviewedArchive += archives.reveiwedApplicationHtml(application);
+		});
+	} else {
+		reviewedArchive += `<p class="empty">No Reviewed Application</p>`;
+	}
+	reviewedArchive += `</section>`;
+	dashboardMainEl.innerHTML += reviewedArchive;
+	// Add Unreviewed Application Section
+	let unreviewedArchive = `<section class="archive">`;
+	unreviewedArchive += "<h3>All unreviewed applications</h3>";
+	if (unreviewedApplications.length > 0) {
+		unreviewedApplications.forEach(application => {
+			unreviewedArchive += archives.unreveiwedApplicationHtml(application);
+		});
+	} else {
+		unreviewedArchive += `<p class="empty">No Unreviewed Application</p>`;
+	}
+	unreviewedArchive += `</section>`;
+	dashboardMainEl.innerHTML += unreviewedArchive;
 };
 
 //Dynamic EventListeners Setups
