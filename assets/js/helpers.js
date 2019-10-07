@@ -69,6 +69,19 @@ export const sAlert = ({title, message, type}) => {
 	});
 };
 
+export const sEnquire = (title, callback) => {
+	return swal({
+		title: title,
+		icon: "info",
+		buttons: true,
+		dangerMode: true
+	}).then(carryOn => {
+		if (carryOn) {
+			callback();
+		}
+	});
+};
+
 export const setCookie = (key, value, days = 1) => {
 	const date = new Date();
 	const expiresIn = date

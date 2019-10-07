@@ -16,6 +16,7 @@ import {
 	onLoadCategories,
 	setupPostClickEventListeners,
 	setupCategoryClickEventListeners,
+	setupApplicationActions,
 	showHomepage,
 	checkAuthState
 } from "./actions/dom.js";
@@ -34,7 +35,7 @@ const applicationForm = document.getElementById("applicationForm");
 const dashboardMainEl = document.querySelector(".dashboard__main");
 const articlesLinks = document.querySelectorAll(".articlesLink");
 const contributorsLinks = document.querySelectorAll(".contributorsLink");
-const applicantsLinks = document.querySelectorAll(".applicantsLink");
+const applicationsLinks = document.querySelectorAll(".applicantsLink");
 const navbarAuthLinks = document.querySelector(".navbar__registration-links");
 const mobileAuthLinks = document.querySelector(".sidenav-reg__links");
 
@@ -89,7 +90,7 @@ const loadDashboardContributors = () => {
 	});
 };
 
-const loadDashboardApplications = () => {
+const loadDashboardApplications = (callback) => {
 	dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
 	Promise.all([getReviewedApplications(), getUnreviewedApplications()]).then(
 		result => {
@@ -97,6 +98,7 @@ const loadDashboardApplications = () => {
 			reviewed = reviewed.data || [];
 			unreviewed = unreviewed.data || [];
 			onLoadDashboardApplications(reviewed, unreviewed, dashboardMainEl);
+			callback();
 		}
 	);
 };
@@ -187,12 +189,29 @@ if (contributorsLinks !== null) {
 		});
 	});
 }
-if (applicantsLinks !== null) {
-	applicantsLinks.forEach(applicantsLink => {
-		applicantsLink.addEventListener("click", () => {
-			loadDashboardApplications();
-			resetNavbarLinks(applicantsLink);
-			applicantsLink.classList.add("navbar__link--active");
+if (applicationsLinks !== null) {
+	applicationsLinks.forEach(applicationsLink => {
+		applicationsLink.addEventListener("click", () => {
+			loadDashboardApplications(() => {
+				const reviewBtns = dashboardMainEl.querySelectorAll(
+					".review_application"
+				);
+				const approveBtns = dashboardMainEl.querySelectorAll(
+					".approve_application"
+				);
+				const deleteBtns = dashboardMainEl.querySelectorAll(
+					".delete_application"
+				);
+				setupApplicationActions(
+					loadingDiv,
+					reviewBtns,
+					approveBtns,
+					deleteBtns,
+					applicationsLink
+				);
+			});
+			resetNavbarLinks(applicationsLink);
+			applicationsLink.classList.add("navbar__link--active");
 		});
 	});
 }

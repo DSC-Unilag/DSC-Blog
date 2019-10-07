@@ -173,14 +173,23 @@ export const approveApplication = id => {
 	return requestData({
 		url: `${API_URL}/applications/approve`,
 		method: "post",
-		data: {
+		data: JSON.stringify({
 			conid: id
-		},
+		}),
 		authToken: localStorage.getItem("token") || ""
-	}).catch(error => {
-		console.log("Error Msg: " + error.message);
-		console.log(error.stack);
-	});
+	})
+		.then(res => {
+			sAlert({
+				title: res.message,
+				message: "Done",
+				type: res.success ? "success" : "error"
+			});
+			return res.success;
+		})
+		.catch(error => {
+			console.log("Error Msg: " + error.message);
+			console.log(error.stack);
+		});
 };
 
 export const deleteApplication = id => {
@@ -188,22 +197,40 @@ export const deleteApplication = id => {
 		url: `${API_URL}/applications/${id}`,
 		method: "delete",
 		authToken: localStorage.getItem("token") || ""
-	}).catch(error => {
-		console.log("Error Msg: " + error.message);
-		console.log(error.stack);
-	});
+	})
+		.then(res => {
+			sAlert({
+				title: res.message,
+				message: "Done",
+				type: res.success ? "success" : "error"
+			});
+			return res.success;
+		})
+		.catch(error => {
+			console.log("Error Msg: " + error.message);
+			console.log(error.stack);
+		});
 };
 
 export const reviewApplication = id => {
 	return requestData({
 		url: `${API_URL}/applications`,
 		method: "patch",
-		data: {
+		data: JSON.stringify({
 			appid: id
-		},
+		}),
 		authToken: localStorage.getItem("token") || ""
-	}).catch(error => {
-		console.log("Error Msg: " + error.message);
-		console.log(error.stack);
-	});
+	})
+		.then(res => {
+			sAlert({
+				title: res.message,
+				message: "Done",
+				type: res.success ? "success" : "error"
+			});
+			return res.success;
+		})
+		.catch(error => {
+			console.log("Error Msg: " + error.message);
+			console.log(error.stack);
+		});
 };

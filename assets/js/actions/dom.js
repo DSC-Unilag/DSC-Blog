@@ -1,10 +1,11 @@
-import {getDateDiff, generateDate} from "../helpers.js";
+import {getDateDiff, generateDate, sEnquire} from "../helpers.js";
 import {
 	getArticlesByCategory,
 	getSingleArticle,
 	getNewToken,
-	getArticles,
-	getUnpublishedArticles
+	reviewApplication,
+	approveApplication,
+	deleteApplication
 } from "./api.js";
 
 //DOM Objects
@@ -74,10 +75,10 @@ const archives = {
 			</p>
 		</div>
 		<div class="archive__card-actions">
-			<buttton class="btn actions__btn">
+			<buttton class="btn actions__btn approve_application">
 				<i class="far fa-thumbs-up"></i> &nbsp; Approve
 			</buttton>
-			<buttton class="btn actions__btn">
+			<buttton class="btn actions__btn delete_application">
 				<i class="far fa-trash-alt"></i> &nbsp; Delete
 			</buttton>
 		</div>
@@ -93,7 +94,7 @@ const archives = {
 			</p>
 		</div>
 		<div class="archive__card-actions">
-			<buttton class="btn actions__btn">
+			<buttton class="btn actions__btn review_application">
 				<i class="far fa-thumbs-up"></i> &nbsp; Review
 			</buttton>
 		</div>
@@ -254,6 +255,48 @@ export const showHomepage = (
 	mainEl.classList.remove("hidden");
 };
 
+export const handleReviewApplication = (e, loadingDiv, onSuccess) => {
+	loadingDiv.classList.remove("hide");
+	let {aid} = e.target.closest("[data-aid]").dataset;
+	reviewApplication(aid)
+		.then(success => {
+			if (success) {
+				onSuccess();
+			}
+		})
+		.finally(() => {
+			loadingDiv.classList.add("hide");
+		});
+};
+
+export const handleApproveApplication = (e, loadingDiv) => {
+	loadingDiv.classList.remove("hide");
+	let {aid} = e.target.closest("[data-aid]").dataset;
+	approveApplication(aid)
+		.then(success => {
+			if (success) {
+				e.target.closest(".archive__card").remove();
+			}
+		})
+		.finally(() => {
+			loadingDiv.classList.add("hide");
+		});
+};
+
+export const handleDeleteApplication = (e, loadingDiv) => {
+	loadingDiv.classList.remove("hide");
+	let {aid} = e.target.closest("[data-aid]").dataset;
+	deleteApplication(aid)
+		.then(success => {
+			if (success) {
+				e.target.closest(".archive__card").remove();
+			}
+		})
+		.finally(() => {
+			loadingDiv.classList.add("hide");
+		});
+};
+
 export const onLoadCategoryArticles = (
 	e,
 	loadArticles,
@@ -381,6 +424,38 @@ export const setupPostClickEventListeners = (
 	});
 };
 
+export const setupApplicationActions = (
+	loadingDiv,
+	reviewBtns,
+	approveBtns,
+	deleteBtns,
+	applicationLink
+) => {
+	reviewBtns.forEach(reviewBtn => {
+		reviewBtn.addEventListener("click", e => {
+			sEnquire("Are you sure you want to review application?", () =>
+				handleReviewApplication(e, loadingDiv, () => {
+					applicationLink.click();
+				})
+			);
+		});
+	});
+	approveBtns.forEach(approveBtn => {
+		approveBtn.addEventListener("click", e => {
+			sEnquire("Are you sure you want to approve application?", () =>
+				handleApproveApplication(e, loadingDiv)
+			);
+		});
+	});
+	deleteBtns.forEach(deleteBtn => {
+		deleteBtn.addEventListener("click", e => {
+			sEnquire("Are you sure you want to delete application?", () =>
+				handleDeleteApplication(e, loadingDiv)
+			);
+		});
+	});
+};
+
 //Custom
 export const checkAuthState = () => {
 	if (
@@ -404,6 +479,6 @@ export const checkAuthState = () => {
 			}
 		});
 	} else {
-		return false
+		return false;
 	}
 };
