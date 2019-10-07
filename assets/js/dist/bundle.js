@@ -4,7 +4,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.reviewApplication = exports.deleteApplication = exports.approveApplication = exports.getContributors = exports.getReviewedApplications = exports.getUnreviewedApplications = exports.postApply = exports.getEndpoints = exports.getNewToken = exports.postSignIn = exports.getUnpublishedArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
+exports.reviewApplication = exports.deleteApplication = exports.approveApplication = exports.deleteContributor = exports.getContributors = exports.getReviewedApplications = exports.getUnreviewedApplications = exports.postApply = exports.getEndpoints = exports.getNewToken = exports.postSignIn = exports.getUnpublishedArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
 
 var _helpers = require("../helpers.js");
 
@@ -202,6 +202,26 @@ var getContributors = function getContributors() {
 
 exports.getContributors = getContributors;
 
+var deleteContributor = function deleteContributor(id) {
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/contributors/").concat(id),
+    method: "delete",
+    authToken: localStorage.getItem("token") || ""
+  }).then(function (res) {
+    (0, _helpers.sAlert)({
+      title: res.message,
+      message: "Done",
+      type: res.success ? "success" : "error"
+    });
+    return res.success;
+  })["catch"](function (error) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
+};
+
+exports.deleteContributor = deleteContributor;
+
 var approveApplication = function approveApplication(id) {
   return (0, _helpers.requestData)({
     url: "".concat(API_URL, "/applications/approve"),
@@ -274,7 +294,7 @@ exports.reviewApplication = reviewApplication;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.checkAuthState = exports.setupApplicationActions = exports.setupPostClickEventListeners = exports.setupCategoryClickEventListeners = exports.onLoadDashboardApplications = exports.onLoadDashboardContributors = exports.onLoadDashboardArticles = exports.onLoadCategoryArticles = exports.handleDeleteApplication = exports.handleApproveApplication = exports.handleReviewApplication = exports.showHomepage = exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = void 0;
+exports.checkAuthState = exports.setupContributorActions = exports.setupApplicationActions = exports.setupPostClickEventListeners = exports.setupCategoryClickEventListeners = exports.onLoadDashboardApplications = exports.onLoadDashboardContributors = exports.onLoadDashboardArticles = exports.onLoadCategoryArticles = exports.handleDeleteContributor = exports.handleDeleteApplication = exports.handleApproveApplication = exports.handleReviewApplication = exports.showHomepage = exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = void 0;
 
 var _helpers = require("../helpers.js");
 
@@ -289,7 +309,7 @@ var archives = {
     return "<article class=\"archive__card\" data-aid=".concat(article.aid, ">\n\t\t<div class=\"archive__card-img\">\n\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"Article Image\" />\n\t\t</div>\n\t\t<div class=\"archive__card-details\">\n\t\t\t<p>").concat(article.title, "</p>\n\t\t\t<p>Author: ").concat(article.user.firstname + " " + article.user.lastname, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-file-alt\"></i> &nbsp; Publish\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
   },
   contributorHtml: function contributorHtml(contributor) {
-    return "<article class=\"archive__card\" data-uid=".concat(contributor.cid, ">\n\t\t<div class=\"archive__card-details contributor__details\">\n\t\t\t<p>Name: Timilehin Olumofin</p>\n\t\t\t<p>Email: timilehin.olumofin@gmail.com</p>\n\t\t\t<p>No of Articles: 1</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
+    return "<article class=\"archive__card\" data-uid=".concat(contributor.id, ">\n\t\t<div class=\"archive__card-details contributor__details\">\n\t\t\t<p>Name: ").concat(contributor.firstname, " ").concat(contributor.lastname, "</p>\n\t\t\t<p>Email: ").concat(contributor.email, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn delete_contributor\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
   },
   reveiwedApplicationHtml: function reveiwedApplicationHtml(application) {
     return "<article class=\"archive__card\" data-aid=\"".concat(application.id, "\">\n\t\t<div class=\"archive__card-details contributor__details\">\n\t\t\t<p>Name: ").concat(application.firstname, " ").concat(application.lastname, "</p>\n\t\t\t<p>Email: ").concat(application.email, "</p>\n\t\t\t<p>\n\t\t\t\tReason for Applying: ").concat(application.reason, "\n\t\t\t</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn approve_application\">\n\t\t\t\t<i class=\"far fa-thumbs-up\"></i> &nbsp; Approve\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn delete_application\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
@@ -394,6 +414,20 @@ var handleDeleteApplication = function handleDeleteApplication(e, loadingDiv) {
 
 exports.handleDeleteApplication = handleDeleteApplication;
 
+var handleDeleteContributor = function handleDeleteContributor(e, loadingDiv) {
+  loadingDiv.classList.remove("hide");
+  var uid = e.target.closest("[data-uid]").dataset.uid;
+  (0, _api.deleteContributor)(uid).then(function (success) {
+    if (success) {
+      e.target.closest(".archive__card").remove();
+    }
+  })["finally"](function () {
+    loadingDiv.classList.add("hide");
+  });
+};
+
+exports.handleDeleteContributor = handleDeleteContributor;
+
 var onLoadCategoryArticles = function onLoadCategoryArticles(e, loadArticles, loadingDiv, topPost) {
   var cid = e.target.closest("[data-cid]").dataset.cid;
   (0, _api.getArticlesByCategory)(cid).then(function (result) {
@@ -442,7 +476,7 @@ var onLoadDashboardContributors = function onLoadDashboardContributors(contribut
   dashboardMainEl.innerHTML = ""; // Add Published Articles Section
 
   var contributorArchive = "<section class=\"archive\">";
-  contributorArchive += "<h3>All published articles</h3>";
+  contributorArchive += "<h3>All Contributors</h3>";
 
   if (contributors.length > 0) {
     contributors.forEach(function (contributor) {
@@ -514,33 +548,55 @@ var setupPostClickEventListeners = function setupPostClickEventListeners(mainEl,
 exports.setupPostClickEventListeners = setupPostClickEventListeners;
 
 var setupApplicationActions = function setupApplicationActions(loadingDiv, reviewBtns, approveBtns, deleteBtns, applicationLink) {
-  reviewBtns.forEach(function (reviewBtn) {
-    reviewBtn.addEventListener("click", function (e) {
-      (0, _helpers.sEnquire)("Are you sure you want to review application?", function () {
-        return handleReviewApplication(e, loadingDiv, function () {
-          applicationLink.click();
+  if (reviewBtns.length > 0) {
+    reviewBtns.forEach(function (reviewBtn) {
+      reviewBtn.addEventListener("click", function (e) {
+        (0, _helpers.sEnquire)("Are you sure you want to review application?", function () {
+          return handleReviewApplication(e, loadingDiv, function () {
+            applicationLink.click();
+          });
         });
       });
     });
-  });
-  approveBtns.forEach(function (approveBtn) {
-    approveBtn.addEventListener("click", function (e) {
-      (0, _helpers.sEnquire)("Are you sure you want to approve application?", function () {
-        return handleApproveApplication(e, loadingDiv);
+  }
+
+  if (approveBtns.length > 0) {
+    approveBtns.forEach(function (approveBtn) {
+      approveBtn.addEventListener("click", function (e) {
+        (0, _helpers.sEnquire)("Are you sure you want to approve application?", function () {
+          return handleApproveApplication(e, loadingDiv);
+        });
       });
     });
-  });
-  deleteBtns.forEach(function (deleteBtn) {
-    deleteBtn.addEventListener("click", function (e) {
-      (0, _helpers.sEnquire)("Are you sure you want to delete application?", function () {
-        return handleDeleteApplication(e, loadingDiv);
+  }
+
+  if (deleteBtns.length > 0) {
+    deleteBtns.forEach(function (deleteBtn) {
+      deleteBtn.addEventListener("click", function (e) {
+        (0, _helpers.sEnquire)("Are you sure you want to delete the application?", function () {
+          return handleDeleteApplication(e, loadingDiv);
+        });
       });
     });
-  });
+  }
+};
+
+exports.setupApplicationActions = setupApplicationActions;
+
+var setupContributorActions = function setupContributorActions(loadingDiv, deleteConBtns) {
+  if (deleteConBtns.length > 0) {
+    deleteConBtns.forEach(function (deleteBtn) {
+      deleteBtn.addEventListener("click", function (e) {
+        (0, _helpers.sEnquire)("Are you sure you want to delete the contributor?", function () {
+          return handleDeleteContributor(e, loadingDiv);
+        });
+      });
+    });
+  }
 }; //Custom
 
 
-exports.setupApplicationActions = setupApplicationActions;
+exports.setupContributorActions = setupContributorActions;
 
 var checkAuthState = function checkAuthState() {
   if (localStorage.getItem("token") && localStorage.getItem("exp") > new Date().getTime()) {
@@ -641,10 +697,11 @@ var loadDashboardArticles = function loadDashboardArticles() {
   });
 };
 
-var loadDashboardContributors = function loadDashboardContributors() {
+var loadDashboardContributors = function loadDashboardContributors(callback) {
   dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
   (0, _api.getContributors)().then(function (result) {
     (0, _dom.onLoadDashboardContributors)(result.data, dashboardMainEl);
+    callback();
   });
 };
 
@@ -722,7 +779,10 @@ if (articlesLinks !== null) {
 if (contributorsLinks !== null) {
   contributorsLinks.forEach(function (contributorsLink) {
     contributorsLink.addEventListener("click", function () {
-      loadDashboardContributors();
+      loadDashboardContributors(function () {
+        var deleteConBtns = dashboardMainEl.querySelectorAll(".delete_contributor");
+        (0, _dom.setupContributorActions)(loadingDiv, deleteConBtns);
+      });
       resetNavbarLinks(contributorsLink);
       contributorsLink.classList.add("navbar__link--active");
     });

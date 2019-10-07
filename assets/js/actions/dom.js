@@ -5,7 +5,8 @@ import {
 	getNewToken,
 	reviewApplication,
 	approveApplication,
-	deleteApplication
+	deleteApplication,
+	deleteContributor
 } from "./api.js";
 
 //DOM Objects
@@ -52,14 +53,13 @@ const archives = {
 	</article>`;
 	},
 	contributorHtml: contributor => {
-		return `<article class="archive__card" data-uid=${contributor.cid}>
+		return `<article class="archive__card" data-uid=${contributor.id}>
 		<div class="archive__card-details contributor__details">
-			<p>Name: Timilehin Olumofin</p>
-			<p>Email: timilehin.olumofin@gmail.com</p>
-			<p>No of Articles: 1</p>
+			<p>Name: ${contributor.firstname} ${contributor.lastname}</p>
+			<p>Email: ${contributor.email}</p>
 		</div>
 		<div class="archive__card-actions">
-			<buttton class="btn actions__btn">
+			<buttton class="btn actions__btn delete_contributor">
 				<i class="far fa-trash-alt"></i> &nbsp; Delete
 			</buttton>
 		</div>
@@ -297,6 +297,20 @@ export const handleDeleteApplication = (e, loadingDiv) => {
 		});
 };
 
+export const handleDeleteContributor = (e, loadingDiv) => {
+	loadingDiv.classList.remove("hide");
+	let {uid} = e.target.closest("[data-uid]").dataset;
+	deleteContributor(uid)
+		.then(success => {
+			if (success) {
+				e.target.closest(".archive__card").remove();
+			}
+		})
+		.finally(() => {
+			loadingDiv.classList.add("hide");
+		});
+};
+
 export const onLoadCategoryArticles = (
 	e,
 	loadArticles,
@@ -346,7 +360,7 @@ export const onLoadDashboardContributors = (contributors, dashboardMainEl) => {
 	dashboardMainEl.innerHTML = "";
 	// Add Published Articles Section
 	let contributorArchive = `<section class="archive">`;
-	contributorArchive += "<h3>All published articles</h3>";
+	contributorArchive += "<h3>All Contributors</h3>";
 	if (contributors.length > 0) {
 		contributors.forEach(contributor => {
 			contributorArchive += archives.contributorHtml(contributor);
@@ -431,29 +445,47 @@ export const setupApplicationActions = (
 	deleteBtns,
 	applicationLink
 ) => {
-	reviewBtns.forEach(reviewBtn => {
-		reviewBtn.addEventListener("click", e => {
-			sEnquire("Are you sure you want to review application?", () =>
-				handleReviewApplication(e, loadingDiv, () => {
-					applicationLink.click();
-				})
-			);
+	if (reviewBtns.length > 0) {
+		reviewBtns.forEach(reviewBtn => {
+			reviewBtn.addEventListener("click", e => {
+				sEnquire("Are you sure you want to review application?", () =>
+					handleReviewApplication(e, loadingDiv, () => {
+						applicationLink.click();
+					})
+				);
+			});
 		});
-	});
-	approveBtns.forEach(approveBtn => {
-		approveBtn.addEventListener("click", e => {
-			sEnquire("Are you sure you want to approve application?", () =>
-				handleApproveApplication(e, loadingDiv)
-			);
+	}
+	if (approveBtns.length > 0) {
+		approveBtns.forEach(approveBtn => {
+			approveBtn.addEventListener("click", e => {
+				sEnquire("Are you sure you want to approve application?", () =>
+					handleApproveApplication(e, loadingDiv)
+				);
+			});
 		});
-	});
-	deleteBtns.forEach(deleteBtn => {
-		deleteBtn.addEventListener("click", e => {
-			sEnquire("Are you sure you want to delete application?", () =>
-				handleDeleteApplication(e, loadingDiv)
-			);
+	}
+	if (deleteBtns.length > 0) {
+		deleteBtns.forEach(deleteBtn => {
+			deleteBtn.addEventListener("click", e => {
+				sEnquire("Are you sure you want to delete the application?", () =>
+					handleDeleteApplication(e, loadingDiv)
+				);
+			});
 		});
-	});
+	}
+};
+
+export const setupContributorActions = (loadingDiv, deleteConBtns) => {
+	if (deleteConBtns.length > 0) {
+		deleteConBtns.forEach(deleteBtn => {
+			deleteBtn.addEventListener("click", e => {
+				sEnquire("Are you sure you want to delete the contributor?", () =>
+					handleDeleteContributor(e, loadingDiv)
+				);
+			});
+		});
+	}
 };
 
 //Custom

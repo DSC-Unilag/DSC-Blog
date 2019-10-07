@@ -18,7 +18,8 @@ import {
 	setupCategoryClickEventListeners,
 	setupApplicationActions,
 	showHomepage,
-	checkAuthState
+	checkAuthState,
+	setupContributorActions
 } from "./actions/dom.js";
 
 //DOM Elements
@@ -83,14 +84,15 @@ const loadDashboardArticles = () => {
 	});
 };
 
-const loadDashboardContributors = () => {
+const loadDashboardContributors = callback => {
 	dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
 	getContributors().then(result => {
 		onLoadDashboardContributors(result.data, dashboardMainEl);
+		callback();
 	});
 };
 
-const loadDashboardApplications = (callback) => {
+const loadDashboardApplications = callback => {
 	dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
 	Promise.all([getReviewedApplications(), getUnreviewedApplications()]).then(
 		result => {
@@ -183,7 +185,12 @@ if (articlesLinks !== null) {
 if (contributorsLinks !== null) {
 	contributorsLinks.forEach(contributorsLink => {
 		contributorsLink.addEventListener("click", () => {
-			loadDashboardContributors();
+			loadDashboardContributors(() => {
+				const deleteConBtns = dashboardMainEl.querySelectorAll(
+					".delete_contributor"
+				);
+				setupContributorActions(loadingDiv, deleteConBtns);
+			});
 			resetNavbarLinks(contributorsLink);
 			contributorsLink.classList.add("navbar__link--active");
 		});

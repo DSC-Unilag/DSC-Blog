@@ -169,6 +169,24 @@ export const getContributors = () => {
 	});
 };
 
+export const deleteContributor = id => {
+	return requestData({
+		url: `${API_URL}/contributors/${id}`,
+		method: "delete",
+		authToken: localStorage.getItem("token") || ""
+	}).then(res => {
+		sAlert({
+			title: res.message,
+			message: "Done",
+			type: res.success ? "success" : "error"
+		});
+		return res.success;
+	}).catch(error => {
+		console.log("Error Msg: " + error.message);
+		console.log(error.stack);
+	});
+};
+
 export const approveApplication = id => {
 	return requestData({
 		url: `${API_URL}/applications/approve`,
