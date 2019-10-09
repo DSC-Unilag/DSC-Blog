@@ -1,8 +1,7 @@
 import {requestData, sAlert} from "../helpers.js";
 
-const DEV_API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
-const API_URL =
-	"https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app";
+const API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
+const PROD_API_URL = "https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app";
 
 export const getArticles = () => {
 	return requestData({url: `${API_URL}/articles`, method: "get"}).catch(
@@ -278,6 +277,49 @@ export const postArticle = e => {
 					window.location.reload();
 				}, 1500);
 			}
+		})
+		.catch(error => {
+			console.log("Error Msg: " + error.message);
+			console.log(error.stack);
+		});
+};
+
+export const deleteArticle = id => {
+	return requestData({
+		url: `${API_URL}/articles/${id}`,
+		method: "delete",
+		authToken: localStorage.getItem("token") || ""
+	})
+		.then(res => {
+			sAlert({
+				title: res.message,
+				message: "Done",
+				type: res.success ? "success" : "error"
+			});
+			return res.success;
+		})
+		.catch(error => {
+			console.log("Error Msg: " + error.message);
+			console.log(error.stack);
+		});
+};
+
+export const publishArticle = id => {
+	return requestData({
+		url: `${API_URL}/articles/publish`,
+		method: "patch",
+		data: JSON.stringify({
+			aid: id
+		}),
+		authToken: localStorage.getItem("token") || ""
+	})
+		.then(res => {
+			sAlert({
+				title: res.message,
+				message: "Done",
+				type: res.success ? "success" : "error"
+			});
+			return res.success;
 		})
 		.catch(error => {
 			console.log("Error Msg: " + error.message);

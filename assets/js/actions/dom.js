@@ -6,12 +6,16 @@ import {
 	reviewApplication,
 	approveApplication,
 	deleteApplication,
-	deleteContributor
+	deleteContributor,
+	deleteArticle,
+	publishArticle
 } from "./api.js";
 
 //DOM Objects
 const archives = {
 	articleHtml: article => {
+		const loggedInUser = JSON.parse(localStorage.getItem("refresh")).uid;
+		const ownedByUser = loggedInUser === article.user.uid;
 		return `<article class="archive__card" data-aid=${article.aid}>
 		<div class="archive__card-img">
 			<img src="${article.imageUrl}" alt="Article Image" />
@@ -21,13 +25,17 @@ const archives = {
 			<p>Author: ${article.user.firstname + " " + article.user.lastname}</p>
 		</div>
 		<div class="archive__card-actions">
-			<buttton class="btn actions__btn">
+			<buttton class="btn actions__btn view_article">
 				<i class="far fa-eye"></i> &nbsp; View
 			</buttton>
-			<buttton class="btn actions__btn">
-				<i class="far fa-edit"></i> &nbsp; Edit
-			</buttton>
-			<buttton class="btn actions__btn">
+			${
+				ownedByUser
+					? `<buttton class="btn actions__btn edit_article">
+							<i class="far fa-edit"></i> &nbsp; Edit
+					   </buttton>`
+					: null
+			}
+			<buttton class="btn actions__btn delete_article">
 				<i class="far fa-trash-alt"></i> &nbsp; Delete
 			</buttton>
 		</div>
@@ -43,11 +51,14 @@ const archives = {
 			<p>Author: ${article.user.firstname + " " + article.user.lastname}</p>
 		</div>
 		<div class="archive__card-actions">
-			<buttton class="btn actions__btn">
+			<buttton class="btn actions__btn publish_article">
+				<i class="far fa-file-alt"></i> &nbsp; Publish
+			</buttton>
+			<buttton class="btn actions__btn view_article">
 				<i class="far fa-eye"></i> &nbsp; View
 			</buttton>
-			<buttton class="btn actions__btn">
-				<i class="far fa-file-alt"></i> &nbsp; Publish
+			<buttton class="btn actions__btn delete_article">
+				<i class="far fa-trash-alt"></i> &nbsp; Delete
 			</buttton>
 		</div>
 	</article>`;
@@ -311,6 +322,34 @@ export const handleDeleteContributor = (e, loadingDiv) => {
 		});
 };
 
+export const handlePublishArticle = (e, loadingDiv, onSuccess) => {
+	loadingDiv.classList.remove("hide");
+	let {aid} = e.target.closest("[data-aid]").dataset;
+	publishArticle(aid)
+		.then(success => {
+			if (success) {
+				onSuccess();
+			}
+		})
+		.finally(() => {
+			loadingDiv.classList.add("hide");
+		});
+};
+
+export const handleDeleteArticle = (e, loadingDiv) => {
+	loadingDiv.classList.remove("hide");
+	let {aid} = e.target.closest("[data-aid]").dataset;
+	deleteArticle(aid)
+		.then(success => {
+			if (success) {
+				e.target.closest(".archive__card").remove();
+			}
+		})
+		.finally(() => {
+			loadingDiv.classList.add("hide");
+		});
+};
+
 export const onLoadCategoryArticles = (
 	e,
 	loadArticles,
@@ -483,6 +522,57 @@ export const setupContributorActions = (loadingDiv, deleteConBtns) => {
 				sEnquire("Are you sure you want to delete the contributor?", () =>
 					handleDeleteContributor(e, loadingDiv)
 				);
+			});
+		});
+	}
+};
+
+export const setupArticlesActions = (
+	loadingDiv,
+	publishBtns,
+	deleteBtns,
+	viewBtns,
+	editBtns,
+	articlesLink,
+	{dashboardMainEl, singleArticleMain, singleArticleSection}
+) => {
+	if (publishBtns.length > 0) {
+		publishBtns.forEach(publishBtn => {
+			publishBtn.addEventListener("click", e => {
+				sEnquire("Are you sure you want to publish article?", () =>
+					handlePublishArticle(e, loadingDiv, () => {
+						articlesLink.click();
+					})
+				);
+			});
+		});
+	}
+	if (deleteBtns.length > 0) {
+		deleteBtns.forEach(deleteBtn => {
+			deleteBtn.addEventListener("click", e => {
+				sEnquire("Are you sure you want to delete the article?", () =>
+					handleDeleteArticle(e, loadingDiv)
+				);
+			});
+		});
+	}
+	if (viewBtns.length > 0) {
+		viewBtns.forEach(viewBtn => {
+			viewBtn.addEventListener("click", e => {
+				showSingleArticle(
+					e,
+					dashboardMainEl,
+					loadingDiv,
+					singleArticleSection,
+					singleArticleMain
+				);
+			});
+		});
+	}
+	if (editBtns.length > 0) {
+		editBtns.forEach(editBtn => {
+			editBtn.addEventListener("click", e => {
+				console.log("Editing Article");
 			});
 		});
 	}

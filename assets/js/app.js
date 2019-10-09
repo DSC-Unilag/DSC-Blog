@@ -20,7 +20,8 @@ import {
 	setupApplicationActions,
 	showHomepage,
 	checkAuthState,
-	setupContributorActions
+	setupContributorActions,
+	setupArticlesActions
 } from "./actions/dom.js";
 
 //DOM Elements
@@ -76,13 +77,14 @@ const loadHomepageElements = () => {
 	});
 };
 
-const loadDashboardArticles = () => {
+const loadDashboardArticles = callback => {
 	dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
 	Promise.all([getArticles(), getUnpublishedArticles()]).then(result => {
 		let [published, unpublished] = result;
 		published = published.data || [];
 		unpublished = unpublished.data || [];
 		onLoadDashboardArticles(published, unpublished, dashboardMainEl);
+		callback();
 	});
 };
 
@@ -109,7 +111,9 @@ const loadDashboardApplications = callback => {
 
 const resetNavbarLinks = navLink => {
 	let activeLink = navLink.parentElement.querySelector(".navbar__link--active");
-	activeLink.classList.remove("navbar__link--active");
+	if (activeLink !== null) {
+		activeLink.classList.remove("navbar__link--active");
+	}
 };
 
 // Event Listeners
@@ -154,9 +158,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	if (window.location.pathname.includes("dashboard")) {
-		loadDashboardArticles();
 		articlesLinks.forEach(articlesLink => {
-			articlesLink.classList.add("navbar__link--active");
+			articlesLink.click();
 		});
 	}
 
@@ -176,7 +179,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 if (backBtn !== null) {
 	backBtn.addEventListener("click", () => {
-		showHomepage(mainEl, loadingDiv, singleArticleSection, singleArticleMain);
+		let main = mainEl;
+		if (dashboardMainEl !== null) {
+			main = dashboardMainEl;
+		}
+		showHomepage(main, loadingDiv, singleArticleSection, singleArticleMain);
 	});
 }
 
@@ -191,7 +198,23 @@ if (applicationForm !== null) {
 if (articlesLinks !== null) {
 	articlesLinks.forEach(articlesLink => {
 		articlesLink.addEventListener("click", () => {
-			loadDashboardArticles();
+			loadDashboardArticles(() => {
+				const publishBtns = dashboardMainEl.querySelectorAll(
+					".publish_article"
+				);
+				const viewBtns = dashboardMainEl.querySelectorAll(".view_article");
+				const deleteBtns = dashboardMainEl.querySelectorAll(".delete_article");
+				const editBtns = dashboardMainEl.querySelectorAll(".edit_article");
+				setupArticlesActions(
+					loadingDiv,
+					publishBtns,
+					deleteBtns,
+					viewBtns,
+					editBtns,
+					articlesLink,
+					{dashboardMainEl, singleArticleMain, singleArticleSection}
+				);
+			});
 			resetNavbarLinks(articlesLink);
 			articlesLink.classList.add("navbar__link--active");
 		});

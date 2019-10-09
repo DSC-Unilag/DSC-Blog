@@ -4,7 +4,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.postArticle = exports.reviewApplication = exports.deleteApplication = exports.approveApplication = exports.deleteContributor = exports.getContributors = exports.getReviewedApplications = exports.getUnreviewedApplications = exports.postApply = exports.getEndpoints = exports.getNewToken = exports.postSignIn = exports.getUnpublishedArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
+exports.publishArticle = exports.deleteArticle = exports.postArticle = exports.reviewApplication = exports.deleteApplication = exports.approveApplication = exports.deleteContributor = exports.getContributors = exports.getReviewedApplications = exports.getUnreviewedApplications = exports.postApply = exports.getEndpoints = exports.getNewToken = exports.postSignIn = exports.getUnpublishedArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
 
 var _helpers = require("../helpers.js");
 
@@ -318,13 +318,56 @@ var postArticle = function postArticle(e) {
 
 exports.postArticle = postArticle;
 
+var deleteArticle = function deleteArticle(id) {
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/articles/").concat(id),
+    method: "delete",
+    authToken: localStorage.getItem("token") || ""
+  }).then(function (res) {
+    (0, _helpers.sAlert)({
+      title: res.message,
+      message: "Done",
+      type: res.success ? "success" : "error"
+    });
+    return res.success;
+  })["catch"](function (error) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
+};
+
+exports.deleteArticle = deleteArticle;
+
+var publishArticle = function publishArticle(id) {
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/articles/publish"),
+    method: "patch",
+    data: JSON.stringify({
+      aid: id
+    }),
+    authToken: localStorage.getItem("token") || ""
+  }).then(function (res) {
+    (0, _helpers.sAlert)({
+      title: res.message,
+      message: "Done",
+      type: res.success ? "success" : "error"
+    });
+    return res.success;
+  })["catch"](function (error) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
+};
+
+exports.publishArticle = publishArticle;
+
 },{"../helpers.js":4}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.checkAuthState = exports.setupContributorActions = exports.setupApplicationActions = exports.setupPostClickEventListeners = exports.setupCategoryClickEventListeners = exports.onLoadDashboardApplications = exports.onLoadDashboardContributors = exports.onLoadDashboardArticles = exports.onLoadCategoryArticles = exports.handleDeleteContributor = exports.handleDeleteApplication = exports.handleApproveApplication = exports.handleReviewApplication = exports.showHomepage = exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = void 0;
+exports.checkAuthState = exports.setupArticlesActions = exports.setupContributorActions = exports.setupApplicationActions = exports.setupPostClickEventListeners = exports.setupCategoryClickEventListeners = exports.onLoadDashboardApplications = exports.onLoadDashboardContributors = exports.onLoadDashboardArticles = exports.onLoadCategoryArticles = exports.handleDeleteArticle = exports.handlePublishArticle = exports.handleDeleteContributor = exports.handleDeleteApplication = exports.handleApproveApplication = exports.handleReviewApplication = exports.showHomepage = exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = void 0;
 
 var _helpers = require("../helpers.js");
 
@@ -333,10 +376,12 @@ var _api = require("./api.js");
 //DOM Objects
 var archives = {
   articleHtml: function articleHtml(article) {
-    return "<article class=\"archive__card\" data-aid=".concat(article.aid, ">\n\t\t<div class=\"archive__card-img\">\n\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"Article Image\" />\n\t\t</div>\n\t\t<div class=\"archive__card-details\">\n\t\t\t<p>").concat(article.title, "</p>\n\t\t\t<p>Author: ").concat(article.user.firstname + " " + article.user.lastname, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-edit\"></i> &nbsp; Edit\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
+    var loggedInUser = JSON.parse(localStorage.getItem("refresh")).uid;
+    var ownedByUser = loggedInUser === article.user.uid;
+    return "<article class=\"archive__card\" data-aid=".concat(article.aid, ">\n\t\t<div class=\"archive__card-img\">\n\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"Article Image\" />\n\t\t</div>\n\t\t<div class=\"archive__card-details\">\n\t\t\t<p>").concat(article.title, "</p>\n\t\t\t<p>Author: ").concat(article.user.firstname + " " + article.user.lastname, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn view_article\">\n\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t</buttton>\n\t\t\t").concat(ownedByUser ? "<buttton class=\"btn actions__btn edit_article\">\n\t\t\t\t\t\t\t<i class=\"far fa-edit\"></i> &nbsp; Edit\n\t\t\t\t\t   </buttton>" : null, "\n\t\t\t<buttton class=\"btn actions__btn delete_article\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
   },
   unpublishedArticleHtml: function unpublishedArticleHtml(article) {
-    return "<article class=\"archive__card\" data-aid=".concat(article.aid, ">\n\t\t<div class=\"archive__card-img\">\n\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"Article Image\" />\n\t\t</div>\n\t\t<div class=\"archive__card-details\">\n\t\t\t<p>").concat(article.title, "</p>\n\t\t\t<p>Author: ").concat(article.user.firstname + " " + article.user.lastname, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn\">\n\t\t\t\t<i class=\"far fa-file-alt\"></i> &nbsp; Publish\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
+    return "<article class=\"archive__card\" data-aid=".concat(article.aid, ">\n\t\t<div class=\"archive__card-img\">\n\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"Article Image\" />\n\t\t</div>\n\t\t<div class=\"archive__card-details\">\n\t\t\t<p>").concat(article.title, "</p>\n\t\t\t<p>Author: ").concat(article.user.firstname + " " + article.user.lastname, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn publish_article\">\n\t\t\t\t<i class=\"far fa-file-alt\"></i> &nbsp; Publish\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn view_article\">\n\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn delete_article\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
   },
   contributorHtml: function contributorHtml(contributor) {
     return "<article class=\"archive__card\" data-uid=".concat(contributor.id, ">\n\t\t<div class=\"archive__card-details contributor__details\">\n\t\t\t<p>Name: ").concat(contributor.firstname, " ").concat(contributor.lastname, "</p>\n\t\t\t<p>Email: ").concat(contributor.email, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn delete_contributor\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
@@ -457,6 +502,34 @@ var handleDeleteContributor = function handleDeleteContributor(e, loadingDiv) {
 };
 
 exports.handleDeleteContributor = handleDeleteContributor;
+
+var handlePublishArticle = function handlePublishArticle(e, loadingDiv, onSuccess) {
+  loadingDiv.classList.remove("hide");
+  var aid = e.target.closest("[data-aid]").dataset.aid;
+  (0, _api.publishArticle)(aid).then(function (success) {
+    if (success) {
+      onSuccess();
+    }
+  })["finally"](function () {
+    loadingDiv.classList.add("hide");
+  });
+};
+
+exports.handlePublishArticle = handlePublishArticle;
+
+var handleDeleteArticle = function handleDeleteArticle(e, loadingDiv) {
+  loadingDiv.classList.remove("hide");
+  var aid = e.target.closest("[data-aid]").dataset.aid;
+  (0, _api.deleteArticle)(aid).then(function (success) {
+    if (success) {
+      e.target.closest(".archive__card").remove();
+    }
+  })["finally"](function () {
+    loadingDiv.classList.add("hide");
+  });
+};
+
+exports.handleDeleteArticle = handleDeleteArticle;
 
 var onLoadCategoryArticles = function onLoadCategoryArticles(e, loadArticles, loadingDiv, topPost) {
   var cid = e.target.closest("[data-cid]").dataset.cid;
@@ -623,10 +696,56 @@ var setupContributorActions = function setupContributorActions(loadingDiv, delet
       });
     });
   }
+};
+
+exports.setupContributorActions = setupContributorActions;
+
+var setupArticlesActions = function setupArticlesActions(loadingDiv, publishBtns, deleteBtns, viewBtns, editBtns, articlesLink, _ref) {
+  var dashboardMainEl = _ref.dashboardMainEl,
+      singleArticleMain = _ref.singleArticleMain,
+      singleArticleSection = _ref.singleArticleSection;
+
+  if (publishBtns.length > 0) {
+    publishBtns.forEach(function (publishBtn) {
+      publishBtn.addEventListener("click", function (e) {
+        (0, _helpers.sEnquire)("Are you sure you want to publish article?", function () {
+          return handlePublishArticle(e, loadingDiv, function () {
+            articlesLink.click();
+          });
+        });
+      });
+    });
+  }
+
+  if (deleteBtns.length > 0) {
+    deleteBtns.forEach(function (deleteBtn) {
+      deleteBtn.addEventListener("click", function (e) {
+        (0, _helpers.sEnquire)("Are you sure you want to delete the article?", function () {
+          return handleDeleteArticle(e, loadingDiv);
+        });
+      });
+    });
+  }
+
+  if (viewBtns.length > 0) {
+    viewBtns.forEach(function (viewBtn) {
+      viewBtn.addEventListener("click", function (e) {
+        showSingleArticle(e, dashboardMainEl, loadingDiv, singleArticleSection, singleArticleMain);
+      });
+    });
+  }
+
+  if (editBtns.length > 0) {
+    editBtns.forEach(function (editBtn) {
+      editBtn.addEventListener("click", function (e) {
+        console.log("Editing Article");
+      });
+    });
+  }
 }; //Custom
 
 
-exports.setupContributorActions = setupContributorActions;
+exports.setupArticlesActions = setupArticlesActions;
 
 var checkAuthState = function checkAuthState() {
   if (localStorage.getItem("token") && localStorage.getItem("exp") > new Date().getTime()) {
@@ -715,7 +834,7 @@ var loadHomepageElements = function loadHomepageElements() {
   });
 };
 
-var loadDashboardArticles = function loadDashboardArticles() {
+var loadDashboardArticles = function loadDashboardArticles(callback) {
   dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
   Promise.all([(0, _api.getArticles)(), (0, _api.getUnpublishedArticles)()]).then(function (result) {
     var _result2 = _slicedToArray(result, 2),
@@ -725,6 +844,7 @@ var loadDashboardArticles = function loadDashboardArticles() {
     published = published.data || [];
     unpublished = unpublished.data || [];
     (0, _dom.onLoadDashboardArticles)(published, unpublished, dashboardMainEl);
+    callback();
   });
 };
 
@@ -752,7 +872,10 @@ var loadDashboardApplications = function loadDashboardApplications(callback) {
 
 var resetNavbarLinks = function resetNavbarLinks(navLink) {
   var activeLink = navLink.parentElement.querySelector(".navbar__link--active");
-  activeLink.classList.remove("navbar__link--active");
+
+  if (activeLink !== null) {
+    activeLink.classList.remove("navbar__link--active");
+  }
 }; // Event Listeners
 
 
@@ -776,9 +899,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   if (window.location.pathname.includes("dashboard")) {
-    loadDashboardArticles();
     articlesLinks.forEach(function (articlesLink) {
-      articlesLink.classList.add("navbar__link--active");
+      articlesLink.click();
     });
   }
 
@@ -798,7 +920,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 if (backBtn !== null) {
   backBtn.addEventListener("click", function () {
-    (0, _dom.showHomepage)(mainEl, loadingDiv, singleArticleSection, singleArticleMain);
+    var main = mainEl;
+
+    if (dashboardMainEl !== null) {
+      main = dashboardMainEl;
+    }
+
+    (0, _dom.showHomepage)(main, loadingDiv, singleArticleSection, singleArticleMain);
   });
 }
 
@@ -813,7 +941,17 @@ if (applicationForm !== null) {
 if (articlesLinks !== null) {
   articlesLinks.forEach(function (articlesLink) {
     articlesLink.addEventListener("click", function () {
-      loadDashboardArticles();
+      loadDashboardArticles(function () {
+        var publishBtns = dashboardMainEl.querySelectorAll(".publish_article");
+        var viewBtns = dashboardMainEl.querySelectorAll(".view_article");
+        var deleteBtns = dashboardMainEl.querySelectorAll(".delete_article");
+        var editBtns = dashboardMainEl.querySelectorAll(".edit_article");
+        (0, _dom.setupArticlesActions)(loadingDiv, publishBtns, deleteBtns, viewBtns, editBtns, articlesLink, {
+          dashboardMainEl: dashboardMainEl,
+          singleArticleMain: singleArticleMain,
+          singleArticleSection: singleArticleSection
+        });
+      });
       resetNavbarLinks(articlesLink);
       articlesLink.classList.add("navbar__link--active");
     });
