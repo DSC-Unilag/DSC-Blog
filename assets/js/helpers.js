@@ -1,10 +1,18 @@
 import swal from "sweetalert";
 
-export const requestData = ({url, method, data = null, authToken = ""}) => {
+export const requestData = ({
+	url,
+	method,
+	data = null,
+	authToken = "",
+	type = null
+}) => {
 	const headers = {
-		"Content-Type": "application/json",
 		Authorization: authToken !== "" ? "Bearer " + authToken : authToken
 	};
+	if (!type) {
+		headers["Content-Type"] = "application/json";
+	}
 	const requestConfig = {
 		method,
 		headers

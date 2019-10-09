@@ -6,7 +6,8 @@ import {
 	postApply,
 	getContributors,
 	getReviewedApplications,
-	getUnreviewedApplications
+	getUnreviewedApplications,
+	postArticle
 } from "./actions/api.js";
 import {
 	onLoadDashboardArticles,
@@ -39,6 +40,7 @@ const contributorsLinks = document.querySelectorAll(".contributorsLink");
 const applicationsLinks = document.querySelectorAll(".applicantsLink");
 const navbarAuthLinks = document.querySelector(".navbar__registration-links");
 const mobileAuthLinks = document.querySelector(".sidenav-reg__links");
+const postArticleForm = document.getElementById("postArticleForm");
 
 //Event Callbacks
 const loadHomepageElements = () => {
@@ -143,7 +145,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	if (
 		window.location.pathname.includes("dashboard") ||
-		window.location.pathname.includes("create_account")
+		window.location.pathname.includes("create_account") ||
+		window.location.pathname.includes("post_article")
 	) {
 		if (!checkAuthState()) {
 			window.location.href = "/sign_in.html";
@@ -154,6 +157,19 @@ document.addEventListener("DOMContentLoaded", () => {
 		loadDashboardArticles();
 		articlesLinks.forEach(articlesLink => {
 			articlesLink.classList.add("navbar__link--active");
+		});
+	}
+
+	if (window.location.pathname.includes("post_article")) {
+		loadingDiv.classList.remove("hide");
+		const categorySelect = document.querySelector("select.form_field");
+		getCategories().then(result => {
+			if (result.data.length > 0) {
+				result.data.forEach(category => {
+					categorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+				});
+				loadingDiv.classList.add("hide");
+			}
 		});
 	}
 });
@@ -221,4 +237,8 @@ if (applicationsLinks !== null) {
 			applicationsLink.classList.add("navbar__link--active");
 		});
 	});
+}
+
+if (postArticleForm !== null) {
+	postArticleForm.addEventListener("submit", postArticle);
 }

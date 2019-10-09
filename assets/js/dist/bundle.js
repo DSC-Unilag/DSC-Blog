@@ -4,12 +4,12 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.reviewApplication = exports.deleteApplication = exports.approveApplication = exports.deleteContributor = exports.getContributors = exports.getReviewedApplications = exports.getUnreviewedApplications = exports.postApply = exports.getEndpoints = exports.getNewToken = exports.postSignIn = exports.getUnpublishedArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
+exports.postArticle = exports.reviewApplication = exports.deleteApplication = exports.approveApplication = exports.deleteContributor = exports.getContributors = exports.getReviewedApplications = exports.getUnreviewedApplications = exports.postApply = exports.getEndpoints = exports.getNewToken = exports.postSignIn = exports.getUnpublishedArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
 
 var _helpers = require("../helpers.js");
 
-var DEV_API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
-var API_URL = "https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app";
+var API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
+var PROD_API_URL = "https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app";
 
 var getArticles = function getArticles() {
   return (0, _helpers.requestData)({
@@ -287,6 +287,36 @@ var reviewApplication = function reviewApplication(id) {
 };
 
 exports.reviewApplication = reviewApplication;
+
+var postArticle = function postArticle(e) {
+  e.preventDefault();
+  var form = new FormData(e.target);
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/articles"),
+    method: "post",
+    data: form,
+    type: "form-data",
+    authToken: localStorage.getItem("token") || ""
+  }).then(function (res) {
+    console.log(res);
+    (0, _helpers.sAlert)({
+      title: res.success ? "Article Sent for Review" : "Something went wrong",
+      message: res.message,
+      type: res.success ? "success" : "error"
+    });
+
+    if (res.success) {
+      setTimeout(function () {
+        window.location.reload();
+      }, 1500);
+    }
+  })["catch"](function (error) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
+};
+
+exports.postArticle = postArticle;
 
 },{"../helpers.js":4}],2:[function(require,module,exports){
 "use strict";
@@ -656,7 +686,8 @@ var articlesLinks = document.querySelectorAll(".articlesLink");
 var contributorsLinks = document.querySelectorAll(".contributorsLink");
 var applicationsLinks = document.querySelectorAll(".applicantsLink");
 var navbarAuthLinks = document.querySelector(".navbar__registration-links");
-var mobileAuthLinks = document.querySelector(".sidenav-reg__links"); //Event Callbacks
+var mobileAuthLinks = document.querySelector(".sidenav-reg__links");
+var postArticleForm = document.getElementById("postArticleForm"); //Event Callbacks
 
 var loadHomepageElements = function loadHomepageElements() {
   Promise.all([(0, _api.getCategories)(), (0, _api.getArticles)()]).then(function (result) {
@@ -738,7 +769,7 @@ document.addEventListener("DOMContentLoaded", function () {
     loadHomepageElements();
   }
 
-  if (window.location.pathname.includes("dashboard") || window.location.pathname.includes("create_account")) {
+  if (window.location.pathname.includes("dashboard") || window.location.pathname.includes("create_account") || window.location.pathname.includes("post_article")) {
     if (!(0, _dom.checkAuthState)()) {
       window.location.href = "/sign_in.html";
     }
@@ -748,6 +779,19 @@ document.addEventListener("DOMContentLoaded", function () {
     loadDashboardArticles();
     articlesLinks.forEach(function (articlesLink) {
       articlesLink.classList.add("navbar__link--active");
+    });
+  }
+
+  if (window.location.pathname.includes("post_article")) {
+    loadingDiv.classList.remove("hide");
+    var categorySelect = document.querySelector("select.form_field");
+    (0, _api.getCategories)().then(function (result) {
+      if (result.data.length > 0) {
+        result.data.forEach(function (category) {
+          categorySelect.innerHTML += "<option value=\"".concat(category.id, "\">").concat(category.name, "</option>");
+        });
+        loadingDiv.classList.add("hide");
+      }
     });
   }
 });
@@ -804,6 +848,10 @@ if (applicationsLinks !== null) {
   });
 }
 
+if (postArticleForm !== null) {
+  postArticleForm.addEventListener("submit", _api.postArticle);
+}
+
 },{"./actions/api.js":1,"./actions/dom.js":2}],4:[function(require,module,exports){
 "use strict";
 
@@ -822,11 +870,17 @@ var requestData = function requestData(_ref) {
       _ref$data = _ref.data,
       data = _ref$data === void 0 ? null : _ref$data,
       _ref$authToken = _ref.authToken,
-      authToken = _ref$authToken === void 0 ? "" : _ref$authToken;
+      authToken = _ref$authToken === void 0 ? "" : _ref$authToken,
+      _ref$type = _ref.type,
+      type = _ref$type === void 0 ? null : _ref$type;
   var headers = {
-    "Content-Type": "application/json",
     Authorization: authToken !== "" ? "Bearer " + authToken : authToken
   };
+
+  if (!type) {
+    headers["Content-Type"] = "application/json";
+  }
+
   var requestConfig = {
     method: method,
     headers: headers

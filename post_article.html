@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>DSC Blog - Post Article</title>
+		<link rel="stylesheet" href="./assets/css/form_page.css" />
+	</head>
+	<body class="flx">
+		<div class="loading hide">
+			<div class="loader">Loading...</div>
+		</div>
+		<div class="left flx col al-cnt">
+			<form action="#" method="POST" id="postArticleForm">
+				<fieldset>
+					<div class="flx col al-cnt">
+						<legend>Post Article</legend>
+						<input
+							type="text"
+							class="form_field"
+							placeholder="Title"
+							name="title"
+							required
+						/>
+						<select name="categoryId" class="form_field" required>
+							<option value="">Select Category</option>
+						</select>
+						<input
+							type="file"
+							class="form_field"
+							placeholder="Article Image"
+							name="image"
+							required
+						/>
+						<textarea
+							class="form_field"
+							id="content"
+							placeholder="Article Content"
+						></textarea>
+						<input type="hidden" name="content" value="" />
+					</div>
+				</fieldset>
+				<button class="btn1">Submit</button>
+			</form>
+			<ul class="sm-icons">
+				<li class="sm-icon">
+					<a href="">
+						<img
+							src="./assets/images/facebook-logo-black.svg"
+							alt="Facebook Logo"
+						/>
+					</a>
+				</li>
+				<li class="sm-icon">
+					<a href="">
+						<img
+							src="./assets/images/twitter-logo-black.svg"
+							alt="Twitter Logo"
+						/>
+					</a>
+				</li>
+				<li class="sm-icon">
+					<a href="https://github.com/DSC-Unilag">
+						<img
+							src="./assets/images/github-logo-black.svg"
+							alt="Github Logo"
+						/>
+					</a>
+				</li>
+			</ul>
+			<p>
+				Back to Blog? &nbsp;<a href="./index.html" class="link">Click Here</a>
+			</p>
+		</div>
+		<div class="right flx col al-cnt">
+			<div class="black-bg flx col">
+				<div class="info flx col al-c-st">
+					<img src="./assets/images/dsc_logo.svg" />
+					<h1>
+						Post An Article
+					</h1>
+					<div class="border"></div>
+					<p>
+						Sub mit an article for review <br />
+						An Admin will review and publish your article after it passes the
+						review
+					</p>
+				</div>
+			</div>
+		</div>
+		<script src="https://cdn.ckeditor.com/ckeditor5/12.4.0/classic/ckeditor.js"></script>
+		<script src="./assets/js/dist/bundle.js"></script>
+		<script>
+			document.addEventListener("DOMContentLoaded", () => {
+				ClassicEditor.create(document.querySelector("#content"))
+					.then(editor => {
+						const content = document.querySelector("input[name=content]");
+						editor.model.document.on("change:data", () => {
+							content.value = editor.getData();
+						});
+					})
+					.catch(error => {
+						console.error(error);
+					});
+			});
+		</script>
+	</body>
+</html>

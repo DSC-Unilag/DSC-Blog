@@ -1,7 +1,8 @@
 import {requestData, sAlert} from "../helpers.js";
 
-const DEV_API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
-const API_URL = "https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app";
+const API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
+const PROD_API_URL =
+	"https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app";
 
 export const getArticles = () => {
 	return requestData({url: `${API_URL}/articles`, method: "get"}).catch(
@@ -174,17 +175,19 @@ export const deleteContributor = id => {
 		url: `${API_URL}/contributors/${id}`,
 		method: "delete",
 		authToken: localStorage.getItem("token") || ""
-	}).then(res => {
-		sAlert({
-			title: res.message,
-			message: "Done",
-			type: res.success ? "success" : "error"
+	})
+		.then(res => {
+			sAlert({
+				title: res.message,
+				message: "Done",
+				type: res.success ? "success" : "error"
+			});
+			return res.success;
+		})
+		.catch(error => {
+			console.log("Error Msg: " + error.message);
+			console.log(error.stack);
 		});
-		return res.success;
-	}).catch(error => {
-		console.log("Error Msg: " + error.message);
-		console.log(error.stack);
-	});
 };
 
 export const approveApplication = id => {
@@ -246,6 +249,35 @@ export const reviewApplication = id => {
 				type: res.success ? "success" : "error"
 			});
 			return res.success;
+		})
+		.catch(error => {
+			console.log("Error Msg: " + error.message);
+			console.log(error.stack);
+		});
+};
+
+export const postArticle = e => {
+	e.preventDefault();
+	const form = new FormData(e.target);
+	return requestData({
+		url: `${API_URL}/articles`,
+		method: "post",
+		data: form,
+		type: "form-data",
+		authToken: localStorage.getItem("token") || ""
+	})
+		.then(res => {
+			console.log(res);
+			sAlert({
+				title: res.success ? "Article Sent for Review" : "Something went wrong",
+				message: res.message,
+				type: res.success ? "success" : "error"
+			});
+			if (res.success) {
+				setTimeout(() => {
+					window.location.reload();
+				}, 1500);
+			}
 		})
 		.catch(error => {
 			console.log("Error Msg: " + error.message);
