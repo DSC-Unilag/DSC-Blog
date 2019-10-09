@@ -8,14 +8,13 @@ const db = admin.firestore();
 
 const postArticle = (request, response) => {
   const { title, content, categoryId } = request.body;
-  if (!title || !content || !categoryId) {
+  const [image] = request.files;
+  if (!title || !content || !categoryId || !image) {
     return response.status(400).send({
       success: false,
       message: 'Missing input/fields',
     });
   }
-
-  const [image] = request.files;
   return cloudinaryUpload(image.filepath)
     .then((result) => {
       fs.unlinkSync(image.filepath, (error) => {

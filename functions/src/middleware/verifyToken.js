@@ -17,7 +17,6 @@ const verifyToken = (request, response, next) => {
   }
   token = token.split(' ')[1];
 
-
   return jwt.verify(token, process.env.TOKEN_SECRET, (err, payload) => {
     if (err) {
       return response.status(401).send({
