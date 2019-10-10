@@ -18,7 +18,6 @@ const deleteArticle = (request, response) => {
         });
       }
       const imageID = getIdFromUrl(data.imageUrl);
-      console.log(imageID);
       return cloudinaryDestroy(imageID);
     })
     .then(() => articleRef.delete())

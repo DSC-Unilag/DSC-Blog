@@ -75,7 +75,7 @@ articleRouter.delete(
   deleteArticle,
 );
 
-articleRouter.patch(
+articleRouter.put(
   '/edit/:id',
   verifyToken,
   (req, res, next) => permissions(req, res, next, 'articles', 'update'),
