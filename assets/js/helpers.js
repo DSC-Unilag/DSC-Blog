@@ -90,24 +90,16 @@ export const sEnquire = (title, callback) => {
 	});
 };
 
-export const setCookie = (key, value, days = 1) => {
-	const date = new Date();
-	const expiresIn = date
-		.setTime(date.getTime() + days * 24 * 60 * 60 * 1000)
-		.toUTCString();
-	document.cookie = `${key}=${value}; expires=${expiresIn}`;
-	return true;
-};
-
-export const getCookie = key => {
-	const cookie = document.cookie.split(";").filter(ck => {
-		const cookiePair = ck.split("=");
-		return cookiePair[0] === key;
-	});
-	return cookie.length > 0 ? cookie[0].split("=")[1] : null;
-};
-
-export const deleteCookie = key => {
-	document.cookie = name + "=; Max-Age=-99999999;";
-	return true;
+/**
+ * Returns an array with arrays of the given size.
+ *
+ * @param myArray {Array} Array to split
+ * @param chunkSize {Integer} Size of every group
+ */
+export const chunkArray = (myArray, chunk_size) => {
+	const results = [];
+	while (myArray.length) {
+		results.push(myArray.splice(0, chunk_size));
+	}
+	return results;
 };

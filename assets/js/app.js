@@ -1,4 +1,4 @@
-import {sAlert} from "./helpers.js";
+import {sAlert, chunkArray} from "./helpers.js";
 import {
 	getArticles,
 	getUnpublishedArticles,
@@ -22,9 +22,11 @@ import {
 	setupCategoryClickEventListeners,
 	setupApplicationActions,
 	showHomepage,
-	checkAuthState,
+	isLoggedIn,
+	refreshAuthState,
 	setupContributorActions,
-	setupArticlesActions
+	setupArticlesActions,
+	logout
 } from "./actions/dom.js";
 
 //DOM Elements
@@ -46,9 +48,9 @@ const navbarAuthLinks = document.querySelector(".navbar__registration-links");
 const mobileAuthLinks = document.querySelector(".sidenav-reg__links");
 const postArticleForm = document.getElementById("postArticleForm");
 const formContainer = document.getElementById("formContainer");
-const editArticleForm = document.getElementById("editArticleForm");
 const editImageContainer = document.querySelector(".edit_image");
 const showEditImageInput = document.querySelector(".edit_image > .btn");
+const logoutBtns = document.querySelectorAll(".logout_btn");
 
 //Events
 const updateDomEvent = new Event("updateDOM");
@@ -72,7 +74,7 @@ const loadHomepageElements = () => {
 				loadingDiv
 			);
 		}
-		loadArticles(articlesResult.data, topPost);
+		window.articles = loadArticles(articlesResult.data, topPost);
 		loadingDiv.classList.add("hide");
 		const postTitles = document.querySelectorAll("p.article__title.tool > a");
 		if (postTitles !== null) {
@@ -182,14 +184,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		window.location.pathname.includes("index") ||
 		window.location.pathname === "/"
 	) {
-		if (checkAuthState()) {
-			navbarAuthLinks.innerHTML = `<a href="#" class="btn navbar__registration-link">
+		if (isLoggedIn()) {
+			navbarAuthLinks.innerHTML = `<a href="#" class="btn navbar__registration-link logout_btn">
 					LOGOUT
 				</a>`;
 			mobileAuthLinks.innerHTML = `
-			<button class="sidenav-reg__link">
+			<button class="sidenav-reg__link logout_btn">
 				LOGOUT
 			</button>`;
+			document.dispatchEvent(updateDomEvent);
 		} else {
 			navbarAuthLinks.innerHTML = `<a href="./sign_in.html" class="btn navbar__registration-link">
 					SIGN IN
@@ -198,13 +201,68 @@ document.addEventListener("DOMContentLoaded", () => {
 					SIGN UP
 				</a>`;
 			mobileAuthLinks.innerHTML = `<button class="sidenav-reg__link">
-			SIGN IN
-		</button>
-		<button class="sidenav-reg__link">
-			SIGN UP
-		</button>`;
+				SIGN IN
+			</button>
+			<button class="sidenav-reg__link">
+				SIGN UP
+			</button>`;
 		}
 		loadHomepageElements();
+		if (window.location.search.includes("page") && window.articles) {
+			let page = new URLSearchParams(window.location.search).get("page");
+			if (window.articles[page - 1].length > 0) {
+				articlesSection.innerHTML = `<div class="loader">Loading...</div>`;
+				window.articles[page - 1].forEach(article => {
+					articlesSection.innerHTML += `<article class="article">
+                <div class="article__img-wrapper">
+                    <span class="article__img-tag article__img-tag--black">${
+											article.category.name
+										}</span>
+                    <img src="${
+											article.imageUrl
+										}" alt="article" class="article__img">
+                </div>
+                <p class="article__title tool" data-aid=${
+									article.aid
+								} data-tip="Read Full Article">
+                    <a href="javascript:;">${article.title}</a>
+                </p>
+                <p class="article__details">
+                    ${getDateDiff(article.created)} / by ${article.user
+						.firstname +
+						" " +
+						article.user.lastname}
+                </p>
+                <p class="article__synopsis">
+                    ${article.content.substring(0, 100) + "..."}
+                </p>
+                <!-- <div class="article__metrics">
+                    <div class="article__views">
+                        <img src="./assets/images/options.svg" alt="options">
+                        <div class="article__viewers">
+                            <img src="./assets/images/viewer-1.png" alt="viewer">
+                            <img src="./assets/images/viewer-2.png" alt="viewer" class="img-1">
+                            <img src="./assets/images/viewer-3.png" alt="viewer" class="img-2">
+                            <img src="./assets/images/viewer-4.png" alt="viewer" class="img-3">
+                            <span>+20 more</span>
+                        </div>
+                    </div>
+                    <div class="article__stats">
+                        <div class="article__stat">
+                            <img src="./assets/images/heart.svg" alt="heart">
+                            <span>10</span>
+                        </div>
+                        <div class="article__stat">
+                            <img src="./assets/images/chat.svg" alt="heart">
+                            <span>10</span>
+                        </div>
+                    </div>
+                </div> -->
+            </article>`;
+				});
+				articlesSection.innerHTML += setupPagination(window.articles, page);
+			}
+		}
 	}
 
 	if (
@@ -212,15 +270,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		window.location.pathname.includes("create_account") ||
 		window.location.pathname.includes("post_article")
 	) {
-		if (!checkAuthState()) {
+		if (!isLoggedIn() && !refreshAuthState()) {
 			window.location.href = "/sign_in.html";
 		}
 	}
 
 	if (window.location.pathname.includes("dashboard")) {
-		articlesLinks.forEach(articlesLink => {
-			articlesLink.click();
-		});
+		articlesLinks[1].click();
 	}
 
 	if (window.location.pathname.includes("post_article")) {
@@ -347,3 +403,17 @@ if (showEditImageInput !== null) {
 		formFile.classList.remove("hide");
 	});
 }
+
+if (logoutBtns !== null) {
+	logoutBtns.forEach(logouBtn => {
+		logouBtn.addEventListener("click", logout);
+	});
+}
+
+document.addEventListener("updateDOM", () => {
+	if (logoutBtns !== null) {
+		logoutBtns.forEach(logouBtn => {
+			logouBtn.addEventListener("click", logout);
+		});
+	}
+});

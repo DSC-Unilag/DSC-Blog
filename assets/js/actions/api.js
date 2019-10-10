@@ -1,7 +1,7 @@
 import {requestData, sAlert} from "../helpers.js";
 
-const DEV_API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
-const API_URL = "https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app";
+const API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
+const PROD_API_URL = "https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app";
 
 export const getArticles = () => {
 	return requestData({url: `${API_URL}/articles`, method: "get"}).catch(
@@ -88,7 +88,7 @@ export const postSignIn = e => {
 
 export const getNewToken = tokenData => {
 	return requestData({
-		url: `${API_URL}/auth/refresh_token`,
+		url: `${API_URL}/users/auth/refresh_token`,
 		method: "post",
 		data: tokenData
 	}).catch(error => {
@@ -330,10 +330,12 @@ export const publishArticle = id => {
 export const editArticle = (e, aid) => {
 	e.preventDefault();
 	const form = new FormData(e.target);
-	console.log(Array.from(form.entries()));
+	if(form.get('image').name === ''){
+		form.delete('image');
+	}
 	return requestData({
 		url: `${API_URL}/articles/edit/${aid}`,
-		method: "patch",
+		method: "put",
 		data: form,
 		type: "form-data",
 		authToken: localStorage.getItem("token") || ""
@@ -344,11 +346,11 @@ export const editArticle = (e, aid) => {
 				message: res.message,
 				type: res.success ? "success" : "error"
 			});
-			// if (res.success) {
-			// 	setTimeout(() => {
-			// 		window.location.href = "/dashboard.html";
-			// 	}, 1500);
-			// }
+			if (res.success) {
+				setTimeout(() => {
+					window.location.href = "/dashboard.html";
+				}, 1500);
+			}
 		})
 		.catch(error => {
 			console.log("Error Msg: " + error.message);

@@ -8,8 +8,8 @@ exports.editArticle = exports.publishArticle = exports.deleteArticle = exports.p
 
 var _helpers = require("../helpers.js");
 
-var DEV_API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
-var API_URL = "https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app";
+var API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
+var PROD_API_URL = "https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app";
 
 var getArticles = function getArticles() {
   return (0, _helpers.requestData)({
@@ -110,7 +110,7 @@ exports.postSignIn = postSignIn;
 
 var getNewToken = function getNewToken(tokenData) {
   return (0, _helpers.requestData)({
-    url: "".concat(API_URL, "/auth/refresh_token"),
+    url: "".concat(API_URL, "/users/auth/refresh_token"),
     method: "post",
     data: tokenData
   })["catch"](function (error) {
@@ -364,10 +364,14 @@ exports.publishArticle = publishArticle;
 var editArticle = function editArticle(e, aid) {
   e.preventDefault();
   var form = new FormData(e.target);
-  console.log(Array.from(form.entries()));
+
+  if (form.get('image').name === '') {
+    form["delete"]('image');
+  }
+
   return (0, _helpers.requestData)({
     url: "".concat(API_URL, "/articles/edit/").concat(aid),
-    method: "patch",
+    method: "put",
     data: form,
     type: "form-data",
     authToken: localStorage.getItem("token") || ""
@@ -376,11 +380,13 @@ var editArticle = function editArticle(e, aid) {
       title: res.success ? "Article Edited" : "Something went wrong",
       message: res.message,
       type: res.success ? "success" : "error"
-    }); // if (res.success) {
-    // 	setTimeout(() => {
-    // 		window.location.href = "/dashboard.html";
-    // 	}, 1500);
-    // }
+    });
+
+    if (res.success) {
+      setTimeout(function () {
+        window.location.href = "/dashboard.html";
+      }, 1500);
+    }
   })["catch"](function (error) {
     console.log("Error Msg: " + error.message);
     console.log(error.stack);
@@ -395,7 +401,7 @@ exports.editArticle = editArticle;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.checkAuthState = exports.setupArticlesActions = exports.setupContributorActions = exports.setupApplicationActions = exports.setupPostClickEventListeners = exports.setupCategoryClickEventListeners = exports.onLoadDashboardApplications = exports.onLoadDashboardContributors = exports.onLoadDashboardArticles = exports.onLoadCategoryArticles = exports.handleDeleteArticle = exports.handlePublishArticle = exports.handleDeleteContributor = exports.handleDeleteApplication = exports.handleApproveApplication = exports.handleReviewApplication = exports.showHomepage = exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = void 0;
+exports.logout = exports.refreshAuthState = exports.isLoggedIn = exports.setupArticlesActions = exports.setupContributorActions = exports.setupApplicationActions = exports.setupPostClickEventListeners = exports.setupCategoryClickEventListeners = exports.onLoadDashboardApplications = exports.onLoadDashboardContributors = exports.onLoadDashboardArticles = exports.onLoadCategoryArticles = exports.handleDeleteArticle = exports.handlePublishArticle = exports.handleDeleteContributor = exports.handleDeleteApplication = exports.handleApproveApplication = exports.handleReviewApplication = exports.showHomepage = exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = exports.setupPagination = void 0;
 
 var _helpers = require("../helpers.js");
 
@@ -420,19 +426,45 @@ var archives = {
   unreveiwedApplicationHtml: function unreveiwedApplicationHtml(application) {
     return "<article class=\"archive__card\" data-aid=\"".concat(application.id, "\">\n\t\t<div class=\"archive__card-details contributor__details\">\n\t\t\t<p>Name: ").concat(application.firstname, " ").concat(application.lastname, "</p>\n\t\t\t<p>Email: ").concat(application.email, "</p>\n\t\t\t<p>\n\t\t\t\tReason for Applying: ").concat(application.reason, "\n\t\t\t</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn review_application\">\n\t\t\t\t<i class=\"far fa-thumbs-up\"></i> &nbsp; Review\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
   }
+};
+
+var setupPagination = function setupPagination(articles, currentPage) {
+  var htmlSpans = "";
+  var i = 0;
+
+  while (i < articles.length) {
+    if (i === 0) {
+      htmlSpans += "<span class=\"article__page-link ".concat(currentPage === 1 ? "article__page-link--active" : "", "\">\n\t\t\t<a href=\"/\">").concat(i + 1, "</a>\n\t\t\t</span>");
+      i += 1;
+      continue;
+    }
+
+    htmlSpans += "<span class=\"article__page-link ".concat(currentPage === i + 1 ? "article__page-link--active" : "", "\">\n\t\t\t<a href=\"/index.html?page=").concat(i + 1, "\">").concat(i + 1, "</a>\n\t\t</span>");
+    i += 1;
+  }
+
+  var urlParams = new URLSearchParams(window.location.search);
+  return "<div class=\"article__page-links\">\n            ".concat(htmlSpans, "\n            <a class=\"article__page-next-link\" href=\"").concat(urlParams.get("page") ? urlParams.get("page") + 1 : 2, "\">Next</a>\n        </div>");
 }; // DOM Actions
+
+
+exports.setupPagination = setupPagination;
 
 var onLoadArticles = function onLoadArticles(articlesSection) {
   articlesSection.innerHTML = "<div class=\"loader\">Loading...</div>";
   return function (articles, topPosts) {
+    var reveresedArticles = (0, _helpers.chunkArray)(articles.reverse(), 4);
+    console.log(reveresedArticles[0][0]);
     articlesSection.innerHTML = "";
 
-    if (articles.length > 0) {
-      articles.forEach(function (article) {
+    if (reveresedArticles[0].length > 0) {
+      reveresedArticles[0].forEach(function (article) {
         articlesSection.innerHTML += "<article class=\"article\">\n                <div class=\"article__img-wrapper\">\n                    <span class=\"article__img-tag article__img-tag--black\">".concat(article.category.name, "</span>\n                    <img src=\"").concat(article.imageUrl, "\" alt=\"article\" class=\"article__img\">\n                </div>\n                <p class=\"article__title tool\" data-aid=").concat(article.aid, " data-tip=\"Read Full Article\">\n                    <a href=\"javascript:;\">").concat(article.title, "</a>\n                </p>\n                <p class=\"article__details\">\n                    ").concat((0, _helpers.getDateDiff)(article.created), " / by ").concat(article.user.firstname + " " + article.user.lastname, "\n                </p>\n                <p class=\"article__synopsis\">\n                    ").concat(article.content.substring(0, 100) + "...", "\n                </p>\n                <!-- <div class=\"article__metrics\">\n                    <div class=\"article__views\">\n                        <img src=\"./assets/images/options.svg\" alt=\"options\">\n                        <div class=\"article__viewers\">\n                            <img src=\"./assets/images/viewer-1.png\" alt=\"viewer\">\n                            <img src=\"./assets/images/viewer-2.png\" alt=\"viewer\" class=\"img-1\">\n                            <img src=\"./assets/images/viewer-3.png\" alt=\"viewer\" class=\"img-2\">\n                            <img src=\"./assets/images/viewer-4.png\" alt=\"viewer\" class=\"img-3\">\n                            <span>+20 more</span>\n                        </div>\n                    </div>\n                    <div class=\"article__stats\">\n                        <div class=\"article__stat\">\n                            <img src=\"./assets/images/heart.svg\" alt=\"heart\">\n                            <span>10</span>\n                        </div>\n                        <div class=\"article__stat\">\n                            <img src=\"./assets/images/chat.svg\" alt=\"heart\">\n                            <span>10</span>\n                        </div>\n                    </div>\n                </div> -->\n            </article>");
       });
-      articlesSection.innerHTML += "<div class=\"article__page-links\">\n            <span class=\"article__page-link article__page-link--active\">1</span>\n            <span class=\"article__page-link\">2</span>\n            <span class=\"article__page-link\">3</span>\n            <span class=\"article__page-link\">...</span>\n            <a class=\"article__page-next-link\">Next</a>\n        </div>";
-      topPosts.innerHTML = "<div class=\"top-post\">\n            <div class=\"overlay\"></div>\n            <img src=\"./assets/images/camp-2-min.png\" alt=\"Post Image\" class=\"top-post__img\">\n            <p class=\"top-post__tag\">\n                <img src=\"./assets/images/play.svg\" alt=\"play\">\n                Latest Post\n            </p>\n            <p class=\"top-post__title\">\n                ".concat(articles[0].title, "\n            </p>\n            <p class=\"top-post__content\">\n                ").concat(articles[0].content.substring(0, 100) + "...", "\n            </p>\n            <div class=\"top-post__row\">\n                <a href=\"#\" class=\"top-post__link\" data-aid=").concat(articles[0].aid, ">\n                    KEEP READING\n                </a>\n                <div class=\"top-post__author-details\">\n                    <p class=\"top-post__author\">\n                    ").concat(articles[0].user.firstname + " " + articles[0].user.lastname, "\n                    </p>\n                    <p class=\"top-post__author-role\">\n                        ").concat(articles[0].user.role[0].toUpperCase() + articles[0].user.role.slice(1), "\n                    </p>\n                </div>\n            </div>\n        </div>");
+      articlesSection.innerHTML += setupPagination(reveresedArticles, 1);
+      console.log(reveresedArticles);
+      topPosts.innerHTML = "<div class=\"top-post\">\n            <div class=\"overlay\"></div>\n            <img src=\"./assets/images/camp-2-min.png\" alt=\"Post Image\" class=\"top-post__img\">\n            <p class=\"top-post__tag\">\n                <img src=\"./assets/images/play.svg\" alt=\"play\">\n                Latest Post\n            </p>\n            <p class=\"top-post__title\">\n                ".concat(reveresedArticles[0][0].title, "\n            </p>\n            <p class=\"top-post__content\">\n                ").concat(reveresedArticles[0][0].content.substring(0, 100) + "...", "\n            </p>\n            <div class=\"top-post__row\">\n                <a href=\"#\" class=\"top-post__link\" data-aid=").concat(reveresedArticles[0][0].aid, ">\n                    KEEP READING\n                </a>\n                <div class=\"top-post__author-details\">\n                    <p class=\"top-post__author\">\n                    ").concat(reveresedArticles[0][0].user.firstname + " " + reveresedArticles[0][0].user.lastname, "\n                    </p>\n                    <p class=\"top-post__author-role\">\n                        ").concat(reveresedArticles[0][0].user.role[0].toUpperCase() + reveresedArticles[0][0].user.role.slice(1), "\n                    </p>\n                </div>\n            </div>\n\t\t</div>");
+      return reveresedArticles;
     } else {
       articlesSection.innerHTML += "<p>No Articles Found</p>";
     }
@@ -776,11 +808,13 @@ var setupArticlesActions = function setupArticlesActions(loadingDiv, publishBtns
 
 exports.setupArticlesActions = setupArticlesActions;
 
-var checkAuthState = function checkAuthState() {
-  if (localStorage.getItem("token") && localStorage.getItem("exp") > new Date().getTime()) {
-    return true;
-  }
+var isLoggedIn = function isLoggedIn() {
+  return localStorage.getItem("token") && localStorage.getItem("exp") > new Date().getTime();
+};
 
+exports.isLoggedIn = isLoggedIn;
+
+var refreshAuthState = function refreshAuthState() {
   var tokenData = localStorage.getItem("refresh");
 
   if (tokenData !== null) {
@@ -801,7 +835,16 @@ var checkAuthState = function checkAuthState() {
   }
 };
 
-exports.checkAuthState = checkAuthState;
+exports.refreshAuthState = refreshAuthState;
+
+var logout = function logout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("refresh");
+  localStorage.removeItem("exp");
+  window.location.href = "/";
+};
+
+exports.logout = logout;
 
 },{"../helpers.js":4,"./api.js":1}],3:[function(require,module,exports){
 "use strict";
@@ -839,9 +882,9 @@ var navbarAuthLinks = document.querySelector(".navbar__registration-links");
 var mobileAuthLinks = document.querySelector(".sidenav-reg__links");
 var postArticleForm = document.getElementById("postArticleForm");
 var formContainer = document.getElementById("formContainer");
-var editArticleForm = document.getElementById("editArticleForm");
 var editImageContainer = document.querySelector(".edit_image");
-var showEditImageInput = document.querySelector(".edit_image > .btn"); //Events
+var showEditImageInput = document.querySelector(".edit_image > .btn");
+var logoutBtns = document.querySelectorAll(".logout_btn"); //Events
 
 var updateDomEvent = new Event("updateDOM"); //Event Callbacks
 
@@ -861,7 +904,7 @@ var loadHomepageElements = function loadHomepageElements() {
       (0, _dom.setupCategoryClickEventListeners)(categoriesList, loadArticles, topPost, loadingDiv);
     }
 
-    loadArticles(articlesResult.data, topPost);
+    window.articles = loadArticles(articlesResult.data, topPost);
     loadingDiv.classList.add("hide");
     var postTitles = document.querySelectorAll("p.article__title.tool > a");
 
@@ -956,27 +999,38 @@ var resetNavbarLinks = function resetNavbarLinks(navLink) {
 
 document.addEventListener("DOMContentLoaded", function () {
   if (window.location.pathname.includes("index") || window.location.pathname === "/") {
-    if ((0, _dom.checkAuthState)()) {
-      navbarAuthLinks.innerHTML = "<a href=\"#\" class=\"btn navbar__registration-link\">\n\t\t\t\t\tLOGOUT\n\t\t\t\t</a>";
-      mobileAuthLinks.innerHTML = "\n\t\t\t<button class=\"sidenav-reg__link\">\n\t\t\t\tLOGOUT\n\t\t\t</button>";
+    if ((0, _dom.isLoggedIn)()) {
+      navbarAuthLinks.innerHTML = "<a href=\"#\" class=\"btn navbar__registration-link logout_btn\">\n\t\t\t\t\tLOGOUT\n\t\t\t\t</a>";
+      mobileAuthLinks.innerHTML = "\n\t\t\t<button class=\"sidenav-reg__link logout_btn\">\n\t\t\t\tLOGOUT\n\t\t\t</button>";
+      document.dispatchEvent(updateDomEvent);
     } else {
       navbarAuthLinks.innerHTML = "<a href=\"./sign_in.html\" class=\"btn navbar__registration-link\">\n\t\t\t\t\tSIGN IN\n\t\t\t\t</a>\n\t\t\t\t<a href=\"./contributor_form.html\" class=\"btn navbar__registration-link\">\n\t\t\t\t\tSIGN UP\n\t\t\t\t</a>";
-      mobileAuthLinks.innerHTML = "<button class=\"sidenav-reg__link\">\n\t\t\tSIGN IN\n\t\t</button>\n\t\t<button class=\"sidenav-reg__link\">\n\t\t\tSIGN UP\n\t\t</button>";
+      mobileAuthLinks.innerHTML = "<button class=\"sidenav-reg__link\">\n\t\t\t\tSIGN IN\n\t\t\t</button>\n\t\t\t<button class=\"sidenav-reg__link\">\n\t\t\t\tSIGN UP\n\t\t\t</button>";
     }
 
     loadHomepageElements();
+
+    if (window.location.search.includes("page") && window.articles) {
+      var page = new URLSearchParams(window.location.search).get("page");
+
+      if (window.articles[page - 1].length > 0) {
+        articlesSection.innerHTML = "<div class=\"loader\">Loading...</div>";
+        window.articles[page - 1].forEach(function (article) {
+          articlesSection.innerHTML += "<article class=\"article\">\n                <div class=\"article__img-wrapper\">\n                    <span class=\"article__img-tag article__img-tag--black\">".concat(article.category.name, "</span>\n                    <img src=\"").concat(article.imageUrl, "\" alt=\"article\" class=\"article__img\">\n                </div>\n                <p class=\"article__title tool\" data-aid=").concat(article.aid, " data-tip=\"Read Full Article\">\n                    <a href=\"javascript:;\">").concat(article.title, "</a>\n                </p>\n                <p class=\"article__details\">\n                    ").concat(getDateDiff(article.created), " / by ").concat(article.user.firstname + " " + article.user.lastname, "\n                </p>\n                <p class=\"article__synopsis\">\n                    ").concat(article.content.substring(0, 100) + "...", "\n                </p>\n                <!-- <div class=\"article__metrics\">\n                    <div class=\"article__views\">\n                        <img src=\"./assets/images/options.svg\" alt=\"options\">\n                        <div class=\"article__viewers\">\n                            <img src=\"./assets/images/viewer-1.png\" alt=\"viewer\">\n                            <img src=\"./assets/images/viewer-2.png\" alt=\"viewer\" class=\"img-1\">\n                            <img src=\"./assets/images/viewer-3.png\" alt=\"viewer\" class=\"img-2\">\n                            <img src=\"./assets/images/viewer-4.png\" alt=\"viewer\" class=\"img-3\">\n                            <span>+20 more</span>\n                        </div>\n                    </div>\n                    <div class=\"article__stats\">\n                        <div class=\"article__stat\">\n                            <img src=\"./assets/images/heart.svg\" alt=\"heart\">\n                            <span>10</span>\n                        </div>\n                        <div class=\"article__stat\">\n                            <img src=\"./assets/images/chat.svg\" alt=\"heart\">\n                            <span>10</span>\n                        </div>\n                    </div>\n                </div> -->\n            </article>");
+        });
+        articlesSection.innerHTML += setupPagination(window.articles, page);
+      }
+    }
   }
 
   if (window.location.pathname.includes("dashboard") || window.location.pathname.includes("create_account") || window.location.pathname.includes("post_article")) {
-    if (!(0, _dom.checkAuthState)()) {
+    if (!(0, _dom.isLoggedIn)() && !(0, _dom.refreshAuthState)()) {
       window.location.href = "/sign_in.html";
     }
   }
 
   if (window.location.pathname.includes("dashboard")) {
-    articlesLinks.forEach(function (articlesLink) {
-      articlesLink.click();
-    });
+    articlesLinks[1].click();
   }
 
   if (window.location.pathname.includes("post_article")) {
@@ -1080,13 +1134,27 @@ if (showEditImageInput !== null) {
   });
 }
 
+if (logoutBtns !== null) {
+  logoutBtns.forEach(function (logouBtn) {
+    logouBtn.addEventListener("click", _dom.logout);
+  });
+}
+
+document.addEventListener("updateDOM", function () {
+  if (logoutBtns !== null) {
+    logoutBtns.forEach(function (logouBtn) {
+      logouBtn.addEventListener("click", _dom.logout);
+    });
+  }
+});
+
 },{"./actions/api.js":1,"./actions/dom.js":2,"./helpers.js":4}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.deleteCookie = exports.getCookie = exports.setCookie = exports.sEnquire = exports.sAlert = exports.inquire = exports.generateDate = exports.getDateDiff = exports.requestData = void 0;
+exports.chunkArray = exports.sEnquire = exports.sAlert = exports.inquire = exports.generateDate = exports.getDateDiff = exports.requestData = void 0;
 
 var _sweetalert = _interopRequireDefault(require("sweetalert"));
 
@@ -1208,35 +1276,27 @@ var sEnquire = function sEnquire(title, callback) {
     }
   });
 };
+/**
+ * Returns an array with arrays of the given size.
+ *
+ * @param myArray {Array} Array to split
+ * @param chunkSize {Integer} Size of every group
+ */
+
 
 exports.sEnquire = sEnquire;
 
-var setCookie = function setCookie(key, value) {
-  var days = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
-  var date = new Date();
-  var expiresIn = date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000).toUTCString();
-  document.cookie = "".concat(key, "=").concat(value, "; expires=").concat(expiresIn);
-  return true;
+var chunkArray = function chunkArray(myArray, chunk_size) {
+  var results = [];
+
+  while (myArray.length) {
+    results.push(myArray.splice(0, chunk_size));
+  }
+
+  return results;
 };
 
-exports.setCookie = setCookie;
-
-var getCookie = function getCookie(key) {
-  var cookie = document.cookie.split(";").filter(function (ck) {
-    var cookiePair = ck.split("=");
-    return cookiePair[0] === key;
-  });
-  return cookie.length > 0 ? cookie[0].split("=")[1] : null;
-};
-
-exports.getCookie = getCookie;
-
-var deleteCookie = function deleteCookie(key) {
-  document.cookie = name + "=; Max-Age=-99999999;";
-  return true;
-};
-
-exports.deleteCookie = deleteCookie;
+exports.chunkArray = chunkArray;
 
 },{"sweetalert":6}],5:[function(require,module,exports){
 // shim for using process in browser

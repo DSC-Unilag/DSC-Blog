@@ -1,4 +1,4 @@
-import {getDateDiff, generateDate, sEnquire} from "../helpers.js";
+import {getDateDiff, generateDate, sEnquire, chunkArray} from "../helpers.js";
 import {
 	getArticlesByCategory,
 	getSingleArticle,
@@ -113,13 +113,44 @@ const archives = {
 	}
 };
 
+export const setupPagination = (articles, currentPage) => {
+	let htmlSpans = "";
+	let i = 0;
+	while (i < articles.length) {
+		if (i === 0) {
+			htmlSpans += `<span class="article__page-link ${
+				currentPage === 1 ? "article__page-link--active" : ""
+			}">
+			<a href="/">${i + 1}</a>
+			</span>`;
+			i += 1;
+			continue;
+		}
+		htmlSpans += `<span class="article__page-link ${
+			currentPage === i + 1 ? "article__page-link--active" : ""
+		}">
+			<a href="/index.html?page=${i + 1}">${i + 1}</a>
+		</span>`;
+		i += 1;
+	}
+	const urlParams = new URLSearchParams(window.location.search);
+	return `<div class="article__page-links">
+            ${htmlSpans}
+            <a class="article__page-next-link" href="${
+							urlParams.get("page") ? urlParams.get("page") + 1 : 2
+						}">Next</a>
+        </div>`;
+};
+
 // DOM Actions
 export const onLoadArticles = articlesSection => {
 	articlesSection.innerHTML = `<div class="loader">Loading...</div>`;
 	return (articles, topPosts) => {
+		const reveresedArticles = chunkArray(articles.reverse(), 4);
+		console.log(reveresedArticles[0][0]);
 		articlesSection.innerHTML = "";
-		if (articles.length > 0) {
-			articles.forEach(article => {
+		if (reveresedArticles[0].length > 0) {
+			reveresedArticles[0].forEach(article => {
 				articlesSection.innerHTML += `<article class="article">
                 <div class="article__img-wrapper">
                     <span class="article__img-tag article__img-tag--black">${
@@ -167,13 +198,8 @@ export const onLoadArticles = articlesSection => {
                 </div> -->
             </article>`;
 			});
-			articlesSection.innerHTML += `<div class="article__page-links">
-            <span class="article__page-link article__page-link--active">1</span>
-            <span class="article__page-link">2</span>
-            <span class="article__page-link">3</span>
-            <span class="article__page-link">...</span>
-            <a class="article__page-next-link">Next</a>
-        </div>`;
+			articlesSection.innerHTML += setupPagination(reveresedArticles, 1);
+			console.log(reveresedArticles);
 			topPosts.innerHTML = `<div class="top-post">
             <div class="overlay"></div>
             <img src="./assets/images/camp-2-min.png" alt="Post Image" class="top-post__img">
@@ -182,28 +208,31 @@ export const onLoadArticles = articlesSection => {
                 Latest Post
             </p>
             <p class="top-post__title">
-                ${articles[0].title}
+                ${reveresedArticles[0][0].title}
             </p>
             <p class="top-post__content">
-                ${articles[0].content.substring(0, 100) + "..."}
+                ${reveresedArticles[0][0].content.substring(0, 100) + "..."}
             </p>
             <div class="top-post__row">
-                <a href="#" class="top-post__link" data-aid=${articles[0].aid}>
+                <a href="#" class="top-post__link" data-aid=${
+									reveresedArticles[0][0].aid
+								}>
                     KEEP READING
                 </a>
                 <div class="top-post__author-details">
                     <p class="top-post__author">
-                    ${articles[0].user.firstname +
+                    ${reveresedArticles[0][0].user.firstname +
 											" " +
-											articles[0].user.lastname}
+											reveresedArticles[0][0].user.lastname}
                     </p>
                     <p class="top-post__author-role">
-                        ${articles[0].user.role[0].toUpperCase() +
-													articles[0].user.role.slice(1)}
+                        ${reveresedArticles[0][0].user.role[0].toUpperCase() +
+													reveresedArticles[0][0].user.role.slice(1)}
                     </p>
                 </div>
             </div>
-        </div>`;
+		</div>`;
+			return reveresedArticles;
 		} else {
 			articlesSection.innerHTML += `<p>No Articles Found</p>`;
 		}
@@ -580,13 +609,14 @@ export const setupArticlesActions = (
 };
 
 //Custom
-export const checkAuthState = () => {
-	if (
+export const isLoggedIn = () => {
+	return (
 		localStorage.getItem("token") &&
 		localStorage.getItem("exp") > new Date().getTime()
-	) {
-		return true;
-	}
+	);
+};
+
+export const refreshAuthState = () => {
 	const tokenData = localStorage.getItem("refresh");
 	if (tokenData !== null) {
 		getNewToken(tokenData).then(res => {
@@ -604,4 +634,11 @@ export const checkAuthState = () => {
 	} else {
 		return false;
 	}
+};
+
+export const logout = () => {
+	localStorage.removeItem("token");
+	localStorage.removeItem("refresh");
+	localStorage.removeItem("exp");
+	window.location.href = "/";
 };

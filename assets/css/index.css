@@ -19,7 +19,9 @@ h6,
 p,
 blockquote,
 pre,
-a,
+a {
+	text-decoration: none;
+}
 abbr,
 acronym,
 address,
@@ -400,6 +402,7 @@ a.btn {
 
 .top-post > * {
 	z-index: 2;
+	color: white;
 }
 
 .top-post__img {
@@ -536,6 +539,10 @@ main {
 .post-article-btn:active {
 	background-color: var(--orange);
 	color: #fff;
+}
+
+.post-article-btn a {
+	color: inherit;
 }
 
 .categories {
@@ -957,10 +964,10 @@ main {
 }
 
 .actions__btn {
-	font-size: .8rem;
-    border: 1px solid var(--orange);
-    cursor: pointer;
-    margin: 5px;
+	font-size: 0.8rem;
+	border: 1px solid var(--orange);
+	cursor: pointer;
+	margin: 5px;
 }
 
 .actions__btn:hover,
@@ -1258,7 +1265,7 @@ footer {
 		grid-column: span 3;
 	}
 
-	.dashboard__main{
+	.dashboard__main {
 		padding: 0 30px;
 	}
 
