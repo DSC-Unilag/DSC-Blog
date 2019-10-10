@@ -1,3 +1,4 @@
+import {sAlert} from "./helpers.js";
 import {
 	getArticles,
 	getUnpublishedArticles,
@@ -7,7 +8,9 @@ import {
 	getContributors,
 	getReviewedApplications,
 	getUnreviewedApplications,
-	postArticle
+	postArticle,
+	getSingleArticle,
+	editArticle
 } from "./actions/api.js";
 import {
 	onLoadDashboardArticles,
@@ -42,6 +45,13 @@ const applicationsLinks = document.querySelectorAll(".applicantsLink");
 const navbarAuthLinks = document.querySelector(".navbar__registration-links");
 const mobileAuthLinks = document.querySelector(".sidenav-reg__links");
 const postArticleForm = document.getElementById("postArticleForm");
+const formContainer = document.getElementById("formContainer");
+const editArticleForm = document.getElementById("editArticleForm");
+const editImageContainer = document.querySelector(".edit_image");
+const showEditImageInput = document.querySelector(".edit_image > .btn");
+
+//Events
+const updateDomEvent = new Event("updateDOM");
 
 //Event Callbacks
 const loadHomepageElements = () => {
@@ -109,6 +119,56 @@ const loadDashboardApplications = callback => {
 	);
 };
 
+const loadEditArticle = (
+	aid,
+	formContainer,
+	editImageContainer,
+	sAlert,
+	loadingDiv,
+	postArticle,
+	editArticle
+) => {
+	loadingDiv.classList.remove("hide");
+	getSingleArticle(aid)
+		.then(result => {
+			const {data: article} = result;
+			const legend = formContainer.querySelector("legend");
+			const form = formContainer.querySelector("form");
+			const formTitle = formContainer.querySelector("input[name=title]");
+			const formCategoryId = formContainer.querySelector(
+				"select[name=categoryId]"
+			);
+			const formFile = formContainer.querySelector("input[type=file]");
+			const formContent = formContainer.querySelector("input[name=content]");
+			const editImage = editImageContainer.querySelector("img");
+			legend.textContent = "Edit Aticle";
+			form.id = "editArticleForm";
+			formTitle.value = article.title;
+			formCategoryId.value = article.category.cid;
+			formContent.value = article.content;
+			formFile.classList.add("hide");
+			formFile.removeAttribute("required");
+			editImage.setAttribute("src", article.imageUrl);
+			editImageContainer.classList.remove("hide");
+			loadingDiv.classList.add("hide");
+			form.removeEventListener("submit", postArticle);
+			form.addEventListener("submit", e => {
+				const urlParams = new URLSearchParams(window.location.search);
+				const aid = urlParams.get("edit");
+				editArticle(e, aid);
+			});
+			document.dispatchEvent(updateDomEvent);
+		})
+		.catch(err => {
+			sAlert({
+				title: "Something went wrong",
+				message: err.message,
+				type: "error"
+			});
+			console.log(err.stack);
+		});
+};
+
 const resetNavbarLinks = navLink => {
 	let activeLink = navLink.parentElement.querySelector(".navbar__link--active");
 	if (activeLink !== null) {
@@ -172,6 +232,19 @@ document.addEventListener("DOMContentLoaded", () => {
 					categorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
 				});
 				loadingDiv.classList.add("hide");
+				if (window.location.search.includes("edit")) {
+					const urlParams = new URLSearchParams(window.location.search);
+					const aid = urlParams.get("edit");
+					loadEditArticle(
+						aid,
+						formContainer,
+						editImageContainer,
+						sAlert,
+						loadingDiv,
+						postArticle,
+						editArticle
+					);
+				}
 			}
 		});
 	}
@@ -264,4 +337,13 @@ if (applicationsLinks !== null) {
 
 if (postArticleForm !== null) {
 	postArticleForm.addEventListener("submit", postArticle);
+}
+
+if (showEditImageInput !== null) {
+	showEditImageInput.addEventListener("click", e => {
+		const formFile = formContainer.querySelector("input[type=file]");
+		editImageContainer.classList.add("hide");
+		formFile.setAttribute("required", "true");
+		formFile.classList.remove("hide");
+	});
 }

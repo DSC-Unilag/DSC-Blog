@@ -4,12 +4,12 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.publishArticle = exports.deleteArticle = exports.postArticle = exports.reviewApplication = exports.deleteApplication = exports.approveApplication = exports.deleteContributor = exports.getContributors = exports.getReviewedApplications = exports.getUnreviewedApplications = exports.postApply = exports.getEndpoints = exports.getNewToken = exports.postSignIn = exports.getUnpublishedArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
+exports.editArticle = exports.publishArticle = exports.deleteArticle = exports.postArticle = exports.reviewApplication = exports.deleteApplication = exports.approveApplication = exports.deleteContributor = exports.getContributors = exports.getReviewedApplications = exports.getUnreviewedApplications = exports.postApply = exports.getEndpoints = exports.getNewToken = exports.postSignIn = exports.getUnpublishedArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
 
 var _helpers = require("../helpers.js");
 
-var API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
-var PROD_API_URL = "https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app";
+var DEV_API_URL = "http://localhost:5000/dsc-blog-c97d3/us-central1/app";
+var API_URL = "https://us-central1-dsc-blog-c97d3.cloudfunctions.net/app";
 
 var getArticles = function getArticles() {
   return (0, _helpers.requestData)({
@@ -360,6 +360,34 @@ var publishArticle = function publishArticle(id) {
 };
 
 exports.publishArticle = publishArticle;
+
+var editArticle = function editArticle(e, aid) {
+  e.preventDefault();
+  var form = new FormData(e.target);
+  console.log(Array.from(form.entries()));
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/articles/edit/").concat(aid),
+    method: "patch",
+    data: form,
+    type: "form-data",
+    authToken: localStorage.getItem("token") || ""
+  }).then(function (res) {
+    (0, _helpers.sAlert)({
+      title: res.success ? "Article Edited" : "Something went wrong",
+      message: res.message,
+      type: res.success ? "success" : "error"
+    }); // if (res.success) {
+    // 	setTimeout(() => {
+    // 		window.location.href = "/dashboard.html";
+    // 	}, 1500);
+    // }
+  })["catch"](function (error) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
+};
+
+exports.editArticle = editArticle;
 
 },{"../helpers.js":4}],2:[function(require,module,exports){
 "use strict";
@@ -738,7 +766,8 @@ var setupArticlesActions = function setupArticlesActions(loadingDiv, publishBtns
   if (editBtns.length > 0) {
     editBtns.forEach(function (editBtn) {
       editBtn.addEventListener("click", function (e) {
-        console.log("Editing Article");
+        var aid = e.target.closest("[data-aid]").dataset.aid;
+        window.location.href = "/post_article.html?edit=".concat(aid);
       });
     });
   }
@@ -777,6 +806,8 @@ exports.checkAuthState = checkAuthState;
 },{"../helpers.js":4,"./api.js":1}],3:[function(require,module,exports){
 "use strict";
 
+var _helpers = require("./helpers.js");
+
 var _api = require("./actions/api.js");
 
 var _dom = require("./actions/dom.js");
@@ -806,7 +837,13 @@ var contributorsLinks = document.querySelectorAll(".contributorsLink");
 var applicationsLinks = document.querySelectorAll(".applicantsLink");
 var navbarAuthLinks = document.querySelector(".navbar__registration-links");
 var mobileAuthLinks = document.querySelector(".sidenav-reg__links");
-var postArticleForm = document.getElementById("postArticleForm"); //Event Callbacks
+var postArticleForm = document.getElementById("postArticleForm");
+var formContainer = document.getElementById("formContainer");
+var editArticleForm = document.getElementById("editArticleForm");
+var editImageContainer = document.querySelector(".edit_image");
+var showEditImageInput = document.querySelector(".edit_image > .btn"); //Events
+
+var updateDomEvent = new Event("updateDOM"); //Event Callbacks
 
 var loadHomepageElements = function loadHomepageElements() {
   Promise.all([(0, _api.getCategories)(), (0, _api.getArticles)()]).then(function (result) {
@@ -870,6 +907,44 @@ var loadDashboardApplications = function loadDashboardApplications(callback) {
   });
 };
 
+var loadEditArticle = function loadEditArticle(aid, formContainer, editImageContainer, sAlert, loadingDiv, postArticle, editArticle) {
+  loadingDiv.classList.remove("hide");
+  (0, _api.getSingleArticle)(aid).then(function (result) {
+    var article = result.data;
+    var legend = formContainer.querySelector("legend");
+    var form = formContainer.querySelector("form");
+    var formTitle = formContainer.querySelector("input[name=title]");
+    var formCategoryId = formContainer.querySelector("select[name=categoryId]");
+    var formFile = formContainer.querySelector("input[type=file]");
+    var formContent = formContainer.querySelector("input[name=content]");
+    var editImage = editImageContainer.querySelector("img");
+    legend.textContent = "Edit Aticle";
+    form.id = "editArticleForm";
+    formTitle.value = article.title;
+    formCategoryId.value = article.category.cid;
+    formContent.value = article.content;
+    formFile.classList.add("hide");
+    formFile.removeAttribute("required");
+    editImage.setAttribute("src", article.imageUrl);
+    editImageContainer.classList.remove("hide");
+    loadingDiv.classList.add("hide");
+    form.removeEventListener("submit", postArticle);
+    form.addEventListener("submit", function (e) {
+      var urlParams = new URLSearchParams(window.location.search);
+      var aid = urlParams.get("edit");
+      editArticle(e, aid);
+    });
+    document.dispatchEvent(updateDomEvent);
+  })["catch"](function (err) {
+    sAlert({
+      title: "Something went wrong",
+      message: err.message,
+      type: "error"
+    });
+    console.log(err.stack);
+  });
+};
+
 var resetNavbarLinks = function resetNavbarLinks(navLink) {
   var activeLink = navLink.parentElement.querySelector(".navbar__link--active");
 
@@ -913,6 +988,12 @@ document.addEventListener("DOMContentLoaded", function () {
           categorySelect.innerHTML += "<option value=\"".concat(category.id, "\">").concat(category.name, "</option>");
         });
         loadingDiv.classList.add("hide");
+
+        if (window.location.search.includes("edit")) {
+          var urlParams = new URLSearchParams(window.location.search);
+          var aid = urlParams.get("edit");
+          loadEditArticle(aid, formContainer, editImageContainer, _helpers.sAlert, loadingDiv, _api.postArticle, _api.editArticle);
+        }
       }
     });
   }
@@ -990,7 +1071,16 @@ if (postArticleForm !== null) {
   postArticleForm.addEventListener("submit", _api.postArticle);
 }
 
-},{"./actions/api.js":1,"./actions/dom.js":2}],4:[function(require,module,exports){
+if (showEditImageInput !== null) {
+  showEditImageInput.addEventListener("click", function (e) {
+    var formFile = formContainer.querySelector("input[type=file]");
+    editImageContainer.classList.add("hide");
+    formFile.setAttribute("required", "true");
+    formFile.classList.remove("hide");
+  });
+}
+
+},{"./actions/api.js":1,"./actions/dom.js":2,"./helpers.js":4}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

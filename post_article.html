@@ -10,11 +10,15 @@
 		<div class="loading hide">
 			<div class="loader">Loading...</div>
 		</div>
-		<div class="left flx col al-cnt">
+		<div class="left flx col al-cnt" id="formContainer">
 			<form action="#" method="POST" id="postArticleForm">
 				<fieldset>
 					<div class="flx col al-cnt">
 						<legend>Post Article</legend>
+						<div class="edit_image hide">
+							<img src="" alt="Image to be Edited" />
+							<button class="btn">Edit Image</button>
+						</div>
 						<input
 							type="text"
 							class="form_field"
@@ -94,7 +98,10 @@
 			document.addEventListener("DOMContentLoaded", () => {
 				ClassicEditor.create(document.querySelector("#content"))
 					.then(editor => {
-						const content = document.querySelector("input[name=content]");
+                        const content = document.querySelector("input[name=content]");
+						document.addEventListener('updateDOM', () => {
+                            editor.setData(content.value);
+                        })
 						editor.model.document.on("change:data", () => {
 							content.value = editor.getData();
 						});

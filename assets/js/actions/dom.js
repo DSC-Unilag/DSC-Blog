@@ -572,7 +572,8 @@ export const setupArticlesActions = (
 	if (editBtns.length > 0) {
 		editBtns.forEach(editBtn => {
 			editBtn.addEventListener("click", e => {
-				console.log("Editing Article");
+				let {aid} = e.target.closest("[data-aid]").dataset;
+				window.location.href = `/post_article.html?edit=${aid}`;
 			});
 		});
 	}
