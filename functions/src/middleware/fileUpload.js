@@ -21,6 +21,10 @@ const filesUpload = (req, res, next) => {
   });
 
   busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+    if (!filename) {
+      req.body = fields;
+      return next();
+    }
     const filepath = path.join(tmpdir, filename);
     console.log(
       `Handling file upload field ${fieldname}: ${filename} (${filepath})`,

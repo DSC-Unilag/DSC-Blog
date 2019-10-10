@@ -55,11 +55,10 @@ const handleEditArticle = (
 const editArticle = (request, response) => {
   const { id } = request.params;
   const { title, content, categoryId } = request.body;
-
-  const [image] = request.files;
   let imageUrl = '';
   const articleRef = db.collection('articles').doc(id);
-  if (image) {
+  if (request.files) {
+    const [image] = request.files;
     return articleRef
       .get()
       .then((docRef) => {
@@ -92,6 +91,7 @@ const editArticle = (request, response) => {
         imageUrl,
       }));
   }
+  console.log(request.body);
   return handleEditArticle(request, response, articleRef, {
     id,
     title,
