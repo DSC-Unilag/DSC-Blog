@@ -452,18 +452,22 @@ exports.setupPagination = setupPagination;
 
 var onLoadArticles = function onLoadArticles(articlesSection) {
   articlesSection.innerHTML = "<div class=\"loader\">Loading...</div>";
-  return function (articles, topPosts) {
+  return function (articles) {
+    var topPosts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
     var reveresedArticles = (0, _helpers.chunkArray)(articles.reverse(), 4);
-    console.log(reveresedArticles[0][0]);
     articlesSection.innerHTML = "";
+    console.log(reveresedArticles);
 
-    if (reveresedArticles[0].length > 0) {
+    if (reveresedArticles.length > 0) {
       reveresedArticles[0].forEach(function (article) {
         articlesSection.innerHTML += "<article class=\"article\">\n                <div class=\"article__img-wrapper\">\n                    <span class=\"article__img-tag article__img-tag--black\">".concat(article.category.name, "</span>\n                    <img src=\"").concat(article.imageUrl, "\" alt=\"article\" class=\"article__img\">\n                </div>\n                <p class=\"article__title tool\" data-aid=").concat(article.aid, " data-tip=\"Read Full Article\">\n                    <a href=\"javascript:;\">").concat(article.title, "</a>\n                </p>\n                <p class=\"article__details\">\n                    ").concat((0, _helpers.getDateDiff)(article.created), " / by ").concat(article.user.firstname + " " + article.user.lastname, "\n                </p>\n                <p class=\"article__synopsis\">\n                    ").concat(article.content.substring(0, 100) + "...", "\n                </p>\n                <!-- <div class=\"article__metrics\">\n                    <div class=\"article__views\">\n                        <img src=\"./assets/images/options.svg\" alt=\"options\">\n                        <div class=\"article__viewers\">\n                            <img src=\"./assets/images/viewer-1.png\" alt=\"viewer\">\n                            <img src=\"./assets/images/viewer-2.png\" alt=\"viewer\" class=\"img-1\">\n                            <img src=\"./assets/images/viewer-3.png\" alt=\"viewer\" class=\"img-2\">\n                            <img src=\"./assets/images/viewer-4.png\" alt=\"viewer\" class=\"img-3\">\n                            <span>+20 more</span>\n                        </div>\n                    </div>\n                    <div class=\"article__stats\">\n                        <div class=\"article__stat\">\n                            <img src=\"./assets/images/heart.svg\" alt=\"heart\">\n                            <span>10</span>\n                        </div>\n                        <div class=\"article__stat\">\n                            <img src=\"./assets/images/chat.svg\" alt=\"heart\">\n                            <span>10</span>\n                        </div>\n                    </div>\n                </div> -->\n            </article>");
       });
       articlesSection.innerHTML += setupPagination(reveresedArticles, 1);
-      console.log(reveresedArticles);
-      topPosts.innerHTML = "<div class=\"top-post\">\n            <div class=\"overlay\"></div>\n            <img src=\"./assets/images/camp-2-min.png\" alt=\"Post Image\" class=\"top-post__img\">\n            <p class=\"top-post__tag\">\n                <img src=\"./assets/images/play.svg\" alt=\"play\">\n                Latest Post\n            </p>\n            <p class=\"top-post__title\">\n                ".concat(reveresedArticles[0][0].title, "\n            </p>\n            <p class=\"top-post__content\">\n                ").concat(reveresedArticles[0][0].content.substring(0, 100) + "...", "\n            </p>\n            <div class=\"top-post__row\">\n                <a href=\"#\" class=\"top-post__link\" data-aid=").concat(reveresedArticles[0][0].aid, ">\n                    KEEP READING\n                </a>\n                <div class=\"top-post__author-details\">\n                    <p class=\"top-post__author\">\n                    ").concat(reveresedArticles[0][0].user.firstname + " " + reveresedArticles[0][0].user.lastname, "\n                    </p>\n                    <p class=\"top-post__author-role\">\n                        ").concat(reveresedArticles[0][0].user.role[0].toUpperCase() + reveresedArticles[0][0].user.role.slice(1), "\n                    </p>\n                </div>\n            </div>\n\t\t</div>");
+
+      if (topPosts) {
+        topPosts.innerHTML = "<div class=\"top-post\">\n            <div class=\"overlay\"></div>\n            <img src=\"./assets/images/camp-2-min.png\" alt=\"Post Image\" class=\"top-post__img\">\n            <p class=\"top-post__tag\">\n                <img src=\"./assets/images/play.svg\" alt=\"play\">\n                Latest Post\n            </p>\n            <p class=\"top-post__title\">\n                ".concat(reveresedArticles[0][0].title, "\n            </p>\n            <p class=\"top-post__content\">\n                ").concat(reveresedArticles[0][0].content.substring(0, 100) + "...", "\n            </p>\n            <div class=\"top-post__row\">\n                <a href=\"#\" class=\"top-post__link\" data-aid=").concat(reveresedArticles[0][0].aid, ">\n                    KEEP READING\n                </a>\n                <div class=\"top-post__author-details\">\n                    <p class=\"top-post__author\">\n                    ").concat(reveresedArticles[0][0].user.firstname + " " + reveresedArticles[0][0].user.lastname, "\n                    </p>\n                    <p class=\"top-post__author-role\">\n                        ").concat(reveresedArticles[0][0].user.role[0].toUpperCase() + reveresedArticles[0][0].user.role.slice(1), "\n                    </p>\n                </div>\n            </div>\n\t\t</div>");
+      }
+
       return reveresedArticles;
     } else {
       articlesSection.innerHTML += "<p>No Articles Found</p>";
@@ -591,11 +595,17 @@ var handleDeleteArticle = function handleDeleteArticle(e, loadingDiv) {
 
 exports.handleDeleteArticle = handleDeleteArticle;
 
-var onLoadCategoryArticles = function onLoadCategoryArticles(e, loadArticles, loadingDiv, topPost) {
+var onLoadCategoryArticles = function onLoadCategoryArticles(e, loadArticles, loadingDiv) {
   var cid = e.target.closest("[data-cid]").dataset.cid;
+  (0, _helpers.sAlert)({
+    title: "Loading Articles",
+    message: "Please Wait",
+    type: "info"
+  });
   (0, _api.getArticlesByCategory)(cid).then(function (result) {
-    loadArticles(result.data, topPost);
-    loadingDiv.classList.add("hide");
+    document.querySelector(".categories__category--active").classList.remove("categories__category--active");
+    e.target.classList.add("categories__category--active");
+    loadArticles(result.data);
   });
 };
 
@@ -690,10 +700,10 @@ var onLoadDashboardApplications = function onLoadDashboardApplications(reviewedA
 
 exports.onLoadDashboardApplications = onLoadDashboardApplications;
 
-var setupCategoryClickEventListeners = function setupCategoryClickEventListeners(categoriesList, loadArticles, topPost, loadingDiv) {
+var setupCategoryClickEventListeners = function setupCategoryClickEventListeners(categoriesList, loadArticles, loadingDiv) {
   categoriesList.forEach(function (category) {
     category.addEventListener("click", function (e) {
-      onLoadCategoryArticles(e, loadArticles, loadingDiv, topPost);
+      onLoadCategoryArticles(e, loadArticles, loadingDiv);
     });
   });
 };
@@ -884,7 +894,8 @@ var postArticleForm = document.getElementById("postArticleForm");
 var formContainer = document.getElementById("formContainer");
 var editImageContainer = document.querySelector(".edit_image");
 var showEditImageInput = document.querySelector(".edit_image > .btn");
-var logoutBtns = document.querySelectorAll(".logout_btn"); //Events
+var logoutBtns = document.querySelectorAll(".logout_btn");
+var categoryLinks = document.querySelectorAll(".categories__category"); //Events
 
 var updateDomEvent = new Event("updateDOM"); //Event Callbacks
 
@@ -901,7 +912,7 @@ var loadHomepageElements = function loadHomepageElements() {
       var categoriesList = Array.from(categoryList.childNodes).filter(function (childNode) {
         return childNode.className === "categories__category";
       });
-      (0, _dom.setupCategoryClickEventListeners)(categoriesList, loadArticles, topPost, loadingDiv);
+      (0, _dom.setupCategoryClickEventListeners)(categoriesList, loadArticles, loadingDiv);
     }
 
     window.articles = loadArticles(articlesResult.data, topPost);
@@ -911,6 +922,8 @@ var loadHomepageElements = function loadHomepageElements() {
     if (postTitles !== null) {
       (0, _dom.setupPostClickEventListeners)(mainEl, loadingDiv, singleArticleSection, singleArticleMain, postTitles);
     }
+
+    mainEl.dispatchEvent(updateDomEvent);
   });
 };
 
@@ -1146,6 +1159,15 @@ document.addEventListener("updateDOM", function () {
       logouBtn.addEventListener("click", _dom.logout);
     });
   }
+});
+mainEl.addEventListener("updateDOM", function () {
+  categoryList.firstElementChild.addEventListener("click", function (e) {
+    (0, _api.getArticles)().then(function (articlesResult) {
+      document.querySelector(".categories__category--active").classList.remove("categories__category--active");
+      e.target.classList.add("categories__category--active");
+      (0, _dom.onLoadArticles)(articlesSection)(articlesResult.data);
+    });
+  });
 });
 
 },{"./actions/api.js":1,"./actions/dom.js":2,"./helpers.js":4}],4:[function(require,module,exports){
