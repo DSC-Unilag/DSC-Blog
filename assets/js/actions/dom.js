@@ -1,4 +1,10 @@
-import {getDateDiff, generateDate, sEnquire, chunkArray} from "../helpers.js";
+import {
+	getDateDiff,
+	generateDate,
+	sEnquire,
+	chunkArray,
+	sAlert
+} from "../helpers.js";
 import {
 	getArticlesByCategory,
 	getSingleArticle,
@@ -145,11 +151,11 @@ export const setupPagination = (articles, currentPage) => {
 // DOM Actions
 export const onLoadArticles = articlesSection => {
 	articlesSection.innerHTML = `<div class="loader">Loading...</div>`;
-	return (articles, topPosts) => {
+	return (articles, topPosts = null) => {
 		const reveresedArticles = chunkArray(articles.reverse(), 4);
-		console.log(reveresedArticles[0][0]);
 		articlesSection.innerHTML = "";
-		if (reveresedArticles[0].length > 0) {
+		console.log(reveresedArticles);
+		if (reveresedArticles.length > 0) {
 			reveresedArticles[0].forEach(article => {
 				articlesSection.innerHTML += `<article class="article">
                 <div class="article__img-wrapper">
@@ -199,8 +205,8 @@ export const onLoadArticles = articlesSection => {
             </article>`;
 			});
 			articlesSection.innerHTML += setupPagination(reveresedArticles, 1);
-			console.log(reveresedArticles);
-			topPosts.innerHTML = `<div class="top-post">
+			if (topPosts) {
+				topPosts.innerHTML = `<div class="top-post">
             <div class="overlay"></div>
             <img src="./assets/images/camp-2-min.png" alt="Post Image" class="top-post__img">
             <p class="top-post__tag">
@@ -232,6 +238,7 @@ export const onLoadArticles = articlesSection => {
                 </div>
             </div>
 		</div>`;
+			}
 			return reveresedArticles;
 		} else {
 			articlesSection.innerHTML += `<p>No Articles Found</p>`;
@@ -379,16 +386,20 @@ export const handleDeleteArticle = (e, loadingDiv) => {
 		});
 };
 
-export const onLoadCategoryArticles = (
-	e,
-	loadArticles,
-	loadingDiv,
-	topPost
-) => {
+export const onLoadCategoryArticles = (e, loadArticles, loadingDiv) => {
 	let {cid} = e.target.closest("[data-cid]").dataset;
+	sAlert({
+		title: "Loading Articles",
+		message: "Please Wait",
+		type: "info"
+	});
 	getArticlesByCategory(cid).then(result => {
-		loadArticles(result.data, topPost);
-		loadingDiv.classList.add("hide");
+		document
+			.querySelector(".categories__category--active")
+			.classList.remove("categories__category--active");
+		e.target.classList.add("categories__category--active");
+		loadArticles(result.data);
+
 	});
 };
 
@@ -476,12 +487,11 @@ export const onLoadDashboardApplications = (
 export const setupCategoryClickEventListeners = (
 	categoriesList,
 	loadArticles,
-	topPost,
 	loadingDiv
 ) => {
 	categoriesList.forEach(category => {
 		category.addEventListener("click", e => {
-			onLoadCategoryArticles(e, loadArticles, loadingDiv, topPost);
+			onLoadCategoryArticles(e, loadArticles, loadingDiv);
 		});
 	});
 };

@@ -1,4 +1,4 @@
-import {sAlert, chunkArray} from "./helpers.js";
+import {sAlert} from "./helpers.js";
 import {
 	getArticles,
 	getUnpublishedArticles,
@@ -51,6 +51,7 @@ const formContainer = document.getElementById("formContainer");
 const editImageContainer = document.querySelector(".edit_image");
 const showEditImageInput = document.querySelector(".edit_image > .btn");
 const logoutBtns = document.querySelectorAll(".logout_btn");
+const categoryLinks = document.querySelectorAll(".categories__category");
 
 //Events
 const updateDomEvent = new Event("updateDOM");
@@ -70,7 +71,6 @@ const loadHomepageElements = () => {
 			setupCategoryClickEventListeners(
 				categoriesList,
 				loadArticles,
-				topPost,
 				loadingDiv
 			);
 		}
@@ -86,6 +86,7 @@ const loadHomepageElements = () => {
 				postTitles
 			);
 		}
+		mainEl.dispatchEvent(updateDomEvent);
 	});
 };
 
@@ -416,4 +417,16 @@ document.addEventListener("updateDOM", () => {
 			logouBtn.addEventListener("click", logout);
 		});
 	}
+});
+
+mainEl.addEventListener("updateDOM", () => {
+	categoryList.firstElementChild.addEventListener("click", e => {
+		getArticles().then(articlesResult => {
+			document
+				.querySelector(".categories__category--active")
+				.classList.remove("categories__category--active");
+			e.target.classList.add("categories__category--active");
+			onLoadArticles(articlesSection)(articlesResult.data);
+		});
+	});
 });

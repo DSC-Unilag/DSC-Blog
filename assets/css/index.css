@@ -21,6 +21,7 @@ blockquote,
 pre,
 a {
 	text-decoration: none;
+	color: inherit;
 }
 abbr,
 acronym,
