@@ -2,8 +2,8 @@
 const admin = require('firebase-admin');
 const randomize = require('../../helpers/randomize');
 const passwordHash = require('../../helpers/passwordHash');
-const verifyUser = require('../../helpers/verifyUser');
 const userPermissions = require('../../helpers/userPermissions');
+const { sendMail } = require('../../helpers/mail');
 
 const db = admin.firestore();
 
@@ -15,6 +15,7 @@ const createContributor = (request, response) => {
       message: 'Missing input/fields',
     });
   }
+  let actualPassword;
   return db
     .collection('applications')
     .doc(conid)
@@ -27,7 +28,7 @@ const createContributor = (request, response) => {
           message: 'Review Application before approval',
         });
       }
-      const actualPassword = randomize(10);
+      actualPassword = randomize(10);
       const password = passwordHash.hash(actualPassword, 10);
       const role = 'contributor';
       const claims = userPermissions(role);
@@ -50,18 +51,26 @@ const createContributor = (request, response) => {
           updated: new Date().getTime(),
           created: new Date().getTime(),
         })
-        .then((newDocRef) => response.status(201).send({
+        .then(() => {
+          sendMail({
+            to: applicantData.email,
+            subject: 'Application Approved',
+            html: `<p>Your application to write for DSC Blog has been approved</p>
+                  <p>These are your login details</p>
+                  <p>Email: ${applicantData.email}</p>
+                  <p>Password: ${actualPassword}</p>`,
+          });
+        })
+        .then(() => response.status(201).send({
           success: true,
           message: 'Contributor successfully created',
           data: {
-            id: docRef.id,
             firstname: applicantData.firstname,
             lastname: applicantData.lastname,
             email: applicantData.email,
             role,
           },
         }));
-      // Email the contributor his/her details
     })
     .catch((err) => response.status(500).send({
       success: false,
