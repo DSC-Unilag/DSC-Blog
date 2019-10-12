@@ -10,7 +10,7 @@ const { verifyToken, permissions } = middleware;
 userRouter.post(
   '/createAdmin',
   verifyToken,
-  // (req, res, next) => permissions(req, res, next, 'admin', 'create'),
+  (req, res, next) => permissions(req, res, next, 'admin', 'create'),
   createAdmin,
 );
 
