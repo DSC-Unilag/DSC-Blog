@@ -454,13 +454,17 @@ var onLoadArticles = function onLoadArticles(articlesSection) {
   articlesSection.innerHTML = "<div class=\"loader\">Loading...</div>";
   return function (articles) {
     var topPosts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    var recentPosts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
     var reveresedArticles = (0, _helpers.chunkArray)(articles.reverse(), 4);
     articlesSection.innerHTML = "";
-    console.log(reveresedArticles);
 
     if (reveresedArticles.length > 0) {
       reveresedArticles[0].forEach(function (article) {
-        articlesSection.innerHTML += "<article class=\"article\">\n                <div class=\"article__img-wrapper\">\n                    <span class=\"article__img-tag article__img-tag--black\">".concat(article.category.name, "</span>\n                    <img src=\"").concat(article.imageUrl, "\" alt=\"article\" class=\"article__img\">\n                </div>\n                <p class=\"article__title tool\" data-aid=").concat(article.aid, " data-tip=\"Read Full Article\">\n                    <a href=\"javascript:;\">").concat(article.title, "</a>\n                </p>\n                <p class=\"article__details\">\n                    ").concat((0, _helpers.getDateDiff)(article.created), " / by ").concat(article.user.firstname + " " + article.user.lastname, "\n                </p>\n                <p class=\"article__synopsis\">\n                    ").concat(article.content.substring(0, 100) + "...", "\n                </p>\n                <!-- <div class=\"article__metrics\">\n                    <div class=\"article__views\">\n                        <img src=\"./assets/images/options.svg\" alt=\"options\">\n                        <div class=\"article__viewers\">\n                            <img src=\"./assets/images/viewer-1.png\" alt=\"viewer\">\n                            <img src=\"./assets/images/viewer-2.png\" alt=\"viewer\" class=\"img-1\">\n                            <img src=\"./assets/images/viewer-3.png\" alt=\"viewer\" class=\"img-2\">\n                            <img src=\"./assets/images/viewer-4.png\" alt=\"viewer\" class=\"img-3\">\n                            <span>+20 more</span>\n                        </div>\n                    </div>\n                    <div class=\"article__stats\">\n                        <div class=\"article__stat\">\n                            <img src=\"./assets/images/heart.svg\" alt=\"heart\">\n                            <span>10</span>\n                        </div>\n                        <div class=\"article__stat\">\n                            <img src=\"./assets/images/chat.svg\" alt=\"heart\">\n                            <span>10</span>\n                        </div>\n                    </div>\n                </div> -->\n            </article>");
+        articlesSection.innerHTML += "<article class=\"article\">\n\t\t\t\t\t<div class=\"article__img-wrapper\">\n\t\t\t\t\t\t<span class=\"article__img-tag article__img-tag--black\">".concat(article.category.name, "</span>\n\t\t\t\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"article\" class=\"article__img\">\n\t\t\t\t\t</div>\n\t\t\t\t\t<p class=\"article__title tool\" data-aid=").concat(article.aid, " data-tip=\"Read Full Article\">\n\t\t\t\t\t\t<a href=\"javascript:;\">").concat(article.title, "</a>\n\t\t\t\t\t</p>\n\t\t\t\t\t<p class=\"article__details\">\n\t\t\t\t\t\t").concat((0, _helpers.getDateDiff)(article.created), " / by ").concat(article.user.firstname + " " + article.user.lastname, "\n\t\t\t\t\t</p>\n\t\t\t\t\t<p class=\"article__synopsis\">\n\t\t\t\t\t\t").concat(article.content.substring(0, 100) + "...", "\n\t\t\t\t\t</p>\n\t\t\t\t\t<!-- <div class=\"article__metrics\">\n\t\t\t\t\t\t<div class=\"article__views\">\n\t\t\t\t\t\t\t<img src=\"./assets/images/options.svg\" alt=\"options\">\n\t\t\t\t\t\t\t<div class=\"article__viewers\">\n\t\t\t\t\t\t\t\t<img src=\"./assets/images/viewer-1.png\" alt=\"viewer\">\n\t\t\t\t\t\t\t\t<img src=\"./assets/images/viewer-2.png\" alt=\"viewer\" class=\"img-1\">\n\t\t\t\t\t\t\t\t<img src=\"./assets/images/viewer-3.png\" alt=\"viewer\" class=\"img-2\">\n\t\t\t\t\t\t\t\t<img src=\"./assets/images/viewer-4.png\" alt=\"viewer\" class=\"img-3\">\n\t\t\t\t\t\t\t\t<span>+20 more</span>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"article__stats\">\n\t\t\t\t\t\t\t<div class=\"article__stat\">\n\t\t\t\t\t\t\t\t<img src=\"./assets/images/heart.svg\" alt=\"heart\">\n\t\t\t\t\t\t\t\t<span>10</span>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"article__stat\">\n\t\t\t\t\t\t\t\t<img src=\"./assets/images/chat.svg\" alt=\"heart\">\n\t\t\t\t\t\t\t\t<span>10</span>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div> -->\n\t\t\t\t</article>");
+
+        if (recentPosts) {
+          recentPosts.innerHTML += "<div class=\"post\" data-aid=".concat(article.aid, ">\n\t\t\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"article image\" />\n\t\t\t\t\t<p class=\"post__time\">").concat((0, _helpers.getDateDiff)(article.created), "</p>\n\t\t\t\t\t<p class=\"post__title\">").concat(article.title, "</p>\n\t\t\t\t</div>");
+        }
       });
       articlesSection.innerHTML += setupPagination(reveresedArticles, 1);
 
@@ -710,10 +714,15 @@ var setupCategoryClickEventListeners = function setupCategoryClickEventListeners
 
 exports.setupCategoryClickEventListeners = setupCategoryClickEventListeners;
 
-var setupPostClickEventListeners = function setupPostClickEventListeners(mainEl, loadingDiv, singleArticleSection, singleArticleMain, postTitles) {
+var setupPostClickEventListeners = function setupPostClickEventListeners(mainEl, loadingDiv, singleArticleSection, singleArticleMain, postTitles, recentPostsTitles) {
   postTitles.forEach(function (postTitle) {
     postTitle.addEventListener("click", function (e) {
       return showSingleArticle(e, mainEl, loadingDiv, singleArticleSection, singleArticleMain);
+    });
+  });
+  recentPostsTitles.forEach(function (recentPostTitle) {
+    recentPostTitle.addEventListener("click", function (e) {
+      showSingleArticle(e, mainEl, loadingDiv, singleArticleSection, singleArticleMain);
     });
   });
 };
@@ -895,7 +904,7 @@ var formContainer = document.getElementById("formContainer");
 var editImageContainer = document.querySelector(".edit_image");
 var showEditImageInput = document.querySelector(".edit_image > .btn");
 var logoutBtns = document.querySelectorAll(".logout_btn");
-var categoryLinks = document.querySelectorAll(".categories__category"); //Events
+var recentPosts = document.querySelector(".recent-posts"); //Events
 
 var updateDomEvent = new Event("updateDOM"); //Event Callbacks
 
@@ -915,12 +924,13 @@ var loadHomepageElements = function loadHomepageElements() {
       (0, _dom.setupCategoryClickEventListeners)(categoriesList, loadArticles, loadingDiv);
     }
 
-    window.articles = loadArticles(articlesResult.data, topPost);
+    window.articles = loadArticles(articlesResult.data, topPost, recentPosts);
     loadingDiv.classList.add("hide");
     var postTitles = document.querySelectorAll("p.article__title.tool > a");
+    var recentPostTitles = recentPosts.querySelectorAll(".post__title");
 
     if (postTitles !== null) {
-      (0, _dom.setupPostClickEventListeners)(mainEl, loadingDiv, singleArticleSection, singleArticleMain, postTitles);
+      (0, _dom.setupPostClickEventListeners)(mainEl, loadingDiv, singleArticleSection, singleArticleMain, postTitles, recentPostTitles);
     }
 
     mainEl.dispatchEvent(updateDomEvent);

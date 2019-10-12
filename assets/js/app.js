@@ -51,7 +51,7 @@ const formContainer = document.getElementById("formContainer");
 const editImageContainer = document.querySelector(".edit_image");
 const showEditImageInput = document.querySelector(".edit_image > .btn");
 const logoutBtns = document.querySelectorAll(".logout_btn");
-const categoryLinks = document.querySelectorAll(".categories__category");
+const recentPosts = document.querySelector(".recent-posts");
 
 //Events
 const updateDomEvent = new Event("updateDOM");
@@ -74,16 +74,18 @@ const loadHomepageElements = () => {
 				loadingDiv
 			);
 		}
-		window.articles = loadArticles(articlesResult.data, topPost);
+		window.articles = loadArticles(articlesResult.data, topPost, recentPosts);
 		loadingDiv.classList.add("hide");
 		const postTitles = document.querySelectorAll("p.article__title.tool > a");
+		const recentPostTitles = recentPosts.querySelectorAll(".post__title");
 		if (postTitles !== null) {
 			setupPostClickEventListeners(
 				mainEl,
 				loadingDiv,
 				singleArticleSection,
 				singleArticleMain,
-				postTitles
+				postTitles,
+				recentPostTitles
 			);
 		}
 		mainEl.dispatchEvent(updateDomEvent);
