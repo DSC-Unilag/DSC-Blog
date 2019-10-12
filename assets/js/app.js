@@ -421,14 +421,17 @@ document.addEventListener("updateDOM", () => {
 	}
 });
 
-mainEl.addEventListener("updateDOM", () => {
-	categoryList.firstElementChild.addEventListener("click", e => {
-		getArticles().then(articlesResult => {
-			document
-				.querySelector(".categories__category--active")
-				.classList.remove("categories__category--active");
-			e.target.classList.add("categories__category--active");
-			onLoadArticles(articlesSection)(articlesResult.data);
+if(mainEl !== null){
+	mainEl.addEventListener("updateDOM", () => {
+		categoryList.firstElementChild.addEventListener("click", e => {
+			getArticles().then(articlesResult => {
+				document
+					.querySelector(".categories__category--active")
+					.classList.remove("categories__category--active");
+				e.target.classList.add("categories__category--active");
+				onLoadArticles(articlesSection)(articlesResult.data);
+			});
 		});
 	});
-});
+}
+
