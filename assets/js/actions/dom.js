@@ -151,58 +151,61 @@ export const setupPagination = (articles, currentPage) => {
 // DOM Actions
 export const onLoadArticles = articlesSection => {
 	articlesSection.innerHTML = `<div class="loader">Loading...</div>`;
-	return (articles, topPosts = null) => {
+	return (articles, topPosts = null, recentPosts = null) => {
 		const reveresedArticles = chunkArray(articles.reverse(), 4);
 		articlesSection.innerHTML = "";
-		console.log(reveresedArticles);
 		if (reveresedArticles.length > 0) {
 			reveresedArticles[0].forEach(article => {
 				articlesSection.innerHTML += `<article class="article">
-                <div class="article__img-wrapper">
-                    <span class="article__img-tag article__img-tag--black">${
-											article.category.name
-										}</span>
-                    <img src="${
-											article.imageUrl
-										}" alt="article" class="article__img">
-                </div>
-                <p class="article__title tool" data-aid=${
-									article.aid
-								} data-tip="Read Full Article">
-                    <a href="javascript:;">${article.title}</a>
-                </p>
-                <p class="article__details">
-                    ${getDateDiff(article.created)} / by ${article.user
-					.firstname +
+					<div class="article__img-wrapper">
+						<span class="article__img-tag article__img-tag--black">${
+							article.category.name
+						}</span>
+						<img src="${article.imageUrl}" alt="article" class="article__img">
+					</div>
+					<p class="article__title tool" data-aid=${
+						article.aid
+					} data-tip="Read Full Article">
+						<a href="javascript:;">${article.title}</a>
+					</p>
+					<p class="article__details">
+						${getDateDiff(article.created)} / by ${article.user.firstname +
 					" " +
 					article.user.lastname}
-                </p>
-                <p class="article__synopsis">
-                    ${article.content.substring(0, 100) + "..."}
-                </p>
-                <!-- <div class="article__metrics">
-                    <div class="article__views">
-                        <img src="./assets/images/options.svg" alt="options">
-                        <div class="article__viewers">
-                            <img src="./assets/images/viewer-1.png" alt="viewer">
-                            <img src="./assets/images/viewer-2.png" alt="viewer" class="img-1">
-                            <img src="./assets/images/viewer-3.png" alt="viewer" class="img-2">
-                            <img src="./assets/images/viewer-4.png" alt="viewer" class="img-3">
-                            <span>+20 more</span>
-                        </div>
-                    </div>
-                    <div class="article__stats">
-                        <div class="article__stat">
-                            <img src="./assets/images/heart.svg" alt="heart">
-                            <span>10</span>
-                        </div>
-                        <div class="article__stat">
-                            <img src="./assets/images/chat.svg" alt="heart">
-                            <span>10</span>
-                        </div>
-                    </div>
-                </div> -->
-            </article>`;
+					</p>
+					<p class="article__synopsis">
+						${article.content.substring(0, 100) + "..."}
+					</p>
+					<!-- <div class="article__metrics">
+						<div class="article__views">
+							<img src="./assets/images/options.svg" alt="options">
+							<div class="article__viewers">
+								<img src="./assets/images/viewer-1.png" alt="viewer">
+								<img src="./assets/images/viewer-2.png" alt="viewer" class="img-1">
+								<img src="./assets/images/viewer-3.png" alt="viewer" class="img-2">
+								<img src="./assets/images/viewer-4.png" alt="viewer" class="img-3">
+								<span>+20 more</span>
+							</div>
+						</div>
+						<div class="article__stats">
+							<div class="article__stat">
+								<img src="./assets/images/heart.svg" alt="heart">
+								<span>10</span>
+							</div>
+							<div class="article__stat">
+								<img src="./assets/images/chat.svg" alt="heart">
+								<span>10</span>
+							</div>
+						</div>
+					</div> -->
+				</article>`;
+				if (recentPosts) {
+					recentPosts.innerHTML += `<div class="post" data-aid=${article.aid}>
+					<img src="${article.imageUrl}" alt="article image" />
+					<p class="post__time">${getDateDiff(article.created)}</p>
+					<p class="post__title">${article.title}</p>
+				</div>`;
+				}
 			});
 			articlesSection.innerHTML += setupPagination(reveresedArticles, 1);
 			if (topPosts) {
@@ -399,7 +402,6 @@ export const onLoadCategoryArticles = (e, loadArticles, loadingDiv) => {
 			.classList.remove("categories__category--active");
 		e.target.classList.add("categories__category--active");
 		loadArticles(result.data);
-
 	});
 };
 
@@ -501,7 +503,8 @@ export const setupPostClickEventListeners = (
 	loadingDiv,
 	singleArticleSection,
 	singleArticleMain,
-	postTitles
+	postTitles,
+	recentPostsTitles
 ) => {
 	postTitles.forEach(postTitle => {
 		postTitle.addEventListener("click", e =>
@@ -513,6 +516,17 @@ export const setupPostClickEventListeners = (
 				singleArticleMain
 			)
 		);
+	});
+	recentPostsTitles.forEach(recentPostTitle => {
+		recentPostTitle.addEventListener("click", e => {
+			showSingleArticle(
+				e,
+				mainEl,
+				loadingDiv,
+				singleArticleSection,
+				singleArticleMain
+			);
+		});
 	});
 };
 
