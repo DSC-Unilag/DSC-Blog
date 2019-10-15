@@ -6,10 +6,11 @@ const publishArticle = require('./publishArticle');
 const getArticle = require('./getArticle');
 const deleteArticle = require('./deleteArticle');
 const editArticle = require('./editArticle');
+// const {upload} = require("../../helpers/firebaseUpload");
 
 const articleRouter = Router();
 
-const { verifyToken, permissions, fileUpload } = middleware;
+const { verifyToken, permissions, gcFileActions } = middleware;
 
 articleRouter.get(
   '/',
@@ -57,7 +58,7 @@ articleRouter.post(
   '/',
   verifyToken,
   (req, res, next) => permissions(req, res, next, 'articles', 'create'),
-  fileUpload,
+  gcFileActions.fileUpload,
   postArticle,
 );
 
@@ -79,7 +80,7 @@ articleRouter.put(
   '/edit/:id',
   verifyToken,
   (req, res, next) => permissions(req, res, next, 'articles', 'update'),
-  fileUpload,
+  gcFileActions.fileUpload,
   editArticle,
 );
 

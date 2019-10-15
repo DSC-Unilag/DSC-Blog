@@ -6,6 +6,7 @@ const {
   cloudinaryDestroy,
   getIdFromUrl,
 } = require('../../helpers/cloudinary');
+const { deleteFile } = require('../../middleware/gcloudStorage');
 
 const db = admin.firestore();
 
@@ -57,7 +58,7 @@ const editArticle = (request, response) => {
   const { title, content, categoryId } = request.body;
   let imageUrl = '';
   const articleRef = db.collection('articles').doc(id);
-  const [image] = request.files;
+  const image = request.file;
   if (image) {
     return articleRef
       .get()
@@ -72,12 +73,11 @@ const editArticle = (request, response) => {
         const imageID = getIdFromUrl(doc.imageUrl);
         return cloudinaryDestroy(imageID);
       })
-      .then(() => cloudinaryUpload(image.filepath))
+      .then(() => cloudinaryUpload(image))
       .then((result) => {
-        fs.unlinkSync(image.filepath, (error) => {
-          if (error) throw new Error(error.message);
+        deleteFile(image.split('/')[4]).then(() => {
+          imageUrl = result.secure_url;
         });
-        imageUrl = result.secure_url;
       })
       .catch(() => response.status(500).send({
         success: false,
