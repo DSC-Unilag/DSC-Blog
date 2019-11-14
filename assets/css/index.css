@@ -825,7 +825,7 @@ main {
 	width: 100%;
 	padding: 0 50px;
 	flex-wrap: wrap;
-	justify-content: space-evenly;
+	justify-content: space-between;
 }
 
 .archive .empty {
