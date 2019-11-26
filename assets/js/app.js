@@ -52,6 +52,7 @@ const editImageContainer = document.querySelector(".edit_image");
 const showEditImageInput = document.querySelector(".edit_image > .btn");
 const logoutBtns = document.querySelectorAll(".logout_btn");
 const recentPosts = document.querySelector(".recent-posts");
+const postArticleLinkBtn = document.querySelector('.post-article-btn');
 
 //Events
 const updateDomEvent = new Event("updateDOM");
@@ -181,6 +182,15 @@ const resetNavbarLinks = navLink => {
 	}
 };
 
+const setupLogoutClickEvents = () => {
+	const logoutBtns = document.querySelectorAll(".logout_btn");
+	if (logoutBtns !== null) {
+		logoutBtns.forEach(logoutBtn => {
+			logoutBtn.addEventListener("click", logout);
+		});
+	}
+}
+
 // Event Listeners
 document.addEventListener("DOMContentLoaded", () => {
 	if (
@@ -195,7 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			<button class="sidenav-reg__link logout_btn">
 				LOGOUT
 			</button>`;
-			document.dispatchEvent(updateDomEvent);
+			setupLogoutClickEvents();
 		} else {
 			navbarAuthLinks.innerHTML = `<a href="./sign_in.html" class="btn navbar__registration-link">
 					SIGN IN
@@ -203,12 +213,15 @@ document.addEventListener("DOMContentLoaded", () => {
 				<a href="./contributor_form.html" class="btn navbar__registration-link">
 					SIGN UP
 				</a>`;
-			mobileAuthLinks.innerHTML = `<button class="sidenav-reg__link">
-				SIGN IN
-			</button>
-			<button class="sidenav-reg__link">
-				SIGN UP
-			</button>`;
+			mobileAuthLinks.innerHTML = `<a href="./sign_in.html" class="btn sidenav-reg__link">
+					SIGN IN
+				</a>
+				<a
+					href="./contributor_form.html"
+					class="btn sidenav-reg__link"
+				>
+					SIGN UP
+				</a>`;
 		}
 		loadHomepageElements();
 		if (window.location.search.includes("page") && window.articles) {
@@ -408,20 +421,12 @@ if (showEditImageInput !== null) {
 }
 
 if (logoutBtns !== null) {
-	logoutBtns.forEach(logouBtn => {
-		logouBtn.addEventListener("click", logout);
+	logoutBtns.forEach(logoutBtn => {
+		logoutBtn.addEventListener("click", logout);
 	});
 }
 
-document.addEventListener("updateDOM", () => {
-	if (logoutBtns !== null) {
-		logoutBtns.forEach(logouBtn => {
-			logouBtn.addEventListener("click", logout);
-		});
-	}
-});
-
-if(mainEl !== null){
+if (mainEl !== null) {
 	mainEl.addEventListener("updateDOM", () => {
 		categoryList.firstElementChild.addEventListener("click", e => {
 			getArticles().then(articlesResult => {
@@ -435,3 +440,8 @@ if(mainEl !== null){
 	});
 }
 
+if(postArticleLinkBtn !== null){
+	postArticleLinkBtn.addEventListener('click', () => {
+		window.location.href = '/post_article.html';
+	})
+}

@@ -904,7 +904,8 @@ var formContainer = document.getElementById("formContainer");
 var editImageContainer = document.querySelector(".edit_image");
 var showEditImageInput = document.querySelector(".edit_image > .btn");
 var logoutBtns = document.querySelectorAll(".logout_btn");
-var recentPosts = document.querySelector(".recent-posts"); //Events
+var recentPosts = document.querySelector(".recent-posts");
+var postArticleLinkBtn = document.querySelector('.post-article-btn'); //Events
 
 var updateDomEvent = new Event("updateDOM"); //Event Callbacks
 
@@ -1017,6 +1018,16 @@ var resetNavbarLinks = function resetNavbarLinks(navLink) {
   if (activeLink !== null) {
     activeLink.classList.remove("navbar__link--active");
   }
+};
+
+var setupLogoutClickEvents = function setupLogoutClickEvents() {
+  var logoutBtns = document.querySelectorAll(".logout_btn");
+
+  if (logoutBtns !== null) {
+    logoutBtns.forEach(function (logoutBtn) {
+      logoutBtn.addEventListener("click", _dom.logout);
+    });
+  }
 }; // Event Listeners
 
 
@@ -1025,10 +1036,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if ((0, _dom.isLoggedIn)()) {
       navbarAuthLinks.innerHTML = "<a href=\"#\" class=\"btn navbar__registration-link logout_btn\">\n\t\t\t\t\tLOGOUT\n\t\t\t\t</a>";
       mobileAuthLinks.innerHTML = "\n\t\t\t<button class=\"sidenav-reg__link logout_btn\">\n\t\t\t\tLOGOUT\n\t\t\t</button>";
-      document.dispatchEvent(updateDomEvent);
+      setupLogoutClickEvents();
     } else {
       navbarAuthLinks.innerHTML = "<a href=\"./sign_in.html\" class=\"btn navbar__registration-link\">\n\t\t\t\t\tSIGN IN\n\t\t\t\t</a>\n\t\t\t\t<a href=\"./contributor_form.html\" class=\"btn navbar__registration-link\">\n\t\t\t\t\tSIGN UP\n\t\t\t\t</a>";
-      mobileAuthLinks.innerHTML = "<button class=\"sidenav-reg__link\">\n\t\t\t\tSIGN IN\n\t\t\t</button>\n\t\t\t<button class=\"sidenav-reg__link\">\n\t\t\t\tSIGN UP\n\t\t\t</button>";
+      mobileAuthLinks.innerHTML = "<a href=\"./sign_in.html\" class=\"btn sidenav-reg__link\">\n\t\t\t\t\tSIGN IN\n\t\t\t\t</a>\n\t\t\t\t<a\n\t\t\t\t\thref=\"./contributor_form.html\"\n\t\t\t\t\tclass=\"btn sidenav-reg__link\"\n\t\t\t\t>\n\t\t\t\t\tSIGN UP\n\t\t\t\t</a>";
     }
 
     loadHomepageElements();
@@ -1158,27 +1169,28 @@ if (showEditImageInput !== null) {
 }
 
 if (logoutBtns !== null) {
-  logoutBtns.forEach(function (logouBtn) {
-    logouBtn.addEventListener("click", _dom.logout);
+  logoutBtns.forEach(function (logoutBtn) {
+    logoutBtn.addEventListener("click", _dom.logout);
   });
 }
 
-document.addEventListener("updateDOM", function () {
-  if (logoutBtns !== null) {
-    logoutBtns.forEach(function (logouBtn) {
-      logouBtn.addEventListener("click", _dom.logout);
-    });
-  }
-});
-mainEl.addEventListener("updateDOM", function () {
-  categoryList.firstElementChild.addEventListener("click", function (e) {
-    (0, _api.getArticles)().then(function (articlesResult) {
-      document.querySelector(".categories__category--active").classList.remove("categories__category--active");
-      e.target.classList.add("categories__category--active");
-      (0, _dom.onLoadArticles)(articlesSection)(articlesResult.data);
+if (mainEl !== null) {
+  mainEl.addEventListener("updateDOM", function () {
+    categoryList.firstElementChild.addEventListener("click", function (e) {
+      (0, _api.getArticles)().then(function (articlesResult) {
+        document.querySelector(".categories__category--active").classList.remove("categories__category--active");
+        e.target.classList.add("categories__category--active");
+        (0, _dom.onLoadArticles)(articlesSection)(articlesResult.data);
+      });
     });
   });
-});
+}
+
+if (postArticleLinkBtn !== null) {
+  postArticleLinkBtn.addEventListener('click', function () {
+    window.location.href = '/post_article.html';
+  });
+}
 
 },{"./actions/api.js":1,"./actions/dom.js":2,"./helpers.js":4}],4:[function(require,module,exports){
 "use strict";
