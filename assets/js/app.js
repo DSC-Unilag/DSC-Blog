@@ -96,6 +96,7 @@ const loadHomepageElements = () => {
 const loadDashboardArticles = callback => {
 	dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
 	Promise.all([getArticles(), getUnpublishedArticles()]).then(result => {
+		console.log(result);
 		let [published, unpublished] = result;
 		published = published.data || [];
 		unpublished = unpublished.data || [];

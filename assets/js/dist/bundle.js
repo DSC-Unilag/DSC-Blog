@@ -412,7 +412,7 @@ var archives = {
   articleHtml: function articleHtml(article) {
     var loggedInUser = JSON.parse(localStorage.getItem("refresh")).uid;
     var ownedByUser = loggedInUser === article.user.uid;
-    return "<article class=\"archive__card\" data-aid=".concat(article.aid, ">\n\t\t<div class=\"archive__card-img\">\n\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"Article Image\" />\n\t\t</div>\n\t\t<div class=\"archive__card-details\">\n\t\t\t<p>").concat(article.title, "</p>\n\t\t\t<p>Author: ").concat(article.user.firstname + " " + article.user.lastname, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn view_article\">\n\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t</buttton>\n\t\t\t").concat(ownedByUser ? "<buttton class=\"btn actions__btn edit_article\">\n\t\t\t\t\t\t\t<i class=\"far fa-edit\"></i> &nbsp; Edit\n\t\t\t\t\t   </buttton>" : null, "\n\t\t\t<buttton class=\"btn actions__btn delete_article\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
+    return "<article class=\"archive__card\" data-aid=".concat(article.aid, ">\n\t\t<div class=\"archive__card-img\">\n\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"Article Image\" />\n\t\t</div>\n\t\t<div class=\"archive__card-details\">\n\t\t\t<p>").concat(article.title, "</p>\n\t\t\t<p>Author: ").concat(article.user.firstname + " " + article.user.lastname, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn view_article\">\n\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t</buttton>\n\t\t\t").concat(ownedByUser ? "<buttton class=\"btn actions__btn edit_article\">\n\t\t\t\t\t\t\t<i class=\"far fa-edit\"></i> &nbsp; Edit\n\t\t\t\t\t   </buttton>" : '', "\n\t\t\t<buttton class=\"btn actions__btn delete_article\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
   },
   unpublishedArticleHtml: function unpublishedArticleHtml(article) {
     return "<article class=\"archive__card\" data-aid=".concat(article.aid, ">\n\t\t<div class=\"archive__card-img\">\n\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"Article Image\" />\n\t\t</div>\n\t\t<div class=\"archive__card-details\">\n\t\t\t<p>").concat(article.title, "</p>\n\t\t\t<p>Author: ").concat(article.user.firstname + " " + article.user.lastname, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn publish_article\">\n\t\t\t\t<i class=\"far fa-file-alt\"></i> &nbsp; Publish\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn view_article\">\n\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn delete_article\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
@@ -941,6 +941,8 @@ var loadHomepageElements = function loadHomepageElements() {
 var loadDashboardArticles = function loadDashboardArticles(callback) {
   dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
   Promise.all([(0, _api.getArticles)(), (0, _api.getUnpublishedArticles)()]).then(function (result) {
+    console.log(result);
+
     var _result2 = _slicedToArray(result, 2),
         published = _result2[0],
         unpublished = _result2[1];
