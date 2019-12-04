@@ -39,7 +39,7 @@ const archives = {
 					? `<buttton class="btn actions__btn edit_article">
 							<i class="far fa-edit"></i> &nbsp; Edit
 					   </buttton>`
-					: null
+					: ''
 			}
 			<buttton class="btn actions__btn delete_article">
 				<i class="far fa-trash-alt"></i> &nbsp; Delete

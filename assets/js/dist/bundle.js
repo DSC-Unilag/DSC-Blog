@@ -412,7 +412,7 @@ var archives = {
   articleHtml: function articleHtml(article) {
     var loggedInUser = JSON.parse(localStorage.getItem("refresh")).uid;
     var ownedByUser = loggedInUser === article.user.uid;
-    return "<article class=\"archive__card\" data-aid=".concat(article.aid, ">\n\t\t<div class=\"archive__card-img\">\n\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"Article Image\" />\n\t\t</div>\n\t\t<div class=\"archive__card-details\">\n\t\t\t<p>").concat(article.title, "</p>\n\t\t\t<p>Author: ").concat(article.user.firstname + " " + article.user.lastname, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn view_article\">\n\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t</buttton>\n\t\t\t").concat(ownedByUser ? "<buttton class=\"btn actions__btn edit_article\">\n\t\t\t\t\t\t\t<i class=\"far fa-edit\"></i> &nbsp; Edit\n\t\t\t\t\t   </buttton>" : null, "\n\t\t\t<buttton class=\"btn actions__btn delete_article\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
+    return "<article class=\"archive__card\" data-aid=".concat(article.aid, ">\n\t\t<div class=\"archive__card-img\">\n\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"Article Image\" />\n\t\t</div>\n\t\t<div class=\"archive__card-details\">\n\t\t\t<p>").concat(article.title, "</p>\n\t\t\t<p>Author: ").concat(article.user.firstname + " " + article.user.lastname, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn view_article\">\n\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t</buttton>\n\t\t\t").concat(ownedByUser ? "<buttton class=\"btn actions__btn edit_article\">\n\t\t\t\t\t\t\t<i class=\"far fa-edit\"></i> &nbsp; Edit\n\t\t\t\t\t   </buttton>" : '', "\n\t\t\t<buttton class=\"btn actions__btn delete_article\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
   },
   unpublishedArticleHtml: function unpublishedArticleHtml(article) {
     return "<article class=\"archive__card\" data-aid=".concat(article.aid, ">\n\t\t<div class=\"archive__card-img\">\n\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"Article Image\" />\n\t\t</div>\n\t\t<div class=\"archive__card-details\">\n\t\t\t<p>").concat(article.title, "</p>\n\t\t\t<p>Author: ").concat(article.user.firstname + " " + article.user.lastname, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn publish_article\">\n\t\t\t\t<i class=\"far fa-file-alt\"></i> &nbsp; Publish\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn view_article\">\n\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn delete_article\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
@@ -904,7 +904,8 @@ var formContainer = document.getElementById("formContainer");
 var editImageContainer = document.querySelector(".edit_image");
 var showEditImageInput = document.querySelector(".edit_image > .btn");
 var logoutBtns = document.querySelectorAll(".logout_btn");
-var recentPosts = document.querySelector(".recent-posts"); //Events
+var recentPosts = document.querySelector(".recent-posts");
+var postArticleLinkBtn = document.querySelector('.post-article-btn'); //Events
 
 var updateDomEvent = new Event("updateDOM"); //Event Callbacks
 
@@ -940,6 +941,8 @@ var loadHomepageElements = function loadHomepageElements() {
 var loadDashboardArticles = function loadDashboardArticles(callback) {
   dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
   Promise.all([(0, _api.getArticles)(), (0, _api.getUnpublishedArticles)()]).then(function (result) {
+    console.log(result);
+
     var _result2 = _slicedToArray(result, 2),
         published = _result2[0],
         unpublished = _result2[1];
@@ -1017,6 +1020,16 @@ var resetNavbarLinks = function resetNavbarLinks(navLink) {
   if (activeLink !== null) {
     activeLink.classList.remove("navbar__link--active");
   }
+};
+
+var setupLogoutClickEvents = function setupLogoutClickEvents() {
+  var logoutBtns = document.querySelectorAll(".logout_btn");
+
+  if (logoutBtns !== null) {
+    logoutBtns.forEach(function (logoutBtn) {
+      logoutBtn.addEventListener("click", _dom.logout);
+    });
+  }
 }; // Event Listeners
 
 
@@ -1025,10 +1038,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if ((0, _dom.isLoggedIn)()) {
       navbarAuthLinks.innerHTML = "<a href=\"#\" class=\"btn navbar__registration-link logout_btn\">\n\t\t\t\t\tLOGOUT\n\t\t\t\t</a>";
       mobileAuthLinks.innerHTML = "\n\t\t\t<button class=\"sidenav-reg__link logout_btn\">\n\t\t\t\tLOGOUT\n\t\t\t</button>";
-      document.dispatchEvent(updateDomEvent);
+      setupLogoutClickEvents();
     } else {
       navbarAuthLinks.innerHTML = "<a href=\"./sign_in.html\" class=\"btn navbar__registration-link\">\n\t\t\t\t\tSIGN IN\n\t\t\t\t</a>\n\t\t\t\t<a href=\"./contributor_form.html\" class=\"btn navbar__registration-link\">\n\t\t\t\t\tSIGN UP\n\t\t\t\t</a>";
-      mobileAuthLinks.innerHTML = "<button class=\"sidenav-reg__link\">\n\t\t\t\tSIGN IN\n\t\t\t</button>\n\t\t\t<button class=\"sidenav-reg__link\">\n\t\t\t\tSIGN UP\n\t\t\t</button>";
+      mobileAuthLinks.innerHTML = "<a href=\"./sign_in.html\" class=\"btn sidenav-reg__link\">\n\t\t\t\t\tSIGN IN\n\t\t\t\t</a>\n\t\t\t\t<a\n\t\t\t\t\thref=\"./contributor_form.html\"\n\t\t\t\t\tclass=\"btn sidenav-reg__link\"\n\t\t\t\t>\n\t\t\t\t\tSIGN UP\n\t\t\t\t</a>";
     }
 
     loadHomepageElements();
@@ -1158,27 +1171,28 @@ if (showEditImageInput !== null) {
 }
 
 if (logoutBtns !== null) {
-  logoutBtns.forEach(function (logouBtn) {
-    logouBtn.addEventListener("click", _dom.logout);
+  logoutBtns.forEach(function (logoutBtn) {
+    logoutBtn.addEventListener("click", _dom.logout);
   });
 }
 
-document.addEventListener("updateDOM", function () {
-  if (logoutBtns !== null) {
-    logoutBtns.forEach(function (logouBtn) {
-      logouBtn.addEventListener("click", _dom.logout);
-    });
-  }
-});
-mainEl.addEventListener("updateDOM", function () {
-  categoryList.firstElementChild.addEventListener("click", function (e) {
-    (0, _api.getArticles)().then(function (articlesResult) {
-      document.querySelector(".categories__category--active").classList.remove("categories__category--active");
-      e.target.classList.add("categories__category--active");
-      (0, _dom.onLoadArticles)(articlesSection)(articlesResult.data);
+if (mainEl !== null) {
+  mainEl.addEventListener("updateDOM", function () {
+    categoryList.firstElementChild.addEventListener("click", function (e) {
+      (0, _api.getArticles)().then(function (articlesResult) {
+        document.querySelector(".categories__category--active").classList.remove("categories__category--active");
+        e.target.classList.add("categories__category--active");
+        (0, _dom.onLoadArticles)(articlesSection)(articlesResult.data);
+      });
     });
   });
-});
+}
+
+if (postArticleLinkBtn !== null) {
+  postArticleLinkBtn.addEventListener('click', function () {
+    window.location.href = '/post_article.html';
+  });
+}
 
 },{"./actions/api.js":1,"./actions/dom.js":2,"./helpers.js":4}],4:[function(require,module,exports){
 "use strict";

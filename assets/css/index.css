@@ -155,10 +155,11 @@ body {
 	background-color: var(--orange);
 	border-radius: 5px;
 	font-family: "Raleway Semibold", sans-serif;
-	font-size: 14px;
+	font-size: .8rem;
 	color: white;
 	outline: none;
 	border: none;
+	cursor: pointer;
 }
 
 a.btn {
@@ -912,6 +913,10 @@ main {
 	width: 25rem;
 }
 
+.swal-footer {
+	text-align: center;
+}
+
 footer {
 	padding: 90px 0 37px;
 	display: flex;
@@ -1246,6 +1251,10 @@ footer {
 
 	.single__article-content {
 		font-size: 1.15rem;
+	}
+	.back-btn {
+		padding: .6rem .4rem;
+		font-size: 0.7rem;
 	}
 }
 
