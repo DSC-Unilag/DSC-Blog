@@ -4,7 +4,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.editArticle = exports.publishArticle = exports.deleteArticle = exports.postArticle = exports.reviewApplication = exports.deleteApplication = exports.approveApplication = exports.deleteContributor = exports.getContributors = exports.getReviewedApplications = exports.getUnreviewedApplications = exports.postApply = exports.getEndpoints = exports.getNewToken = exports.postSignIn = exports.getUnpublishedArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
+exports.postModifyPassword = exports.editArticle = exports.publishArticle = exports.deleteArticle = exports.postArticle = exports.reviewApplication = exports.deleteApplication = exports.approveApplication = exports.deleteContributor = exports.getContributors = exports.getReviewedApplications = exports.getUnreviewedApplications = exports.postApply = exports.getEndpoints = exports.getNewToken = exports.postSignIn = exports.getUnpublishedArticles = exports.getArticlesByCategory = exports.getCategories = exports.getSingleArticle = exports.getArticles = void 0;
 
 var _helpers = require("../helpers.js");
 
@@ -365,8 +365,8 @@ var editArticle = function editArticle(e, aid) {
   e.preventDefault();
   var form = new FormData(e.target);
 
-  if (form.get('image').name === '') {
-    form["delete"]('image');
+  if (form.get("image").name === "") {
+    form["delete"]("image");
   }
 
   return (0, _helpers.requestData)({
@@ -394,6 +394,49 @@ var editArticle = function editArticle(e, aid) {
 };
 
 exports.editArticle = editArticle;
+
+var postModifyPassword = function postModifyPassword(e) {
+  e.preventDefault();
+  var form = new FormData(e.target);
+
+  if (form.get("password") !== form.get("confirm_password")) {
+    (0, _helpers.sAlert)({
+      title: "Passwords don't match",
+      message: "Check Passwords",
+      type: "error"
+    });
+    return;
+  }
+
+  var urlParams = new URLSearchParams(window.location.search);
+  return (0, _helpers.requestData)({
+    url: "".concat(API_URL, "/auth/password"),
+    method: "post",
+    data: JSON.stringify({
+      password: form.get("password"),
+      token: urlParams.get('token'),
+      email: urlParams.get('email')
+    })
+  }).then(function (res) {
+    console.log(res);
+    (0, _helpers.sAlert)({
+      title: res.success ? "Password Modified" : "Something went wrong",
+      message: res.message,
+      type: res.success ? "success" : "error"
+    });
+
+    if (res.success) {
+      setTimeout(function () {
+        window.location.href = "/sign_in.html";
+      }, 1500);
+    }
+  })["catch"](function (error) {
+    console.log("Error Msg: " + error.message);
+    console.log(error.stack);
+  });
+};
+
+exports.postModifyPassword = postModifyPassword;
 
 },{"../helpers.js":4}],2:[function(require,module,exports){
 "use strict";
@@ -893,6 +936,7 @@ var singleArticleMain = document.querySelector(".single__article-main");
 var backBtn = document.querySelector(".single__article-main > .btn");
 var signInForm = document.getElementById("signInForm");
 var applicationForm = document.getElementById("applicationForm");
+var passwordForm = document.getElementById('passwordForm');
 var dashboardMainEl = document.querySelector(".dashboard__main");
 var articlesLinks = document.querySelectorAll(".articlesLink");
 var contributorsLinks = document.querySelectorAll(".contributorsLink");
@@ -1087,6 +1131,14 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+
+  if (windows.location.pathname.includes('change_password')) {
+    var urlParams = new URLSearchParams(window.location.search);
+
+    if (!urlParams.has('token') && !urlParams.has('email')) {
+      window.location.href = '/';
+    }
+  }
 });
 
 if (backBtn !== null) {
@@ -1192,6 +1244,10 @@ if (postArticleLinkBtn !== null) {
   postArticleLinkBtn.addEventListener('click', function () {
     window.location.href = '/post_article.html';
   });
+}
+
+if (passwordForm !== null) {
+  passwordForm.addEventListener('submit', _api.postModifyPassword);
 }
 
 },{"./actions/api.js":1,"./actions/dom.js":2,"./helpers.js":4}],4:[function(require,module,exports){
