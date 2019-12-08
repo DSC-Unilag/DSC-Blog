@@ -371,7 +371,7 @@ export const postModifyPassword = e => {
 	}
 	const urlParams = new URLSearchParams(window.location.search);
 	return requestData({
-		url: `${API_URL}/auth/password`,
+		url: `${API_URL}/users/auth/password`,
 		method: "post",
 		data: JSON.stringify({
 			password: form.get("password"),

@@ -324,7 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 
-	if(windows.location.pathname.includes('change_password')){
+	if(window.location.pathname.includes('change_password')){
 		const urlParams = new URLSearchParams(window.location.search);
 		if(!urlParams.has('token') && !urlParams.has('email')){
 			window.location.href = '/';
