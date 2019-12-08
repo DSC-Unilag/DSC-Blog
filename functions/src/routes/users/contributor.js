@@ -1,10 +1,12 @@
 /* eslint-disable promise/no-nesting */
 const admin = require('firebase-admin');
+const dotenv = require('dotenv');
 const randomize = require('../../helpers/randomize');
 const passwordHash = require('../../helpers/passwordHash');
 const userPermissions = require('../../helpers/userPermissions');
 const { sendMail } = require('../../helpers/mail');
 
+dotenv.config();
 const db = admin.firestore();
 
 const createContributor = (request, response) => {
@@ -15,7 +17,6 @@ const createContributor = (request, response) => {
       message: 'Missing input/fields',
     });
   }
-  let actualPassword;
   return db
     .collection('applications')
     .doc(conid)
@@ -28,8 +29,8 @@ const createContributor = (request, response) => {
           message: 'Review Application before approval',
         });
       }
-      actualPassword = randomize(10);
-      const password = passwordHash.hash(actualPassword, 10);
+      const passwordToken = randomize(20);
+      const password = passwordHash.hash(randomize(10), 10);
       const role = 'contributor';
       const claims = userPermissions(role);
       if (!claims) {
@@ -48,6 +49,7 @@ const createContributor = (request, response) => {
           password,
           role,
           claims,
+          passwordToken,
           updated: new Date().getTime(),
           created: new Date().getTime(),
         })
@@ -56,9 +58,7 @@ const createContributor = (request, response) => {
             to: applicantData.email,
             subject: 'Application Approved',
             html: `<p>Your application to write for DSC Blog has been approved</p>
-                  <p>These are your login details</p>
-                  <p>Email: ${applicantData.email}</p>
-                  <p>Password: ${actualPassword}</p>`,
+                  <p>Go to this link to set your password: ${process.env.APP_URL}change_password.html?token=${passwordToken}&email=${applicantData.email} </p>`,
           });
         })
         .then(() => response.status(201).send({
