@@ -17,9 +17,8 @@ const createContributor = (request, response) => {
       message: 'Missing input/fields',
     });
   }
-  return db
-    .collection('applications')
-    .doc(conid)
+  const appRef = db.collection('applications').doc(conid);
+  return appRef
     .get()
     .then((docRef) => {
       const applicantData = docRef.data();
@@ -61,6 +60,7 @@ const createContributor = (request, response) => {
                   <p>Go to this link to set your password: ${process.env.APP_URL}change_password.html?token=${passwordToken}&email=${applicantData.email} </p>`,
           });
         })
+        .then(() => appRef.delete())
         .then(() => response.status(201).send({
           success: true,
           message: 'Contributor successfully created',
