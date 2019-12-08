@@ -410,7 +410,7 @@ var postModifyPassword = function postModifyPassword(e) {
 
   var urlParams = new URLSearchParams(window.location.search);
   return (0, _helpers.requestData)({
-    url: "".concat(API_URL, "/auth/password"),
+    url: "".concat(API_URL, "/users/auth/password"),
     method: "post",
     data: JSON.stringify({
       password: form.get("password"),
@@ -1132,7 +1132,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  if (windows.location.pathname.includes('change_password')) {
+  if (window.location.pathname.includes('change_password')) {
     var urlParams = new URLSearchParams(window.location.search);
 
     if (!urlParams.has('token') && !urlParams.has('email')) {
