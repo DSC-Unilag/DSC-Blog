@@ -17,7 +17,7 @@ const login = (request, response) => {
   }
   return verifyUser({ email }, ['email']).then((check) => {
     if (!check) {
-      return response.status(422).send({
+      return response.status(404).send({
         success: false,
         message: 'This user does not exist',
       });
@@ -53,11 +53,9 @@ const login = (request, response) => {
             refreshToken,
           }));
       })
-      .catch((err) => response.status(500).send({
+      .catch(() => response.status(500).send({
         success: false,
         message: 'Something went wrong',
-        error: err.message,
-        errStack: err.stack,
       }));
   });
 };
@@ -99,7 +97,58 @@ const refreshJwtToken = (request, response) => {
           uid: data.uid,
         }));
     })
-    .catch();
+    .catch(() => response.status(500).send({
+      success: false,
+      message: 'Something went wrong',
+    }));
 };
 
-module.exports = { login, refreshJwtToken };
+const modifyPassword = (request, response) => {
+  const { email, password, token } = request.body;
+  if (!email || !password || !token) {
+    return response.status(400).send({
+      success: false,
+      message: 'Missing input/fields',
+    });
+  }
+  return verifyUser({ email }, ['email']).then((check) => {
+    if (!check) {
+      return response.status(404).send({
+        success: false,
+        message: 'This user does not exist',
+      });
+    }
+    return db
+      .collection('users')
+      .where('email', '==', email)
+      .get()
+      .then((snapshot) => {
+        const doc = snapshot.docs[0];
+        const data = { ...doc.data(), uid: doc.id };
+        if (token !== data.passwordToken) {
+          return response.status(400).send({
+            success: false,
+            message: 'Password Token isInvalid',
+          });
+        }
+        const newPassword = passwordHash.hash(password, 10);
+        return db
+          .collection('users')
+          .doc(data.uid)
+          .update({
+            password: newPassword,
+            passwordToken: null,
+          })
+          .then(() => response.status(200).json({
+            success: true,
+            message: 'Password Modified',
+          }));
+      })
+      .catch(() => response.status(500).send({
+        success: false,
+        message: 'Something went wrong',
+      }));
+  });
+};
+
+module.exports = { login, refreshJwtToken, modifyPassword };

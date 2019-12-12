@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { createAdmin } = require('./admin');
-const { login, refreshJwtToken } = require('./auth');
+const { login, refreshJwtToken, modifyPassword } = require('./auth');
 const middleware = require('../../middleware');
 
 const userRouter = Router();
@@ -17,5 +17,7 @@ userRouter.post(
 userRouter.post('/auth/login', login);
 
 userRouter.post('/auth/refresh_token', refreshJwtToken);
+
+userRouter.post('/auth/password', modifyPassword);
 
 module.exports = userRouter;

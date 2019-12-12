@@ -16,7 +16,6 @@ const createAdmin = (request, response) => {
       message: 'Missing input/fields',
     });
   }
-  let actualPassword;
   return verifyUser({ email }, ['email']).then((check) => {
     if (check) {
       return response.status(409).send({
@@ -24,8 +23,8 @@ const createAdmin = (request, response) => {
         message: 'This user already exists',
       });
     }
-    actualPassword = randomize(10);
-    const password = passwordHash.hash(actualPassword, 10);
+    const passwordToken = randomize(20);
+    const password = passwordHash.hash(randomize(10), 10);
     const role = 'admin';
     const claims = userPermissions(role);
     if (!claims) {
@@ -44,6 +43,7 @@ const createAdmin = (request, response) => {
         password,
         role,
         claims,
+        passwordToken,
         updated: new Date().getTime(),
         created: new Date().getTime(),
       })
@@ -51,9 +51,7 @@ const createAdmin = (request, response) => {
         to: email,
         subject: 'Congratulations Admin!',
         html: `<p>You have been selected to be an administrator on DSC Unilag Blog</p>
-                <p>These are your login details</p>
-                <p>Email: ${email}</p>
-                <p>Password: ${actualPassword}</p>`,
+        <p>Go to this link to set your password: ${process.env.APP_URL}change_password.html?token=${passwordToken}&email=${email} </p>`,
       }))
       .then(() => response.status(201).send({
         success: true,
