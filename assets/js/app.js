@@ -10,7 +10,8 @@ import {
 	getUnreviewedApplications,
 	postArticle,
 	getSingleArticle,
-	editArticle
+	editArticle,
+	postModifyPassword
 } from "./actions/api.js";
 import {
 	onLoadDashboardArticles,
@@ -40,6 +41,7 @@ const singleArticleMain = document.querySelector(".single__article-main");
 const backBtn = document.querySelector(".single__article-main > .btn");
 const signInForm = document.getElementById("signInForm");
 const applicationForm = document.getElementById("applicationForm");
+const passwordForm = document.getElementById('passwordForm');
 const dashboardMainEl = document.querySelector(".dashboard__main");
 const articlesLinks = document.querySelectorAll(".articlesLink");
 const contributorsLinks = document.querySelectorAll(".contributorsLink");
@@ -321,6 +323,13 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		});
 	}
+
+	if(window.location.pathname.includes('change_password')){
+		const urlParams = new URLSearchParams(window.location.search);
+		if(!urlParams.has('token') && !urlParams.has('email')){
+			window.location.href = '/';
+		}
+	}
 });
 
 if (backBtn !== null) {
@@ -445,4 +454,8 @@ if(postArticleLinkBtn !== null){
 	postArticleLinkBtn.addEventListener('click', () => {
 		window.location.href = '/post_article.html';
 	})
+}
+
+if(passwordForm !== null){
+	passwordForm.addEventListener('submit', postModifyPassword);
 }

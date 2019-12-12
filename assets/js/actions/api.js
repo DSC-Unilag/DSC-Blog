@@ -330,8 +330,8 @@ export const publishArticle = id => {
 export const editArticle = (e, aid) => {
 	e.preventDefault();
 	const form = new FormData(e.target);
-	if(form.get('image').name === ''){
-		form.delete('image');
+	if (form.get("image").name === "") {
+		form.delete("image");
 	}
 	return requestData({
 		url: `${API_URL}/articles/edit/${aid}`,
@@ -349,6 +349,46 @@ export const editArticle = (e, aid) => {
 			if (res.success) {
 				setTimeout(() => {
 					window.location.href = "/dashboard.html";
+				}, 1500);
+			}
+		})
+		.catch(error => {
+			console.log("Error Msg: " + error.message);
+			console.log(error.stack);
+		});
+};
+
+export const postModifyPassword = e => {
+	e.preventDefault();
+	const form = new FormData(e.target);
+	if (form.get("password") !== form.get("confirm_password")) {
+		sAlert({
+			title: "Passwords don't match",
+			message: "Check Passwords",
+			type: "error"
+		});
+		return;
+	}
+	const urlParams = new URLSearchParams(window.location.search);
+	return requestData({
+		url: `${API_URL}/users/auth/password`,
+		method: "post",
+		data: JSON.stringify({
+			password: form.get("password"),
+			token: urlParams.get('token'),
+			email: urlParams.get('email')
+		})
+	})
+		.then(res => {
+			console.log(res);
+			sAlert({
+				title: res.success ? "Password Modified" : "Something went wrong",
+				message: res.message,
+				type: res.success ? "success" : "error"
+			});
+			if (res.success) {
+				setTimeout(() => {
+					window.location.href = "/sign_in.html";
 				}, 1500);
 			}
 		})
