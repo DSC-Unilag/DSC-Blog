@@ -455,7 +455,7 @@ var archives = {
   articleHtml: function articleHtml(article) {
     var loggedInUser = JSON.parse(localStorage.getItem("refresh")).uid;
     var ownedByUser = loggedInUser === article.user.uid;
-    return "<article class=\"archive__card\" data-aid=".concat(article.aid, ">\n\t\t<div class=\"archive__card-img\">\n\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"Article Image\" />\n\t\t</div>\n\t\t<div class=\"archive__card-details\">\n\t\t\t<p>").concat(article.title, "</p>\n\t\t\t<p>Author: ").concat(article.user.firstname + " " + article.user.lastname, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn view_article\">\n\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t</buttton>\n\t\t\t").concat(ownedByUser ? "<buttton class=\"btn actions__btn edit_article\">\n\t\t\t\t\t\t\t<i class=\"far fa-edit\"></i> &nbsp; Edit\n\t\t\t\t\t   </buttton>" : '', "\n\t\t\t<buttton class=\"btn actions__btn delete_article\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
+    return "<article class=\"archive__card\" data-aid=".concat(article.aid, ">\n\t\t<div class=\"archive__card-img\">\n\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"Article Image\" />\n\t\t</div>\n\t\t<div class=\"archive__card-details\">\n\t\t\t<p>").concat(article.title, "</p>\n\t\t\t<p>Author: ").concat(article.user.firstname + " " + article.user.lastname, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn view_article\">\n\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t</buttton>\n\t\t\t").concat(ownedByUser ? "<buttton class=\"btn actions__btn edit_article\">\n\t\t\t\t\t\t\t<i class=\"far fa-edit\"></i> &nbsp; Edit\n\t\t\t\t\t   </buttton>" : "", "\n\t\t\t<buttton class=\"btn actions__btn delete_article\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
   },
   unpublishedArticleHtml: function unpublishedArticleHtml(article) {
     return "<article class=\"archive__card\" data-aid=".concat(article.aid, ">\n\t\t<div class=\"archive__card-img\">\n\t\t\t<img src=\"").concat(article.imageUrl, "\" alt=\"Article Image\" />\n\t\t</div>\n\t\t<div class=\"archive__card-details\">\n\t\t\t<p>").concat(article.title, "</p>\n\t\t\t<p>Author: ").concat(article.user.firstname + " " + article.user.lastname, "</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn publish_article\">\n\t\t\t\t<i class=\"far fa-file-alt\"></i> &nbsp; Publish\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn view_article\">\n\t\t\t\t<i class=\"far fa-eye\"></i> &nbsp; View\n\t\t\t</buttton>\n\t\t\t<buttton class=\"btn actions__btn delete_article\">\n\t\t\t\t<i class=\"far fa-trash-alt\"></i> &nbsp; Delete\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
@@ -525,6 +525,8 @@ var onLoadArticles = function onLoadArticles(articlesSection) {
 exports.onLoadArticles = onLoadArticles;
 
 var onLoadCategories = function onLoadCategories(categoriesList, categories) {
+  console.log(categories);
+
   if (categories.length > 0) {
     categories.forEach(function (category) {
       categoriesList.innerHTML += "<li class=\"categories__category\" data-cid=".concat(category.id, ">\n            <span></span>\n            ").concat(category.name, "\n        </li>");
@@ -936,7 +938,7 @@ var singleArticleMain = document.querySelector(".single__article-main");
 var backBtn = document.querySelector(".single__article-main > .btn");
 var signInForm = document.getElementById("signInForm");
 var applicationForm = document.getElementById("applicationForm");
-var passwordForm = document.getElementById('passwordForm');
+var passwordForm = document.getElementById("passwordForm");
 var dashboardMainEl = document.querySelector(".dashboard__main");
 var articlesLinks = document.querySelectorAll(".articlesLink");
 var contributorsLinks = document.querySelectorAll(".contributorsLink");
@@ -949,7 +951,7 @@ var editImageContainer = document.querySelector(".edit_image");
 var showEditImageInput = document.querySelector(".edit_image > .btn");
 var logoutBtns = document.querySelectorAll(".logout_btn");
 var recentPosts = document.querySelector(".recent-posts");
-var postArticleLinkBtn = document.querySelector('.post-article-btn'); //Events
+var postArticleLinkBtn = document.querySelector(".post-article-btn"); //Events
 
 var updateDomEvent = new Event("updateDOM"); //Event Callbacks
 
@@ -1132,11 +1134,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  if (window.location.pathname.includes('change_password')) {
+  if (window.location.pathname.includes("change_password")) {
     var urlParams = new URLSearchParams(window.location.search);
 
-    if (!urlParams.has('token') && !urlParams.has('email')) {
-      window.location.href = '/';
+    if (!urlParams.has("token") && !urlParams.has("email")) {
+      window.location.href = "/";
     }
   }
 });
@@ -1241,13 +1243,13 @@ if (mainEl !== null) {
 }
 
 if (postArticleLinkBtn !== null) {
-  postArticleLinkBtn.addEventListener('click', function () {
-    window.location.href = '/post_article.html';
+  postArticleLinkBtn.addEventListener("click", function () {
+    window.location.href = "/post_article.html";
   });
 }
 
 if (passwordForm !== null) {
-  passwordForm.addEventListener('submit', _api.postModifyPassword);
+  passwordForm.addEventListener("submit", _api.postModifyPassword);
 }
 
 },{"./actions/api.js":1,"./actions/dom.js":2,"./helpers.js":4}],4:[function(require,module,exports){

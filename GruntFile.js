@@ -3,12 +3,13 @@ module.exports = function(grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON("package.json"),
 		uglify: {
-			files: {
-				src: "assets/js/dist/*.js", // source files mask
-				dest: "assets/js/dist/", // destination folder
-				expand: true, // allow dynamic building
-				flatten: true, // remove all unnecessary nesting
-				ext: ".min.js" // replace .js to .min.js
+			options: {
+				mangle: false
+			},
+			my_target: {
+				files: {
+					"assets/js/dist/bundle.min.js": ["assets/js/dist/bundle.js"]
+				}
 			}
 		},
 		cssmin: {
