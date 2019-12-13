@@ -41,7 +41,7 @@ const singleArticleMain = document.querySelector(".single__article-main");
 const backBtn = document.querySelector(".single__article-main > .btn");
 const signInForm = document.getElementById("signInForm");
 const applicationForm = document.getElementById("applicationForm");
-const passwordForm = document.getElementById('passwordForm');
+const passwordForm = document.getElementById("passwordForm");
 const dashboardMainEl = document.querySelector(".dashboard__main");
 const articlesLinks = document.querySelectorAll(".articlesLink");
 const contributorsLinks = document.querySelectorAll(".contributorsLink");
@@ -54,7 +54,7 @@ const editImageContainer = document.querySelector(".edit_image");
 const showEditImageInput = document.querySelector(".edit_image > .btn");
 const logoutBtns = document.querySelectorAll(".logout_btn");
 const recentPosts = document.querySelector(".recent-posts");
-const postArticleLinkBtn = document.querySelector('.post-article-btn');
+const postArticleLinkBtn = document.querySelector(".post-article-btn");
 
 //Events
 const updateDomEvent = new Event("updateDOM");
@@ -192,7 +192,7 @@ const setupLogoutClickEvents = () => {
 			logoutBtn.addEventListener("click", logout);
 		});
 	}
-}
+};
 
 // Event Listeners
 document.addEventListener("DOMContentLoaded", () => {
@@ -324,10 +324,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 
-	if(window.location.pathname.includes('change_password')){
+	if (window.location.pathname.includes("change_password")) {
 		const urlParams = new URLSearchParams(window.location.search);
-		if(!urlParams.has('token') && !urlParams.has('email')){
-			window.location.href = '/';
+		if (!urlParams.has("token") && !urlParams.has("email")) {
+			window.location.href = "/";
 		}
 	}
 });
@@ -450,12 +450,12 @@ if (mainEl !== null) {
 	});
 }
 
-if(postArticleLinkBtn !== null){
-	postArticleLinkBtn.addEventListener('click', () => {
-		window.location.href = '/post_article.html';
-	})
+if (postArticleLinkBtn !== null) {
+	postArticleLinkBtn.addEventListener("click", () => {
+		window.location.href = "/post_article.html";
+	});
 }
 
-if(passwordForm !== null){
-	passwordForm.addEventListener('submit', postModifyPassword);
+if (passwordForm !== null) {
+	passwordForm.addEventListener("submit", postModifyPassword);
 }
