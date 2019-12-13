@@ -525,8 +525,6 @@ var onLoadArticles = function onLoadArticles(articlesSection) {
 exports.onLoadArticles = onLoadArticles;
 
 var onLoadCategories = function onLoadCategories(categoriesList, categories) {
-  console.log(categories);
-
   if (categories.length > 0) {
     categories.forEach(function (category) {
       categoriesList.innerHTML += "<li class=\"categories__category\" data-cid=".concat(category.id, ">\n            <span></span>\n            ").concat(category.name, "\n        </li>");

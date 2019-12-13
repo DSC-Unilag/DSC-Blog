@@ -250,7 +250,6 @@ export const onLoadArticles = articlesSection => {
 };
 
 export const onLoadCategories = (categoriesList, categories) => {
-	console.log(categories);
 	if (categories.length > 0) {
 		categories.forEach(category => {
 			categoriesList.innerHTML += `<li class="categories__category" data-cid=${category.id}>
