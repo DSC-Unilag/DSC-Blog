@@ -1,0 +1,51 @@
+{
+	"name": "dsc-blog",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"deploy": "firebase deploy",
+		"build": "npm run build-js && npm run minify",
+		"build-js": "browserify ./assets/js/app.js -o ./assets/js/dist/bundle.js",
+		"watch-js": "watchify ./assets/js/app.js -o ./assets/js/dist/bundle.js -v",
+		"minify": "grunt"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/DSC-Unilag/DSC-Blog.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/DSC-Unilag/DSC-Blog/issues"
+	},
+	"homepage": "https://github.com/DSC-Unilag/DSC-Blog#readme",
+	"dependencies": {
+		"browserify": "^16.5.0",
+		"firebase": "^7.5.2",
+		"sweetalert": "^2.1.2",
+		"watchify": "^3.11.1"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.6.0",
+		"@babel/polyfill": "^7.6.0",
+		"@babel/preset-env": "^7.6.0",
+		"babelify": "^10.0.0",
+		"grunt": "^1.0.4",
+		"grunt-contrib-cssmin": "^3.0.0",
+		"grunt-contrib-uglify": "^4.0.1"
+	},
+	"browserify": {
+		"transform": [
+			[
+				"babelify",
+				{
+					"presets": [
+						"@babel/preset-env"
+					]
+				}
+			]
+		]
+	}
+}
