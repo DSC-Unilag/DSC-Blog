@@ -4,3 +4,4 @@ node_modules
 firebase-debug.log
 .firebase
 config/settings.json
+.travis.yml
