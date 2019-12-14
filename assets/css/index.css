@@ -532,7 +532,8 @@ main {
 }
 
 .post img {
-	width: 150px;
+	width: 10rem;
+	height: 10rem;
 }
 
 .post__time {
