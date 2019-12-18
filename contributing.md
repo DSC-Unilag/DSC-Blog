@@ -1,4 +1,4 @@
-#Contributing to DSC-Blog 
+# Contributing to DSC-Blog 
 
 As an open-source project, DSC UNILAG welcomes contributions of many forms
 
@@ -9,5 +9,5 @@ As an open-source project, DSC UNILAG welcomes contributions of many forms
 
 Cheers you just contributed to DSC-Blog.
 
-#Thanks for contributing to Open Source.
+# Thanks for contributing to Open Source.
 
