@@ -83,7 +83,6 @@ var postSignIn = function postSignIn(e) {
       password: form.get("password")
     })
   }).then(function (res) {
-    console.log(res);
     (0, _helpers.sAlert)({
       title: res.popup || "Something went wrong",
       message: res.message,
@@ -143,7 +142,6 @@ var postApply = function postApply(e) {
       reason: form.get("reason")
     })
   }).then(function (res) {
-    console.log(res);
     (0, _helpers.sAlert)({
       title: res.success ? "Application Sent" : "Something went wrong",
       message: res.message,
@@ -298,7 +296,6 @@ var postArticle = function postArticle(e) {
     type: "form-data",
     authToken: localStorage.getItem("token") || ""
   }).then(function (res) {
-    console.log(res);
     (0, _helpers.sAlert)({
       title: res.success ? "Article Sent for Review" : "Something went wrong",
       message: res.message,
@@ -418,7 +415,6 @@ var postModifyPassword = function postModifyPassword(e) {
       email: urlParams.get('email')
     })
   }).then(function (res) {
-    console.log(res);
     (0, _helpers.sAlert)({
       title: res.success ? "Password Modified" : "Something went wrong",
       message: res.message,
@@ -444,7 +440,7 @@ exports.postModifyPassword = postModifyPassword;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.logout = exports.refreshAuthState = exports.isLoggedIn = exports.setupArticlesActions = exports.setupContributorActions = exports.setupApplicationActions = exports.setupPostClickEventListeners = exports.setupCategoryClickEventListeners = exports.onLoadDashboardApplications = exports.onLoadDashboardContributors = exports.onLoadDashboardArticles = exports.onLoadCategoryArticles = exports.handleDeleteArticle = exports.handlePublishArticle = exports.handleDeleteContributor = exports.handleDeleteApplication = exports.handleApproveApplication = exports.handleReviewApplication = exports.showHomepage = exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = exports.setupPagination = void 0;
+exports.logout = exports.refreshAuthState = exports.isLoggedIn = exports.setupArticlesActions = exports.setupContributorActions = exports.setupApplicationActions = exports.setupPostClickEventListeners = exports.setupCategoryClickEventListeners = exports.onLoadDashboardApplications = exports.onLoadDashboardContributors = exports.onLoadDashboardArticles = exports.onLoadCategoryArticles = exports.handleDeleteArticle = exports.handlePublishArticle = exports.handleDeleteContributor = exports.handleDeleteApplication = exports.handleApproveApplication = exports.handleReviewApplication = exports.showHomepage = exports.showSingleArticle = exports.onLoadCategories = exports.onLoadArticles = exports.setupPagination = exports.toggleSideNav = void 0;
 
 var _helpers = require("../helpers.js");
 
@@ -470,6 +466,18 @@ var archives = {
     return "<article class=\"archive__card\" data-aid=\"".concat(application.id, "\">\n\t\t<div class=\"archive__card-details contributor__details\">\n\t\t\t<p>Name: ").concat(application.firstname, " ").concat(application.lastname, "</p>\n\t\t\t<p>Email: ").concat(application.email, "</p>\n\t\t\t<p>\n\t\t\t\tReason for Applying: ").concat(application.reason, "\n\t\t\t</p>\n\t\t</div>\n\t\t<div class=\"archive__card-actions\">\n\t\t\t<buttton class=\"btn actions__btn review_application\">\n\t\t\t\t<i class=\"far fa-thumbs-up\"></i> &nbsp; Review\n\t\t\t</buttton>\n\t\t</div>\n\t</article>");
   }
 };
+
+var toggleSideNav = function toggleSideNav(sidenav, sidenavBtn) {
+  if (sidenav.classList.contains("active")) {
+    sidenav.classList.remove("active");
+    sidenavBtn.classList.remove("sidenav__btn--active");
+  } else {
+    sidenav.classList.add("active");
+    sidenavBtn.classList.add("sidenav__btn--active");
+  }
+};
+
+exports.toggleSideNav = toggleSideNav;
 
 var setupPagination = function setupPagination(articles, currentPage) {
   var htmlSpans = "";
@@ -662,6 +670,7 @@ var onLoadDashboardArticles = function onLoadDashboardArticles(publishedArticles
   dashboardMainEl.innerHTML = ""; // Add Published Articles Section
 
   var publishedArchive = "<section class=\"archive\">";
+  publishedArchive += "<button class=\"post-article-btn\"><a href=\"/post_article.html\">Post Article</a></button>";
   publishedArchive += "<h3>All published articles</h3>";
 
   if (publishedArticles.length > 0) {
@@ -949,7 +958,9 @@ var editImageContainer = document.querySelector(".edit_image");
 var showEditImageInput = document.querySelector(".edit_image > .btn");
 var logoutBtns = document.querySelectorAll(".logout_btn");
 var recentPosts = document.querySelector(".recent-posts");
-var postArticleLinkBtn = document.querySelector(".post-article-btn"); //Events
+var postArticleLinkBtn = document.querySelector(".post-article-btn");
+var sidenavBtn = document.querySelector(".sidenav__btn");
+var sidenav = document.querySelector(".sidenav__container"); //Events
 
 var updateDomEvent = new Event("updateDOM"); //Event Callbacks
 
@@ -985,8 +996,6 @@ var loadHomepageElements = function loadHomepageElements() {
 var loadDashboardArticles = function loadDashboardArticles(callback) {
   dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
   Promise.all([(0, _api.getArticles)(), (0, _api.getUnpublishedArticles)()]).then(function (result) {
-    console.log(result);
-
     var _result2 = _slicedToArray(result, 2),
         published = _result2[0],
         unpublished = _result2[1];
@@ -1141,6 +1150,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+if (sidenav !== null && sidenavBtn !== null) {
+  sidenavBtn.addEventListener("click", function () {
+    return (0, _dom.toggleSideNav)(sidenav, sidenavBtn);
+  });
+}
+
 if (backBtn !== null) {
   backBtn.addEventListener("click", function () {
     var main = mainEl;
@@ -1163,7 +1178,11 @@ if (applicationForm !== null) {
 
 if (articlesLinks !== null) {
   articlesLinks.forEach(function (articlesLink) {
-    articlesLink.addEventListener("click", function () {
+    articlesLink.addEventListener("click", function (e) {
+      if (e.target.parentElement.classList.contains("sidenav__link")) {
+        (0, _dom.toggleSideNav)(sidenav, sidenavBtn);
+      }
+
       loadDashboardArticles(function () {
         var publishBtns = dashboardMainEl.querySelectorAll(".publish_article");
         var viewBtns = dashboardMainEl.querySelectorAll(".view_article");
@@ -1183,7 +1202,11 @@ if (articlesLinks !== null) {
 
 if (contributorsLinks !== null) {
   contributorsLinks.forEach(function (contributorsLink) {
-    contributorsLink.addEventListener("click", function () {
+    contributorsLink.addEventListener("click", function (e) {
+      if (e.target.parentElement.classList.contains("sidenav__link")) {
+        (0, _dom.toggleSideNav)(sidenav, sidenavBtn);
+      }
+
       loadDashboardContributors(function () {
         var deleteConBtns = dashboardMainEl.querySelectorAll(".delete_contributor");
         (0, _dom.setupContributorActions)(loadingDiv, deleteConBtns);
@@ -1196,7 +1219,11 @@ if (contributorsLinks !== null) {
 
 if (applicationsLinks !== null) {
   applicationsLinks.forEach(function (applicationsLink) {
-    applicationsLink.addEventListener("click", function () {
+    applicationsLink.addEventListener("click", function (e) {
+      if (e.target.parentElement.classList.contains("sidenav__link")) {
+        (0, _dom.toggleSideNav)(sidenav, sidenavBtn);
+      }
+
       loadDashboardApplications(function () {
         var reviewBtns = dashboardMainEl.querySelectorAll(".review_application");
         var approveBtns = dashboardMainEl.querySelectorAll(".approve_application");

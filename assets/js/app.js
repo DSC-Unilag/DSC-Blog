@@ -14,6 +14,7 @@ import {
 	postModifyPassword
 } from "./actions/api.js";
 import {
+	toggleSideNav,
 	onLoadDashboardArticles,
 	onLoadDashboardContributors,
 	onLoadDashboardApplications,
@@ -55,6 +56,8 @@ const showEditImageInput = document.querySelector(".edit_image > .btn");
 const logoutBtns = document.querySelectorAll(".logout_btn");
 const recentPosts = document.querySelector(".recent-posts");
 const postArticleLinkBtn = document.querySelector(".post-article-btn");
+const sidenavBtn = document.querySelector(".sidenav__btn");
+const sidenav = document.querySelector(".sidenav__container");
 
 //Events
 const updateDomEvent = new Event("updateDOM");
@@ -98,7 +101,6 @@ const loadHomepageElements = () => {
 const loadDashboardArticles = callback => {
 	dashboardMainEl.innerHTML = '<div class="loader">Loading...</div>';
 	Promise.all([getArticles(), getUnpublishedArticles()]).then(result => {
-		console.log(result);
 		let [published, unpublished] = result;
 		published = published.data || [];
 		unpublished = unpublished.data || [];
@@ -332,6 +334,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 });
 
+if (sidenav !== null && sidenavBtn !== null) {
+	sidenavBtn.addEventListener("click", () =>
+		toggleSideNav(sidenav, sidenavBtn)
+	);
+}
+
 if (backBtn !== null) {
 	backBtn.addEventListener("click", () => {
 		let main = mainEl;
@@ -352,7 +360,10 @@ if (applicationForm !== null) {
 
 if (articlesLinks !== null) {
 	articlesLinks.forEach(articlesLink => {
-		articlesLink.addEventListener("click", () => {
+		articlesLink.addEventListener("click", e => {
+			if (e.target.parentElement.classList.contains("sidenav__link")) {
+				toggleSideNav(sidenav, sidenavBtn);
+			}
 			loadDashboardArticles(() => {
 				const publishBtns = dashboardMainEl.querySelectorAll(
 					".publish_article"
@@ -378,7 +389,10 @@ if (articlesLinks !== null) {
 
 if (contributorsLinks !== null) {
 	contributorsLinks.forEach(contributorsLink => {
-		contributorsLink.addEventListener("click", () => {
+		contributorsLink.addEventListener("click", e => {
+			if (e.target.parentElement.classList.contains("sidenav__link")) {
+				toggleSideNav(sidenav, sidenavBtn);
+			}
 			loadDashboardContributors(() => {
 				const deleteConBtns = dashboardMainEl.querySelectorAll(
 					".delete_contributor"
@@ -392,7 +406,10 @@ if (contributorsLinks !== null) {
 }
 if (applicationsLinks !== null) {
 	applicationsLinks.forEach(applicationsLink => {
-		applicationsLink.addEventListener("click", () => {
+		applicationsLink.addEventListener("click", e => {
+			if (e.target.parentElement.classList.contains("sidenav__link")) {
+				toggleSideNav(sidenav, sidenavBtn);
+			}
 			loadDashboardApplications(() => {
 				const reviewBtns = dashboardMainEl.querySelectorAll(
 					".review_application"
