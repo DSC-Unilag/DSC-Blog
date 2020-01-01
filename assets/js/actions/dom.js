@@ -119,6 +119,16 @@ const archives = {
 	}
 };
 
+export const toggleSideNav = (sidenav, sidenavBtn) => {
+	if (sidenav.classList.contains("active")) {
+		sidenav.classList.remove("active");
+		sidenavBtn.classList.remove("sidenav__btn--active");
+	} else {
+		sidenav.classList.add("active");
+		sidenavBtn.classList.add("sidenav__btn--active");
+	}
+}
+
 export const setupPagination = (articles, currentPage) => {
 	let htmlSpans = "";
 	let i = 0;
@@ -413,6 +423,7 @@ export const onLoadDashboardArticles = (
 	dashboardMainEl.innerHTML = "";
 	// Add Published Articles Section
 	let publishedArchive = `<section class="archive">`;
+	publishedArchive += `<button class="post-article-btn"><a href="/post_article.html">Post Article</a></button>`;
 	publishedArchive += "<h3>All published articles</h3>";
 	if (publishedArticles.length > 0) {
 		publishedArticles.forEach(article => {

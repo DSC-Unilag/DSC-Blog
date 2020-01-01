@@ -22,7 +22,7 @@
 					</div>
 					<ul class="sidenav__links">
 						<li class="sidenav__link">
-							<a href="#">BLOG</a>
+							<a href="/">BLOG</a>
 						</li>
 						<li class="sidenav__link">
 							<a href="https://dscunilag.dev/#technologies">TECHNOLOGIES</a>
@@ -174,19 +174,16 @@
 		<footer>
 			<ul class="footer-page-links">
 				<li class="footer-page-link">
-					Blog
+					<a href="/">Blog</a> 
 				</li>
 				<li class="footer-page-link">
-					Technologies
+				 	<a href="https://dscunilag.dev/#technologies">Technologies</a>	
 				</li>
 				<li class="footer-page-link">
-					Workshop
+					<a href="https://dscunilag.dev/#workshops">Workshop</a> 
 				</li>
 				<li class="footer-page-link">
-					The Team
-				</li>
-				<li class="footer-page-link">
-					Contact Us
+					<a href="https://dscunilag.dev/#team">The Team</a> 
 				</li>
 			</ul>
 			<ul class="sm-icons">
@@ -215,19 +212,6 @@
 				class="dsc-logo"
 			/>
 		</footer>
-		<script>
-			const sidenavBtn = document.querySelector(".sidenav__btn");
-			const sidenav = document.querySelector(".sidenav__container");
-			sidenavBtn.addEventListener("click", () => {
-				if (sidenav.classList.contains("active")) {
-					sidenav.classList.remove("active");
-					sidenavBtn.classList.remove("sidenav__btn--active");
-				} else {
-					sidenav.classList.add("active");
-					sidenavBtn.classList.add("sidenav__btn--active");
-				}
-			});
-		</script>
 		<script src="assets/js/dist/bundle.min.js"></script>
 	</body>
 </html>

@@ -63,7 +63,6 @@ export const postSignIn = e => {
 		})
 	})
 		.then(res => {
-			console.log(res);
 			sAlert({
 				title: res.popup || "Something went wrong",
 				message: res.message,
@@ -118,7 +117,6 @@ export const postApply = e => {
 		})
 	})
 		.then(res => {
-			console.log(res);
 			sAlert({
 				title: res.success ? "Application Sent" : "Something went wrong",
 				message: res.message,
@@ -266,7 +264,6 @@ export const postArticle = e => {
 		authToken: localStorage.getItem("token") || ""
 	})
 		.then(res => {
-			console.log(res);
 			sAlert({
 				title: res.success ? "Article Sent for Review" : "Something went wrong",
 				message: res.message,
@@ -380,7 +377,6 @@ export const postModifyPassword = e => {
 		})
 	})
 		.then(res => {
-			console.log(res);
 			sAlert({
 				title: res.success ? "Password Modified" : "Something went wrong",
 				message: res.message,
