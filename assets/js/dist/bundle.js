@@ -951,7 +951,9 @@ var logoutBtns = document.querySelectorAll(".logout_btn");
 var recentPosts = document.querySelector(".recent-posts");
 var postArticleLinkBtn = document.querySelector(".post-article-btn"); //Events
 
-var updateDomEvent = new Event("updateDOM"); //Event Callbacks
+var updateDomEvent = new Event("updateDOM"); //hide loader till we sort the CORS issue
+
+loadingDiv.classList.add("hide"); //Event Callbacks
 
 var loadHomepageElements = function loadHomepageElements() {
   Promise.all([(0, _api.getCategories)(), (0, _api.getArticles)()]).then(function (result) {
