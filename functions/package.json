@@ -1,48 +1,48 @@
 {
-	"name": "functions",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"serve": "firebase serve --only functions",
-		"shell": "firebase functions:shell",
-		"start": "npm run shell",
-		"deploy": "firebase deploy --only functions",
-		"logs": "firebase functions:log",
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"lint": "eslint --ignore-path .gitignore src/ --fix",
-		"prettier": "prettier --single-quote --use-tabs --tab-width 8 --trailing-comma es5 --print-width 85 --write --no-bracket-spacing src/**/*.js"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"dependencies": {
-		"@google-cloud/storage": "^3.3.1",
-		"bcryptjs": "^2.4.3",
-		"busboy": "^0.3.1",
-		"cloudinary": "^1.15.0",
-		"dotenv": "^8.1.0",
-		"express": "^4.17.1",
-		"express-fileupload": "^1.1.6-alpha.4",
-		"express-list-endpoints": "^4.0.1",
-		"firebase": "^6.4.2",
-		"firebase-admin": "^8.4.0",
-		"firebase-functions": "^3.2.0",
-		"googleapis": "^43.0.0",
-		"jsonwebtoken": "^8.5.1",
-		"multer": "^1.4.2",
-		"nodemailer": "^6.3.1",
-		"rand-token": "^0.4.0"
-	},
-	"devDependencies": {
-		"eslint": "^6.2.2",
-		"eslint-config-airbnb": "^18.0.1",
-		"eslint-config-prettier": "^6.3.0",
-		"eslint-plugin-import": "^2.18.2",
-		"eslint-plugin-promise": "^4.2.1",
-		"prettier": "^1.18.2"
-	},
-	"engines": {
-		"node": "10"
-	}
+  "name": "functions",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "serve": "firebase serve --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --ignore-path .gitignore src/ --fix",
+    "prettier": "prettier --single-quote --use-tabs --tab-width 8 --trailing-comma es5 --print-width 85 --write --no-bracket-spacing src/**/*.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/storage": "^3.3.1",
+    "bcryptjs": "^2.4.3",
+    "busboy": "^0.3.1",
+    "cloudinary": "^1.15.0",
+    "dotenv": "^8.1.0",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.1.6-alpha.4",
+    "express-list-endpoints": "^4.0.1",
+    "firebase": "^6.4.2",
+    "firebase-admin": "^9.4.1",
+    "firebase-functions": "^3.11.0",
+    "googleapis": "^43.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.2",
+    "nodemailer": "^6.3.1",
+    "rand-token": "^0.4.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.2.2",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-promise": "^4.2.1",
+    "prettier": "^1.18.2"
+  },
+  "engines": {
+    "node": "12"
+  }
 }
