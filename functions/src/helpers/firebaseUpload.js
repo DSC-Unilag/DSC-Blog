@@ -7,5 +7,4 @@ const upload = (file, filename) => {
   return imageRef.put(file);
 };
 
-
 module.exports = { upload };

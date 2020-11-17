@@ -2,3 +2,4 @@ config.json
 serviceAccountKey.json
 firebase-debug.log
 .env
+node_modules
